@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>@yield('page_title') | Task Planner</title>
+
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/favicon.png') }}">
+    <link rel="apple-touch-icon" sizes="128x128" href="{{ asset('img/app-icon.png') }}">
+    <link rel="shortcut icon" href="{{ asset('img/app-icon.png') }}">
+
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
+
+    @yield('style')
+    @livewireStyles
+</head>
+
+<body id="admin-portal">
+    @include('layout/side-bar')
+
+    <div class="main">
+        <div class="container-fluid px-1 px-md-2">
+            @include('layout/top-bar')
+
+            @yield('content')
+        </div>
+    </div>
+
+    <script type="text/javascript" src="{{ asset('js/app.js') }}"></script>
+
+    @yield('script')
+
+    @livewireScripts
+
+    <script>
+        @if (Session::has('success'))
+            notifier.show('Success!', '{!! Session::get('success') !!}', 'success',
+                '', 4000);
+        @elseif (session('error'))
+            notifier.show('Error!', '{!! Session::get('error') !!}', 'danger',
+                '', 4000);
+        @endif
+
+        @if (Session::has('success_confirm'))
+            Swal.fire({
+                title: '{!! Session::get('success_confirm') !!}',
+                icon: 'success',
+                confirmButtonColor: '#002FA7',
+            })
+        @elseif (session('error_confirm'))
+            Swal.fire({
+                title: '{!! Session::get('error_confirm') !!}',
+                icon: 'error',
+                confirmButtonColor: '#002FA7',
+            })
+        @endif
+
+        function toggleMobileNavigation() {
+            if ($("#sidebar").hasClass("show")) {
+                $("#sidebar").removeClass("show");
+                $("body").css("overflow-y", "auto");
+            } else {
+                $("#sidebar").addClass("show");
+                $("body").css("overflow-y", "hidden");
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,255 @@
+// Variables
+@import "variables";
+
+//bootstrap
+@import "~bootstrap/scss/bootstrap";
+
+//fortawesome
+@import "~@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "~@fortawesome/fontawesome-free/scss/solid.scss";
+@import "~@fortawesome/fontawesome-free/scss/regular.scss";
+@import "~@fortawesome/fontawesome-free/scss/brands.scss";
+
+//notifier-js
+@import "~notifier-js/css/notifier.css";
+
+//auth
+@import "auth";
+
+//admin
+@import "admin";
+
+//customer
+@import "customer";
+
+//select2
+@import "~select2/dist/css/select2.min.css";
+
+//select2 bootstrap5 theme
+@import "~select2-bootstrap-5-theme/dist/select2-bootstrap-5-theme.min.css";
+
+.btn-primary {
+    --bs-btn-color: #fff !important;
+    --bs-btn-bg: #11a6b9 !important;
+    --bs-btn-border-color: #11a6b9 !important;
+    --bs-btn-hover-color: #fff !important;
+    --bs-btn-hover-bg: rgb(0, 145, 158) !important;
+    --bs-btn-hover-border-color: rgb(0, 135, 150) !important;
+    --bs-btn-focus-shadow-rgb: 79, 115, 213 !important;
+    --bs-btn-active-color: #fff !important;
+    --bs-btn-active-bg: rgb(0, 135, 150) !important;
+    --bs-btn-active-border-color: rgb(0, 125, 140) !important;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125) !important;
+    --bs-btn-disabled-color: #fff !important;
+    --bs-btn-disabled-bg: #11a6b9 !important;
+    --bs-btn-disabled-border-color: #11a6b9 !important;
+  }
+
+body{
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+//start notifier js
+.notifier-container {
+    z-index: 1082;
+}
+//end notifier js
+
+.circle-img-sm-wrap {
+    height: 45px;
+    width: 45px;
+    overflow: hidden;
+    position: relative;
+
+    img {
+        height: 45px;
+        left: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: auto;
+    }
+}
+
+.circle-img-md-wrap {
+    height: 70px;
+    width: 70px;
+    overflow: hidden;
+    position: relative;
+
+    img {
+        height: 70px;
+        left: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: auto;
+    }
+}
+
+.circle-img-lg-wrap {
+    height: 150px;
+    width: 150px;
+    overflow: hidden;
+    position: relative;
+
+    img {
+        height: 150px;
+        left: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: auto;
+    }
+}
+
+.card-shadow{
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1) !important;
+}
+
+.card-hover:hover{
+    background-color:rgb(158, 216, 218) !important;
+    cursor: pointer !important;
+}
+
+
+.more-loader-pulse-container {
+    display: flex;
+
+    .more-loader-pulse-bubble {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background-color: $primary;
+    }
+
+    .more-loader-pulse-bubble-1 {
+        animation: moreLoaderPluse 0.4s ease 0s infinite alternate;
+    }
+
+    .more-loader-pulse-bubble-2 {
+        animation: moreLoaderPluse 0.4s ease 0.2s infinite alternate;
+    }
+
+    .more-loader-pulse-bubble-3 {
+        animation: moreLoaderPluse 0.4s ease 0.4s infinite alternate;
+    }
+}
+
+@keyframes moreLoaderPluse {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0.25;
+        transform: scale(0.75);
+    }
+}
+
+
+//start select2
+.select2-container--bootstrap-5 .select2-selection--single{
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+}
+
+.select2-container--bootstrap-5.select2-container--open .select2-selection,
+.select2-container--bootstrap-5.select2-container--focus .select2-selection{
+    border-color: #bed0ff;
+    box-shadow: 0 0 0 0.25rem rgba(124, 160, 255, 0.25);
+}
+
+.select2-container--bootstrap-5 .select2-selection--single,
+.select2-container--bootstrap-5 .select2-results__option,
+.select2-container--bootstrap-5 .select2-search,
+.select2-container--bootstrap-5 .select2-dropdown .select2-search .select2-search__field ,
+.select2-container--bootstrap-5 .select2-results__option--highlighted{
+    background-color: var(--bs-body-bg);
+}
+.select2-container--bootstrap-5 .select2-dropdown .select2-search .select2-search__field:focus {
+    background-color: var(--bs-body-bg);
+    border-color: #bed0ff ;
+    box-shadow: 0 0 0 0.25rem rgba(124, 160, 255, 0.25);
+}
+
+.select2-selection__rendered {
+    padding-left: 0px !important;
+}
+//end select2
+
+//start notifier
+.notifier{
+    padding: 15px !important;
+    border-radius: 15px;
+
+    .notifier-title{
+        margin-bottom: 0px !important;
+        color: #373737 !important;
+        font-weight: 500 !important;
+    }
+}
+//end notifier
+
+
+.profile-tabs {
+    border-bottom: 0;
+    .nav-item {
+        margin-bottom: -0px;
+
+        .nav-link {
+            position: relative;
+            padding: 1rem 0;
+            margin: 0 1.5rem 0 0;
+            font-weight: 500;
+            color: var(--bs-body-color);
+            display: inline-flex;
+            align-items: center;
+            @include media-breakpoint-down(sm) {
+                padding: 0.8rem 0;
+            }
+            i {
+                font-size: 18px;
+            }
+            .material-icons-two-tone {
+                font-size: 20px;
+            }
+            &:after {
+                content: "";
+                background: #0d6efd;
+                position: absolute;
+                transition: all 0.3s ease-in-out;
+                left: 50%;
+                right: 50%;
+                bottom: -1px;
+                height: 2px;
+                border-radius: 2px 2px 0 0;
+            }
+        }
+    }
+
+    .nav-link:hover {
+        border-color: transparent;
+        background: transparent;
+        color: var(--bs-primary);
+        .material-icons-two-tone {
+            background-color: var(--bs-primary);
+        }
+    }
+
+    .nav-item.show .nav-link,
+    .nav-link.active {
+        border-color: transparent;
+        color: #0d6efd;
+        background: transparent;
+        .material-icons-two-tone {
+            background-color: var(--bs-primary);
+        }
+        &:after {
+            left: 0;
+            right: 0;
+        }
+    }
+}
