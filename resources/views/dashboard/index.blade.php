@@ -32,8 +32,16 @@
 
     <div class="row mb-3">
         <div class="col">
-            <h2 class="fw-bold">Dashboard</h2>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item">
+                    Dashboard
+                </li>
+                <li class="breadcrumb-item">
+                    Home
+                </li>
+            </ul>
         </div>
+
         <div class="col-12 col-md-auto">
             <div class="d-flex float-end gap-2">
             </div>
@@ -42,7 +50,7 @@
 
     <div class="row g-3">
         <div class="col-6">
-            <a class="dashboard-menu-button">
+            {{-- <a class="dashboard-menu-button">
                 <div class="card border-0 bg-white rounded-4 card-shadow card-hover">
                     <div class="card-body p-2 py-4 p-md-4 text-center">
                         <div>
@@ -54,7 +62,7 @@
                         </div>
                     </div>
                 </div>
-            </a>
+            </a> --}}
         </div>
 
 

@@ -5,15 +5,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>@yield('page_title') | Task Planner</title>
+    <title>@yield('page_title') | Student Attendance Management</title>
     <meta name="description" content="@yield('description', '')" />
 
     <meta property="og:locale" content="@yield('og:locale', 'en_US')" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="@yield('og:title', 'Task Planner')" />
+    <meta property="og:title" content="@yield('og:title', 'Student Attendance Management')" />
     <meta property="og:description" content="@yield('og:description', '')" />
     <meta property="og:url" content="@yield('og:url', Request::url())" />
-    <meta property="og:site_name" content="@yield('og:site_name', 'Task Planner')" />
+    <meta property="og:site_name" content="@yield('og:site_name', 'Student Attendance Management')" />
     <meta property="og:image" content="@yield('og:image', asset('img/social-preview.png'))" />
     <meta property="og:image:width" content="@yield('og:image:width', '1200')" />
     <meta property="og:image:height" content="@yield('og:image:height', '630')" />

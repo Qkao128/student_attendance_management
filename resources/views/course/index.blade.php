@@ -32,7 +32,15 @@
 
     <div class="row mb-3">
         <div class="col">
-            <h2 class="fw-bold">Dashboard</h2>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item">
+                    Dashboard
+                </li>
+                <li class="breadcrumb-item">
+                    Course Management
+                </li>
+            </ul>
+
         </div>
         <div class="col-12 col-md-auto">
             <div class="d-flex float-end gap-2">

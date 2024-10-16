@@ -1,10 +1,15 @@
 <div id="top-bar">
     <div class="row align-items-center">
-        <div class="col ps-3">
-            <div class="d-lg-none" role="button">
+        <div class="col ps-3 d-lg-none">
+            <div role="button">
                 <i class="fa-solid fa-bars fs-3" onclick="toggleMobileNavigation()"></i>
             </div>
         </div>
+
+        <div class="col ps-3 d-lg-block d-none" style="margin-bottom: -15px;">
+            <h3 class="fw-bold mb-0">Student Attendance Management</h2>
+        </div>
+
 
         <div class="col-auto">
             <div class="circle-img-sm-wrap rounded-circle border" role="button" data-bs-toggle="dropdown">

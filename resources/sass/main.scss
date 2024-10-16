@@ -12,6 +12,7 @@
     #close-sidebar-btn {
         position: absolute;
         top: 10px;
+        padding: 20px 0;
         right: 0px;
         color: #bababa;
 
@@ -80,15 +81,16 @@
 
             .sidebar-link {
                 display: block;
-                padding: 15px 10px;
+                padding: 5px 0px;
                 color: #747474;
                 font-size: 16px;
                 text-align: center;
+                align-items: center;
                 outline: none;
                 text-decoration: none;
 
                 i{
-                    font-size: 25px;
+                    font-size: 23px;
                     margin-bottom: 10px;
                 }
             }
@@ -98,7 +100,7 @@
     .main {
         position: relative;
         min-height: 100vh;
-        margin-left: 150px;
+        margin-left: 170px;
         padding-left: 30px;
         padding-right: 30px;
         padding-top: 20px;

@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>@yield('page_title') | Task Planner</title>
+    <title>@yield('page_title') | Student Attendance Management</title>
 
     <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/favicon.png') }}">
     <link rel="apple-touch-icon" sizes="128x128" href="{{ asset('img/app-icon.png') }}">
@@ -23,6 +23,9 @@
     <div class="main">
         <div class="container-fluid px-1 px-md-2">
             @include('layout/top-bar')
+            <div class="d-lg-none d-block">
+                <h3 class="fw-bold" style="margin-top: -10px;">Student Attendance Management</h2>
+            </div>
 
             @yield('content')
         </div>

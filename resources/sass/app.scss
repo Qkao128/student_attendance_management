@@ -20,7 +20,7 @@
 @import "admin";
 
 //customer
-@import "course";
+@import "main";
 
 //select2
 @import "~select2/dist/css/select2.min.css";
@@ -204,7 +204,7 @@ body{
             padding: 1rem 0;
             margin: 0 1.5rem 0 0;
             font-weight: 500;
-            color: var(--bs-body-color);
+            color: #000000;
             display: inline-flex;
             align-items: center;
             @include media-breakpoint-down(sm) {

@@ -1,8 +1,13 @@
 #admin-portal {
-    background-color: #F4F9FD;
+    background-color: #FAFAFA;
+    a {
+        color: black ;
+        text-decoration: none ;
+      }
+
 
     #sidebar {
-        width: 220px;
+        width: 240px;
         position: fixed;
         top: 0;
         bottom: 0;
@@ -25,11 +30,11 @@
     }
 
         #sidebar-background{
-            width: 210px;
+            width: 240px;
             position: fixed;
             top: 0;
             bottom: 0;
-            background-color: #ffffff;
+            background-color: #F4F6FA;
             box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
             z-index: -1;
         }
@@ -48,22 +53,20 @@
 
         .sidebar-nav {
             list-style: none;
-            padding: 25px 0;
+            padding: 30px 20px;
             margin-bottom: 0;
 
-            .sidebar-logo {
+            .sidebar-top {
+                text-decoration: none;
+                color: #000000;
                 img {
-                    width: 80%;
-                    margin-bottom: 20px;
+                    width: 37px;
                     padding-right: 10px;
                 }
             }
 
             .sidebar-item {
                 margin-bottom: 10px;
-                border-top-right-radius: 20px;
-                border-bottom-right-radius: 20px;
-                padding-right: 10px;
 
                 &.active {
                     background-color: $primary;
@@ -74,7 +77,7 @@
                 }
 
                 &:hover{
-                    background-color: rgb(158, 216, 218);
+                    background-color: $sidebar-hover-bg;
 
                     .sidebar-link{
                         color: #ffffff;
@@ -83,17 +86,28 @@
             }
 
             .sidebar-link {
-                display: block;
-                padding: 15px 10px;
-                color: #747474;
+                display: flex;
+                justify-content: left;
+                align-items: center;
+                padding-top: 3px;
+                padding-bottom: 3px;
+                padding-left: 5px;
                 font-size: 16px;
                 text-align: center;
                 outline: none;
                 text-decoration: none;
 
-                i{
-                    font-size: 25px;
-                    margin-bottom: 10px;
+                .pc-micon {
+                    margin-right: 4px;
+                    height: 24px;
+                    width: 24px;
+                    display: inline-block;
+                    vertical-align: middle;
+
+
+                    i{
+                        vertical-align: middle;
+                    }
                 }
             }
         }
@@ -102,7 +116,7 @@
     .main {
         position: relative;
         min-height: 100vh;
-        margin-left: 220px;
+        margin-left: 240px;
         padding-left: 30px;
         padding-right: 30px;
         padding-top: 20px;
@@ -138,12 +152,7 @@
                 width: 300px;
             }
 
-            .sidebar-logo {
-                img {
-                    width: 150px !important;
-                    padding-right: 0px;
-                }
-            }
+
         }
 
         .main {

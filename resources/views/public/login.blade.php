@@ -2,7 +2,7 @@
 
 @section('page_title', 'Login')
 
-@section('og:title', 'Login | Task Planner')
+@section('og:title', 'Login | Student Attendance Management')
 @section('description', '')
 @section('og:description', '')
 
