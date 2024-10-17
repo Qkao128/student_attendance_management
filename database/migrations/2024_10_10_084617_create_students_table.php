@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('name');
             $table->string('gender');
             $table->string('enrollment_date');
-            $table->foreignId('class_id')->constrained('classes');
             $table->timestamps();
         });
     }

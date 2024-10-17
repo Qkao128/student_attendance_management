@@ -15,7 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->foreignId('course_id')->constrained('courses');
+            $table->foreignId('user_id')->constrained('users');
             $table->timestamps();
+        });
+
+        Schema::table('students', function (Blueprint $table) {
+            $table->foreignId('class_id')->constrained('classes');
         });
     }
 
