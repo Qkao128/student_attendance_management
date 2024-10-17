@@ -6,7 +6,7 @@
             </div>
         </div>
 
-        <div class="col ps-3 d-lg-block d-none">
+        <div class="col ps-3 d-lg-block d-none" style="margin-bottom: -15px;">
             <h3 class="fw-bold mb-0">Student Attendance Management</h2>
         </div>
 

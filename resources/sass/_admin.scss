@@ -124,23 +124,7 @@
     }
 
     #top-bar {
-        margin-bottom: 5px;
-        .dropdown-menu{
-            .dropdown-item {
-                &.active {
-                    background-color: $primary !important;
-                    color: #ffffff !important;
-
-                }
-
-                &:hover{
-                    background-color: $sidebar-hover-bg !important;
-                    color: #ffffff !important;
-
-                }
-            }
-            }
-        }
+        margin-bottom: 20px;
     }
 
     @include media-breakpoint-down(lg) {
@@ -177,4 +161,4 @@
             padding-right: 10px;
         }
     }
-
+}

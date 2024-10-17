@@ -24,7 +24,7 @@
         <div class="container-fluid px-1 px-md-2">
             @include('layout/top-bar')
             <div class="d-lg-none d-block">
-                <h3 class="fw-bold">Student Attendance Management</h2>
+                <h3 class="fw-bold" style="margin-top: -10px;">Student Attendance Management</h2>
             </div>
 
             @yield('content')
