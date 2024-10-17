@@ -15,9 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('class_id')->constrained('classes');
             $table->foreignId('student_id')->constrained('students');
-            $table->date('attendance_date'); // 避免保留字問題
+            $table->date('attendance_date');
             $table->string('attendance_status');
-            $table->string('reason')->nullable();
+            $table->string('details')->nullable();
             $table->timestamps();
         });
     }
