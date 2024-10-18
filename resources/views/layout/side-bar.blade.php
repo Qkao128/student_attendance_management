@@ -75,8 +75,8 @@
 
             <li class="sidebar-item">
                 <a class="sidebar-link" href="{{ route('dashboard') }}">
-                    <span class="pc-micon">
-                        <i class="fa-solid fa-book-bookmark"></i>
+                    <span class="pc-micon" style="margin-top: -2px !important;margin-left: -4px !important;">
+                        <i class="fa-solid fa-user-tie"></i>
                     </span>
                     Manage Account
 
@@ -85,8 +85,8 @@
 
             <li class="sidebar-item  ">
                 <a class="sidebar-link" href="">
-                    <span class="pc-micon">
-                        <i class="fa-solid fa-users-rectangle"></i>
+                    <span class="pc-micon" style="margin-top: -2px !important;margin-left: -4px !important;">
+                        <i class="fa-solid fa-gear"></i>
                     </span>
                     Setting
 

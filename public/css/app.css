@@ -22600,7 +22600,15 @@ readers do not read off random characters that represent icons */
   padding-bottom: 30px;
 }
 #admin-portal #top-bar {
-  margin-bottom: 20px;
+  margin-bottom: 5px;
+}
+#admin-portal #top-bar .dropdown-menu .dropdown-item.active {
+  background-color: #0089E5 !important;
+  color: #ffffff !important;
+}
+#admin-portal #top-bar .dropdown-menu .dropdown-item:hover {
+  background-color: #00A3FF !important;
+  color: #ffffff !important;
 }
 @media (max-width: 991.98px) {
   #admin-portal body {
