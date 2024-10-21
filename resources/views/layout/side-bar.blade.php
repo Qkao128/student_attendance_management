@@ -21,8 +21,8 @@
                 Course and Class
             </li>
 
-            <li class="sidebar-item {{ Request::routeIs('dashboard') ? 'active' : '' }}">
-                <a class="sidebar-link" href="{{ route('dashboard') }}">
+            <li class="sidebar-item {{ Request::routeIs('course.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('course.index') }}">
                     <span class="pc-micon">
                         <i class="fa-solid fa-book-bookmark"></i>
                     </span>

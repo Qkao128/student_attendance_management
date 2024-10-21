@@ -32,7 +32,7 @@
 
     <div class="row mb-3">
         <div class="col">
-            <ul class="breadcrumb">
+            <ul class="breadcrumb text-muted">
                 <li class="breadcrumb-item">
                     Dashboard
                 </li>

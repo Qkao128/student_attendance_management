@@ -7,7 +7,7 @@
         </div>
 
         <div class="col ps-3 d-lg-block d-none">
-            <h3 class="fw-bold mb-0">Student Attendance Management</h2>
+            <h3 class="fw-bold mb-0" style="margin-left: -5px;">Student Attendance Management</h2>
         </div>
 
 

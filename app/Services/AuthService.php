@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\RateLimiter;
 
-class AuthService
+class AuthService extends Service
 {
     protected $_userRepository;
     public $_errorMessage = [];
