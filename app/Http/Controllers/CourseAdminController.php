@@ -33,7 +33,7 @@ class CourseAdminController extends Controller
             return back()->with('error', $errorMessage)->withInput();
         }
 
-        return Redirect::route('course.index', $result->id)->with('success', "Course successfully added.");
+        return Redirect::route('course.index')->with('success', "Course successfully added.");
     }
 
 
@@ -61,10 +61,6 @@ class CourseAdminController extends Controller
         if ($result == null) {
             $errorMessage = implode("<br>", $this->_courseAdminService->_errorMessage);
             return back()->with('error', $errorMessage)->withInput();
-        }
-
-        if ($result->parent_course_category_id) {
-            return back()->with('success', "Course successfully deleted.");
         }
 
         return Redirect::route('course.index')->with('success', "Course successfully deleted.");
