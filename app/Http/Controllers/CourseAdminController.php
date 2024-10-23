@@ -33,7 +33,7 @@ class CourseAdminController extends Controller
             return back()->with('error', $errorMessage)->withInput();
         }
 
-        return Redirect::route('course.index', $result->id)->with('success', "Course successfully added.");
+        return Redirect::route('course.index')->with('success', "Course successfully added.");
     }
 
 
