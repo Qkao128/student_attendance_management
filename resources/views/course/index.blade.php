@@ -2,65 +2,39 @@
 
 @section('page_title', 'Dashboard')
 
-@section('style')
-    <style>
-        .dashboard-menu-button {
-            text-decoration: none;
-        }
-
-        .dashboard-menu-button i {
-            font-size: 40px;
-        }
-
-        .dashboard-menu-button {
-            font-size: 25px;
-        }
-
-        @media(max-width: 768px) {
-            .dashboard-menu-button i {
-                font-size: 25px;
-            }
-
-            .dashboard-menu-button {
-                font-size: 18px;
-            }
-        }
-    </style>
-@endsection
-
 @section('content')
+    <div id="admin-course">
+        <div class="row mt-2">
+            <div class="col text-muted">
+                <ul class="breadcrumb mb-2 mb-md-1">
+                    <li class="breadcrumb-item">
+                        Dashboard
+                    </li>
+                    <li class="breadcrumb-item">
+                        Course Management
+                    </li>
+                </ul>
 
-    <div class="row">
-        <div class="col text-muted">
-            <ul class="breadcrumb mb-1">
-                <li class="breadcrumb-item">
-                    Dashboard
-                </li>
-                <li class="breadcrumb-item">
-                    Course Management
-                </li>
-            </ul>
-
-        </div>
-    </div>
-
-    <div class="row align-items-center g-2 mt-1">
-        <div class="col">
-            <h4 class="mb-0">Manage Course</h4>
-        </div>
-        <div class="col-12 col-md-auto">
-            <div class="d-flex float-end gap-2">
-                <button type="button" class="btn btn-success text-white rounded-4" data-bs-toggle="modal"
-                    data-bs-target="#add-course-modal">
-                    <i class="fa fa-plus opacity-50"></i>
-                    Add
-                </button>
             </div>
         </div>
-    </div>
 
-    <div>
-        @livewire('course-list')
+        <div class="row align-items-center g-2">
+            <div class="col">
+                <h4 class="mb-0">Manage Course</h4>
+            </div>
+            <div class="col-12 col-md-auto mt-0 mt-md-1">
+                <div class="d-flex float-end align-items-center">
+                    <button type="button" class="btn btn-success text-white py-2 px-3" style="border-radius: 10px;"
+                        data-bs-toggle="modal" data-bs-target="#add-course-modal">
+                        Add
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            @livewire('course-list')
+        </div>
     </div>
 
 

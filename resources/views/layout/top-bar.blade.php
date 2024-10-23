@@ -22,7 +22,7 @@
                 <li>
                     <a class="dropdown-item" href="">
                         <div class="d-flex align-items-center gap-2">
-                            <i class="fa-solid fa-user-tie"></i> Manager
+                            <i class="fa-solid fa-user-tie"></i> Account managment
                         </div>
                     </a>
                 </li>
@@ -31,7 +31,7 @@
                 <li>
                     <a class="dropdown-item" href="">
                         <div class="d-flex align-items-center gap-2">
-                            <i class="fa-solid fa-gear"></i> Account managment
+                            <i class="fa-solid fa-gear"></i> Setting
                         </div>
                     </a>
                 </li>

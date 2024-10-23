@@ -27,8 +27,6 @@ class CourseRepository extends Repository
     {
         $model = $this->_db->find($id);
         $model->name = $data['name'] ?? $model->name;
-        $model->parent_course_category_id = (array_key_exists('parent_course_category_id', $data)) ? $data['parent_course_category_id'] : $model->parent_course_category_id;
-
 
         $model->update();
         return $model;

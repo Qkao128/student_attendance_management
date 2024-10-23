@@ -35,7 +35,6 @@
             top: 0;
             bottom: 0;
             background-color: #F4F6FA;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.25);
             z-index: -1;
         }
 
@@ -181,6 +180,46 @@
     #add-course-modal{
         #add-course-modal-content{
             margin-bottom: 200px;
+        }
+    }
+
+    #edit-course-modal-content{
+        margin-bottom: 200px;
+    }
+
+
+
+    .search-input-group {
+        display: flex;
+        flex-direction: row;
+        position: relative;
+
+        .search-input-icon {
+            position: absolute;
+            right: 0;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0px 15px;
+            color: #747474;
+        }
+
+        .search-input {
+            padding-left: 20px;
+            padding-right: 40px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            background-color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25);
+            background-color: #F4F6FA;
+
+            &::placeholder,
+            &::-ms-input-placeholder {
+                color: #747474;
+                opacity: 1;
+            }
         }
     }
 }
