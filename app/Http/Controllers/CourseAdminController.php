@@ -63,10 +63,6 @@ class CourseAdminController extends Controller
             return back()->with('error', $errorMessage)->withInput();
         }
 
-        if ($result->parent_course_category_id) {
-            return back()->with('success', "Course successfully deleted.");
-        }
-
         return Redirect::route('course.index')->with('success', "Course successfully deleted.");
     }
 }
