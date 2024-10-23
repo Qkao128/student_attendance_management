@@ -52,9 +52,9 @@
                         @csrf
                         <div class="w-100">
                             <div class="form-group" id="add-course-modal-content">
-                                <label class="form-label" for="name">Name</label>
-                                <input type="text" class="form-control" id="name" name="name"
-                                    value="{{ old('name') }}" placeholder="Enter name" required>
+                                <label class="form-label" for="course">Name</label>
+                                <input type="text" class="form-control" id="course" name="course"
+                                    value="{{ old('course') }}" placeholder="Enter name" required>
                             </div>
 
                         </div>

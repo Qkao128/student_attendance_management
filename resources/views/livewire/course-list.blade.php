@@ -6,7 +6,7 @@
                     <i class="fa fa-search"></i>
                 </div>
                 <input type="text" class="form-control search-input" placeholder="Search course"
-                    wire:keydown.debounce.250ms="filterCourse($event.target.value)" wire:model="filter.name">
+                    wire:keydown.debounce.250ms="filterCourse($event.target.value)" wire:model="filter.course">
             </div>
         </div>
     </div>
@@ -27,7 +27,7 @@
                                     </div>
 
                                     <div class="col-12 mt-1">
-                                        {{ $course->name }}
+                                        {{ $course->course }}
                                     </div>
                                 </div>
                             </div>
@@ -90,9 +90,10 @@
                                 @csrf
                                 <div class="w-100">
                                     <div class="form-group" id="edit-course-modal-content">
-                                        <label class="form-label" for="name">Name</label>
-                                        <input type="text" class="form-control" id="name" name="name"
-                                            value="{{ old('name', $course->name) }}" placeholder="Enter name" required>
+                                        <label class="form-label" for="course">Name</label>
+                                        <input type="text" class="form-control" id="course" name="course"
+                                            value="{{ old('course', $course->course) }}" placeholder="Enter name"
+                                            required>
                                     </div>
                                 </div>
                                 <div class="text-end">

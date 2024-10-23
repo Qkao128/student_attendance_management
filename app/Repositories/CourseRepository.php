@@ -17,7 +17,7 @@ class CourseRepository extends Repository
     public function save($data)
     {
         $model = new Course;
-        $model->name = $data['name'];
+        $model->course = $data['course'];
 
         $model->save();
         return $model->fresh();
@@ -26,7 +26,7 @@ class CourseRepository extends Repository
     public function update($data, $id)
     {
         $model = $this->_db->find($id);
-        $model->name = $data['name'] ?? $model->name;
+        $model->course = $data['course'] ?? $model->course;
 
         $model->update();
         return $model;

@@ -24,7 +24,7 @@ class CourseAdminService extends Service
         try {
 
             $validator = Validator::make($data, [
-                'name' => 'required|string|max:255',
+                'course' => 'required|string|max:255',
             ]);
 
             if ($validator->fails()) {
@@ -71,7 +71,7 @@ class CourseAdminService extends Service
 
         try {
             $validator = Validator::make($data, [
-                'name' => 'required|string|max:255',
+                'course' => 'required|string|max:255',
             ]);
 
             if ($validator->fails()) {
