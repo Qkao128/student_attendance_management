@@ -50,7 +50,7 @@
                 <div class="modal-body">
                     <form action="{{ route('course.store') }}" id="form" method="POST">
                         @csrf
-                        <div class="w-100">
+                        <div class="w-100 p-2">
                             <div class="form-group" id="add-course-modal-content">
                                 <label class="form-label" for="course">Name</label>
                                 <input type="text" class="form-control" id="course" name="course"
@@ -60,7 +60,7 @@
                         </div>
 
 
-                        <div class="text-end">
+                        <div class="text-end pe-2">
                             <button type="submit" class="btn btn-success text-white rounded-4">Submit</button>
                         </div>
                     </form>
