@@ -32,43 +32,13 @@ class CourseRepository extends Repository
         return $model;
     }
 
-    public function updatePackageByParentCourseCategoryId($package, $parentCourseCategoryId)
-    {
-        $this->_db->where("parent_course_category_id", '=', $parentCourseCategoryId)->update([
-            'package' => $package
-        ]);
-
-        return true;
-    }
-
-    public function getMainCourseCategoryByName($name)
-    {
-        $model = $this->_db
-            ->where('name', '=', $name)
-            ->where('parent_course_category_id', '=', null)
-            ->first();
-
-        return $model;
-    }
-
-    public function getByNameAndParentCourseCategoryId($name, $parentCourseCategoryId)
-    {
-        $model = $this->_db
-            ->where('name', '=', $name)
-            ->where('parent_course_category_id', '=', $parentCourseCategoryId)
-            ->first();
-
-        return $model;
-    }
-
-    public function getAllBySearchTermAndParentCategoryId($data)
+    public function getAllBySearchTerm($data)
     {
 
-        $name = $data['search_term'] ?? '';
+        $course = $data['search_term'] ?? '';
 
-        $data = $this->_db->select('id', 'name')
-            ->where('name', 'LIKE', "%$name%")
-            ->where('parent_course_category_id', '=', $data['parent_course_category_id'])
+        $data = $this->_db->select('id', 'course')
+            ->where('course', 'LIKE', "%$course%")
             ->skip($data['offset'])->take($data['result_count'])
             ->get();
 
@@ -78,28 +48,15 @@ class CourseRepository extends Repository
         return $data;
     }
 
-    public function getTotalCountBySearchTermAndParentCategoryId($data)
+    public function getTotalCountBySearchTerm($data)
     {
 
-        $name = $data['search_term'] ?? '';
+        $course = $data['search_term'] ?? '';
 
         $totalCount = $this->_db
-            ->where('name', 'LIKE', "%$name%")
-            ->where('parent_course_category_id', '=', $data['parent_course_category_id'])
+            ->where('course', 'LIKE', "%$course%")
             ->count();
 
         return $totalCount;
-    }
-
-    public function updateDisplayOrder($data)
-    {
-        $this->_db->whereIn('id', array_column($data, 'id'))
-            ->update([
-                'display_order' => DB::raw('CASE id ' . implode(' ', array_map(function ($item) {
-                    return 'WHEN ' . $item['id'] . ' THEN ' . $item['course_category_display_order'] . ' ';
-                }, $data)) . 'END')
-            ]);
-
-        return true;
     }
 }

@@ -65,4 +65,15 @@ class CourseAdminController extends Controller
 
         return Redirect::route('course.index')->with('success', "Course successfully deleted.");
     }
+
+    public function selectOption(Request $request)
+    {
+        $data = [
+            "search_term" => $request->search_term ?? null,
+            "page" => $request->page ?? 1,
+        ];
+
+        $results = $this->_courseAdminService->getSelectOption($data);
+        return $results;
+    }
 }

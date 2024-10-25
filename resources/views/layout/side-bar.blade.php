@@ -44,8 +44,8 @@
                 </a>
             </li>
 
-            <li class="sidebar-item  ">
-                <a class="sidebar-link" href="">
+            <li class="sidebar-item {{ Request::routeIs('class.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('class.index') }}">
                     <span class="pc-micon">
                         <i class="fa-solid fa-users-rectangle"></i>
                     </span>

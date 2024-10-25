@@ -22650,6 +22650,9 @@ readers do not read off random characters that represent icons */
 #admin-portal #edit-course-modal-content {
   margin-bottom: 200px;
 }
+#admin-portal #add-class-modal #add-class-modal-content {
+  margin-bottom: 120px;
+}
 #admin-portal .search-input-group {
   display: flex;
   flex-direction: row;

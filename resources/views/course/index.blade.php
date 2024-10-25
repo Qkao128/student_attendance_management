@@ -56,9 +56,7 @@
                                 <input type="text" class="form-control" id="course" name="course"
                                     value="{{ old('course') }}" placeholder="Enter name" required>
                             </div>
-
                         </div>
-
 
                         <div class="text-end pe-2">
                             <button type="submit" class="btn btn-success text-white rounded-4">Submit</button>

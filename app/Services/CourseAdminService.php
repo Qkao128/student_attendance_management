@@ -112,4 +112,29 @@ class CourseAdminService extends Service
             return null;
         }
     }
+
+    public function getSelectOption($data)
+    {
+        try {
+            $data['result_count'] = 5;
+            $data['offset'] = ($data['page'] - 1) * $data['result_count'];
+
+            $course = $this->_courseRepository->getAllBySearchTerm($data);
+
+            $totalCount = $this->_courseRepository->getTotalCountBySearchTerm($data);
+
+            $results = array(
+                "results" => $course->toArray(),
+                "pagination" => array(
+                    "more" => $totalCount < $data['offset'] + $data['result_count'] ? false : true
+                )
+            );
+
+            return $results;
+        } catch (Exception $e) {
+            array_push($this->_errorMessage, "Fail to get course select option.");
+            DB::rollBack();
+            return null;
+        }
+    }
 }
