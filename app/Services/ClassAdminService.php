@@ -26,7 +26,7 @@ class ClassAdminService extends Service
         try {
 
             $validator = Validator::make($data, [
-                'name' => 'required|string|max:255',
+                'class' => 'required|string|max:255',
                 'course_id' => 'required|exists:courses,id',
                 'user_id' => 'required|exists:users,id',
             ]);

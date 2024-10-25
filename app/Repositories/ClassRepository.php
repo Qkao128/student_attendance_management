@@ -17,7 +17,7 @@ class ClassRepository extends Repository
     public function save($data)
     {
         $model = new Classes;
-        $model->name = $data['name'];
+        $model->class = $data['class'];
         $model->course_id = $data['course_id'];
         $model->user_id = $data['user_id'];
 

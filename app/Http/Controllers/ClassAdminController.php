@@ -24,7 +24,7 @@ class ClassAdminController extends Controller
     public function store(Request $request)
     {
         $data = $request->only([
-            'name',
+            'class',
             'course_id',
             'user_id'
         ]);
@@ -37,7 +37,7 @@ class ClassAdminController extends Controller
             return back()->with('error', $errorMessage)->withInput();
         }
 
-        return Redirect::route('class.show', $result->id)->with('success', "Class successfully added.");
+        return Redirect::route('class.index')->with('success', "Class successfully added.");
     }
 
 

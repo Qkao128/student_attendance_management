@@ -65,9 +65,9 @@
                             </div>
 
                             <div class="form-group col-12">
-                                <label class="form-label" for="name">Name</label>
-                                <input type="text" class="form-control" id="name" name="name"
-                                    value="{{ old('name') }}" placeholder="Enter name" required>
+                                <label class="form-label" for="class">Name</label>
+                                <input type="text" class="form-control" id="class" name="class"
+                                    value="{{ old('class') }}" placeholder="Enter name" required>
                             </div>
 
                         </div>
