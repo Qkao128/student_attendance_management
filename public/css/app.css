@@ -22544,16 +22544,19 @@ readers do not read off random characters that represent icons */
   padding: 30px 20px;
   margin-bottom: 0;
 }
-#admin-portal #sidebar .sidebar-nav .sidebar-top {
-  text-decoration: none;
-  color: #000000;
-}
-#admin-portal #sidebar .sidebar-nav .sidebar-top img {
-  width: 37px;
+#admin-portal #sidebar .sidebar-nav .sidebar-logo img {
+  width: 80%;
+  margin-bottom: 20px;
   padding-right: 10px;
 }
 #admin-portal #sidebar .sidebar-nav .sidebar-item {
   margin-bottom: 10px;
+  text-decoration: none;
+  color: #000000;
+}
+#admin-portal #sidebar .sidebar-nav .sidebar-item img {
+  width: 34px;
+  padding-right: 10px;
 }
 #admin-portal #sidebar .sidebar-nav .sidebar-item.active {
   background-color: #0089E5;
@@ -22630,6 +22633,10 @@ readers do not read off random characters that represent icons */
   }
   #admin-portal #sidebar #sidebar-background {
     width: 300px;
+  }
+  #admin-portal #sidebar .sidebar-logo img {
+    width: 150px !important;
+    padding-right: 0px;
   }
   #admin-portal .main {
     margin: 0px;

@@ -32,7 +32,6 @@ class AuthService extends Service
                 return null;
             }
 
-            // 驗證登入表單數據
             $validator = Validator::make($data, [
                 'name' => 'required',
                 'password' => 'required',
@@ -46,7 +45,6 @@ class AuthService extends Service
                 return null;
             }
 
-            // 改為用 name 進行登入驗證
             if (Auth::attempt(['name' => $data['name'], 'password' => $data['password']])) {
                 RateLimiter::clear($this->throttleKey($rateLimiterKey));
                 return true;
@@ -74,56 +72,6 @@ class AuthService extends Service
         }
     }
 
-    public function registerUser($data)
-    {
-        DB::beginTransaction();
-
-        try {
-            $rateLimiterKey = 'register';
-            $rateLimiter = $this->checkTooManyFailedAttempts($rateLimiterKey);
-
-            if ($rateLimiter) {
-                array_push($this->_errorMessage, "Too many attempts, please try again later.");
-                return null;
-            }
-
-            $validator = Validator::make($data, [
-                'name' => 'required|string|max:255|unique:users,name',
-                'password' => 'required|confirmed|min:5',
-                'profile_image' => 'nullable|mimes:jpeg,png,jpg|max:512000',
-            ]);
-
-            if ($validator->fails()) {
-                foreach ($validator->errors()->all() as $error) {
-                    array_push($this->_errorMessage, $error);
-                }
-                RateLimiter::hit($this->throttleKey($rateLimiterKey), 600);
-                return null;
-            }
-
-            if (isset($data['profile_image']) && !empty($data['profile_image'])) {
-                $fileName = $this->generateFileName();
-                $fileExtension = $data['profile_image']->extension();
-                $fileName = $fileName . '.' . $fileExtension;
-
-                $data['profile_image']->storeAs('public/profile_image', $fileName);
-
-                $data['profile_image'] = $fileName;
-            }
-
-            $user = $this->_userRepository->save($data);
-
-            RateLimiter::clear($this->throttleKey($rateLimiterKey));
-            DB::commit();
-            return true;
-        } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to register.");
-            RateLimiter::hit($this->throttleKey($rateLimiterKey), 600);
-            DB::rollBack();
-            return null;
-        }
-    }
-
     public function throttleKey($key)
     {
         return $key . request()->ip();
@@ -135,10 +83,5 @@ class AuthService extends Service
             return false;
         }
         return true;
-    }
-
-    public function generateFileName()
-    {
-        return Str::random(5) . Str::uuid() . Str::random(5);
     }
 }

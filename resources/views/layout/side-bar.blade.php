@@ -8,9 +8,22 @@
                 <i class="fa-solid fa-circle-xmark fs-3"></i>
             </button>
 
-            <li class="sidebar-top text-center mb-4 ps-2">
-                <a href="{{ route('dashboard') }}" class="d-flex align-items-center">
-                    <div><img src="{{ asset('img/dashboard.png') }}"></div>
+            <li class="sidebar-logo text-center p-2">
+                <a href="{{ route('dashboard') }}">
+                    <img src="{{ asset('img/logo.png') }}" />
+                </a>
+            </li>
+
+            <hr class="m-0">
+
+            <li class="text-muted sidebar-header my-3">
+                Dashboard
+            </li>
+
+            <li class="sidebar-item {{ Request::routeIs('dashboard') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('dashboard') }}">
+                    <div><img src="{{ asset('img/dashboard.png') }}" data-original="{{ asset('img/dashboard.png') }}"
+                            data-hover="{{ asset('img/dashboard-white.png') }}" id="dashboard-icon"></div>
                     <span>Dashboard</span>
                 </a>
             </li>

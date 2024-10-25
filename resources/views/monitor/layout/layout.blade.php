@@ -38,28 +38,6 @@
     @livewireScripts
 
     <script>
-        $('.sidebar-item').each(function() {
-            const $item = $(this);
-            const $img = $item.find('#dashboard-icon');
-
-            if ($img.length) {
-                $item.hover(
-                    function() {
-                        $img.attr('src', $img.data('hover'));
-                    },
-                    function() {
-                        if (!$item.hasClass('active')) {
-                            $img.attr('src', $img.data('original'));
-                        }
-                    }
-                );
-
-                if ($item.hasClass('active')) {
-                    $img.attr('src', $img.data('hover'));
-                }
-            }
-        });
-
         @if (Session::has('success'))
             notifier.show('Success!', '{!! Session::get('success') !!}', 'success',
                 '', 4000);

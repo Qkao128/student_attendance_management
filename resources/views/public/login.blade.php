@@ -27,7 +27,6 @@
                     </div>
                 @endif
 
-
                 <form id="form" method="POST" action="{{ route('login.request') }}">
                     @csrf
 
@@ -53,12 +52,6 @@
     </div>
 
 
-    <div class="text-center mt-3">
-        Don't have an account yet? <br class="d-md-none">
-        <a href="{{ route('register.index') }}" class="fw-bold text-dark">
-            Register Now
-        </a>
-    </div>
 @endsection
 
 @section('script')

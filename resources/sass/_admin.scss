@@ -55,30 +55,37 @@
             padding: 30px 20px;
             margin-bottom: 0;
 
-            .sidebar-top {
-                text-decoration: none;
-                color: #000000;
+
+            .sidebar-logo {
                 img {
-                    width: 37px;
+                    width: 80%;
+                    margin-bottom: 20px;
                     padding-right: 10px;
                 }
             }
 
             .sidebar-item {
                 margin-bottom: 10px;
+                text-decoration: none;
+                color: #000000;
+
+                img {
+                    width: 34px;
+                    padding-right: 10px;
+                }
 
                 &.active {
                     background-color: $primary;
 
-                    .sidebar-link{
+                    .sidebar-link {
                         color: #ffffff;
                     }
                 }
 
-                &:hover{
+                &:hover {
                     background-color: $sidebar-hover-bg;
 
-                    .sidebar-link{
+                    .sidebar-link {
                         color: #ffffff;
                     }
                 }
@@ -167,6 +174,12 @@
                 width: 300px;
             }
 
+            .sidebar-logo {
+                img {
+                    width: 150px !important;
+                    padding-right: 0px;
+                }
+            }
 
         }
 

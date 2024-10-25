@@ -13,16 +13,16 @@ Route::name('login.')->prefix('login')->group(function () {
     Route::post('/', [AuthController::class, 'login'])->name('request');
 });
 
-Route::name('register.')->prefix('register')->group(function () {
-    Route::get('/', [AuthController::class, 'registerIndex'])->name('index');
-    Route::post('/', [AuthController::class, 'register'])->name('request');
-});
+Route::get('/dashboard', function () {
+    return view('dashboard.index');
+})->name('dashboard')->middleware('can:teacher');
+
+
+Route::get('/dashboard/monitor', function () {
+    return view('monitor.dashboard.index');
+})->name('dashboard.monitor')->middleware('can:monitor');
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-
-Route::get('/index', function () {
-    return view('dashboard.index');
-})->name('dashboard');
 
 
 Route::name('course.')->prefix('course')->group(function () {

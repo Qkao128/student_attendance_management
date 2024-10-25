@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Services\AuthService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Gate;
 
 class AuthController extends Controller
 {
@@ -19,7 +20,13 @@ class AuthController extends Controller
     public function loginIndex()
     {
         if (Auth::check()) {
-            return Redirect::route('dashboard');
+            $user = Auth::user();
+
+            if (Gate::allows('teacher')) {
+                return Redirect::route('dashboard')->with('error', 'You are already logged.');
+            } elseif (Gate::allows('monitor')) {
+                return Redirect::route('dashboard.monitor')->with('error', 'You are already logged.');
+            }
         }
 
         return view('public/login');
@@ -30,7 +37,12 @@ class AuthController extends Controller
         $data = $request->only(['name', 'password']);
 
         if (Auth::check()) {
-            return Redirect::route('dashboard')->with('error', 'You are already logged in.');
+            $user = Auth::user();
+            if (Gate::allows('teacher')) {
+                return Redirect::route('dashboard')->with('error', 'You are already logged.');
+            } elseif (Gate::allows('monitor')) {
+                return Redirect::route('dashboard.monitor')->with('error', 'You are already logged.');
+            }
         }
 
         $result = $this->_authService->loginUser($data);
@@ -40,7 +52,15 @@ class AuthController extends Controller
             return back()->with('error', $errorMessage)->withInput();
         }
 
-        return Redirect::route('dashboard')->with('success', "Login successfully.");
+        $user = Auth::user();
+
+        if (Gate::allows('teacher')) {
+            return Redirect::route('dashboard')->with('success', "Login successfully.");
+        } elseif (Gate::allows('monitor')) {
+            return Redirect::route('dashboard.monitor')->with('success', "Login successfully.");
+        }
+
+        return back()->with('error', 'Unauthorized access.');
     }
 
     public function logout()
@@ -53,31 +73,5 @@ class AuthController extends Controller
         }
 
         return Redirect::route('login.index');
-    }
-
-    public function registerIndex()
-    {
-        if (Auth::check()) {
-            return Redirect::route('dashboard');
-        }
-
-        return view('public/register');
-    }
-
-    public function register(Request $request)
-    {
-        if (Auth::check()) {
-            return Redirect::route('dashboard')->with('error', 'You are already logged in.');
-        }
-
-        $data = $request->only(['profile_image', 'name', 'password', 'password_confirmation']);
-        $result = $this->_authService->registerUser($data);
-
-        if ($result == null) {
-            $errorMessage = implode("<br>", $this->_authService->_errorMessage);
-            return back()->with('error', $errorMessage)->withInput();
-        }
-
-        return Redirect::route('login.index')->with('success', "Successfully registered.");
     }
 }
