@@ -54,7 +54,6 @@ class CourseList extends Component
         $newData = $newData->offset($this->limitPerPage * $this->page);
         $newData = $newData->limit($this->limitPerPage);
         $newData = $newData->get();
-        $newData = $newData->toArray();
 
         if ($this->page == 0) {
             $this->courses = $newData;

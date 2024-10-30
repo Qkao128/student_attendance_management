@@ -1,3 +1,7 @@
+@php
+    use Carbon\Carbon;
+@endphp
+
 <div id="course-list">
     <div class="row align-items-center g-0 mt-3">
         <div class="col">
@@ -20,7 +24,7 @@
                     <div class="card-body px-md-4">
                         <div class="row g-2 g-md-3 align-items-center">
 
-                            <div class="col">
+                            <div class="col-12 col-sm">
                                 <div class="row gap-2 d-md-block">
                                     <div class="col-12 text-muted">
                                         Name :
@@ -32,14 +36,26 @@
                                 </div>
                             </div>
 
-                            <div class="col-12 col-md">
+                            <div class="col-12 col-sm">
+                                <div class="row gap-2 d-md-block">
+                                    <div class="col-12 text-muted">
+                                        Member :
+                                    </div>
+
+                                    <div class="col-12 mt-1">
+                                        {{ $class->created_at }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm">
                                 <div class="row gap-2 d-md-block">
                                     <div class="col-12 text-muted">
                                         Created At :
                                     </div>
 
                                     <div class="col-12 mt-1">
-                                        {{ $class->created_at }}
+                                        {{ Carbon::parse($class->created_at)->format('d-m-Y h:i A') }}
                                     </div>
                                 </div>
                             </div>
@@ -52,10 +68,15 @@
 
                                     <div class="col-12 mt-1">
                                         <div class="d-inline-flex gap-3">
-                                            <button class="btn btn-warning text-dark" data-bs-toggle="modal"
-                                                data-bs-target="#edit-course-modal-{{ $class->id }}">
+                                            <a href="{{ route('class.show', ['id' => $class->id]) }}"
+                                                class="btn btn-info rounded-4">
+                                                <i class="fa-solid fa-eye"></i>
+                                            </a>
+
+                                            <a href="{{ route('class.edit', ['id' => $class->id]) }}"
+                                                class="btn btn-warning text-dark">
                                                 <i class="fa-solid fa-pen-nib"></i>
-                                            </button>
+                                            </a>
 
                                             <form method="POST" action="{{ route('class.destroy', $class->id) }}">
                                                 @csrf
@@ -70,35 +91,32 @@
                                 </div>
                             </div>
 
-                        </div>
-                    </div>
-                </div>
-            </div>
+                            <hr class="mb-0">
 
-            <!-- Modal for editing course -->
-            <div class="modal fade" id="edit-class-modal-{{ $class->id }}" tabindex="-1">
-                <div class="modal-dialog modal-lg modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title fw-bold">Edit Class</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form action="{{ route('class.update', ['id' => $class->id]) }}" method="POST">
-                                @method('PATCH')
-                                @csrf
-                                <div class="w-100">
-                                    <div class="form-group" id="edit-class-modal-content">
-                                        <label class="form-label" for="class">Name</label>
-                                        <input type="text" class="form-control" id="class" name="class"
-                                            value="{{ old('class', $class->class) }}" placeholder="Enter name" required>
+                            <div class="col-12 col-md">
+                                <div class="row gap-2 d-md-block">
+                                    <div class="col-12 text-muted">
+                                        Course :
+                                    </div>
+
+                                    <div class="col-12 mt-1">
+                                        {{ $class->courseModal->course }}
                                     </div>
                                 </div>
-                                <div class="text-end">
-                                    <button type="submit" class="btn btn-success text-white rounded-4">Submit</button>
+                            </div>
+
+                            <div class="col-12 col-md">
+                                <div class="row gap-2 d-md-block">
+                                    <div class="col-12 text-muted">
+                                        Teacher :
+                                    </div>
+
+                                    <div class="col-12 mt-1">
+                                        {{ $class->userModal->name }}
+                                    </div>
                                 </div>
-                            </form>
+                            </div>
+
                         </div>
                     </div>
                 </div>

@@ -1,18 +1,8 @@
+@php
+    use Carbon\Carbon;
+@endphp
+
 <div id="course-list">
-    <div class="row align-items-center g-0 mt-3">
-        <div class="col">
-            <div class="search-input-group">
-                <div class="search-input-icon">
-                    <i class="fa fa-search"></i>
-                </div>
-                <input type="text" class="form-control search-input" placeholder="Search course"
-                    wire:keydown.debounce.250ms="filterCourse($event.target.value)" wire:model="filter.course">
-            </div>
-        </div>
-    </div>
-
-
-
     <div class="row g-4 mt-2">
         @foreach ($courses as $course)
             <div class="col-12">
@@ -39,7 +29,7 @@
                                     </div>
 
                                     <div class="col-12 mt-1">
-                                        {{ $course->created_at }}
+                                        {{ Carbon::parse($course->created_at)->format('d-m-Y h:i A') }}
                                     </div>
                                 </div>
                             </div>

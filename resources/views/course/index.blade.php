@@ -11,7 +11,7 @@
                         Dashboard
                     </li>
                     <li class="breadcrumb-item">
-                        Course Management
+                        Manage Course
                     </li>
                 </ul>
 
@@ -20,12 +20,12 @@
 
         <div class="row align-items-center g-2">
             <div class="col">
-                <h4 class="mb-0">Manage Course</h4>
+                <h4 class="header-title">Manage Course</h4>
             </div>
             <div class="col-12 col-md-auto mt-0 mt-md-1">
                 <div class="d-flex float-end align-items-center">
-                    <button type="button" class="btn btn-success text-white py-2 px-3" style="border-radius: 10px;"
-                        data-bs-toggle="modal" data-bs-target="#add-course-modal">
+                    <button type="button" class="btn btn-success text-white rounded-4" data-bs-toggle="modal"
+                        data-bs-target="#add-course-modal">
                         Add
                     </button>
                 </div>

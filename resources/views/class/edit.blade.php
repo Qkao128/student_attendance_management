@@ -11,7 +11,10 @@
                         Dashboard
                     </li>
                     <li class="breadcrumb-item">
-                        Class Management
+                        Manage Class
+                    </li>
+                    <li class="breadcrumb-item">
+                        Edit Class
                     </li>
                 </ul>
 
@@ -20,67 +23,63 @@
 
         <div class="row align-items-center g-2">
             <div class="col">
-                <h4 class="header-title">Manage Class</h4>
+                <h4 class="header-title">Edit Class</h4>
             </div>
-            <div class="col-12 col-md-auto mt-0 mt-md-1">
+            <div class="col-12 col-md-auto mt-0">
                 <div class="d-flex float-end align-items-center">
-                    <button type="button" class="btn btn-success text-white rounded-4" data-bs-toggle="modal"
-                        data-bs-target="#add-class-modal">
-                        Add
-                    </button>
-                </div>
-            </div>
-
-        </div>
-
-        <div>
-            @livewire('class-list')
-        </div>
-    </div>
-
-
-    <div class="modal fade" id="add-class-modal" tabindex="-1">
-        <div class="modal-dialog modal-lg modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title fw-bold">
-                        Add New Class
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form action="{{ route('class.store') }}" id="form" method="POST">
-                        @csrf
-                        <div class="row w-100 p-2 g-3" id="add-class-modal-content">
-                            <div class="form-group col-12 col-md-6">
-                                <label class="form-label" for="course_id">Course</label>
-                                <select class="form-select" id="course_id" name="course_id" required style="width:100%;">
-                                </select>
-                            </div>
-
-                            <div class="form-group col-12 col-md-6">
-                                <label class="form-label" for="user_id">Teacher</label>
-                                <select class="form-select" id="user_id" name="user_id" required style="width:100%;">
-                                </select>
-                            </div>
-
-                            <div class="form-group col-12">
-                                <label class="form-label" for="class">Name</label>
-                                <input type="text" class="form-control" id="class" name="class"
-                                    value="{{ old('class') }}" placeholder="Enter name" required>
-                            </div>
-
-                        </div>
-
-                        <div class="text-end pe-3">
-                            <button type="submit" class="btn btn-success text-white rounded-4">Submit</button>
-                        </div>
-                    </form>
-
-
+                    <a href="{{ route('class.index') }}" class="btn btn-dark rounded-4 text-white">
+                        <i class="fa-solid fa-angle-left text-white"></i>
+                        Back
+                    </a>
                 </div>
             </div>
         </div>
+
+
+        <div class="container mt-4" class="edit-class-form" id="edit-class-section-{{ $class->id }}">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title fw-bold mt-0 ps-2">Edit Class</h5>
+                        <hr class="my-3">
+
+                        <form action="{{ route('class.update', ['id' => $class->id]) }}" method="POST">
+                            @method('PATCH')
+                            @csrf
+                            <div class="row w-100 p-2 g-3" id="edit-class-form-content">
+                                <div class="form-group col-12 col-md-6">
+                                    <label class="form-label" for="course_id">Course</label>
+                                    <select class="form-select" id="course_id" name="course_id" required
+                                        style="width:100%;">
+                                        <option value="{{ $class->course_id }}">
+                                            {{ $class->courseModal->course }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-12 col-md-6">
+                                    <label class="form-label" for="user_id">Teacher</label>
+                                    <select class="form-select" id="user_id" name="user_id" required style="width:100%;">
+                                        <option value="{{ $class->user_id }}">
+                                            {{ $class->userModal->name }}
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group col-12">
+                                    <label class="form-label" for="class">Name</label>
+                                    <input type="text" class="form-control" id="class" name="class"
+                                        value="{{ $class->class }}" placeholder="Enter name" required>
+                                </div>
+                            </div>
+
+                            <div class="text-end pe-3 mt-2">
+                                <button type="submit" class="btn btn-success text-white rounded-4">Submit</button>
+                            </div>
+                        </form>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 @endsection
@@ -113,7 +112,6 @@
                 theme: 'bootstrap-5',
                 allowClear: true,
                 placeholder: 'Select course',
-                dropdownParent: $('#add-class-modal'),
                 ajax: {
                     url: "{{ route('course.select_search') }}",
                     dataType: 'json',
@@ -128,6 +126,7 @@
                     },
                     processResults: function(data) {
                         return {
+
                             results: $.map(data.results, function(item) {
                                 return {
                                     text: item.course,
@@ -148,7 +147,6 @@
                 theme: 'bootstrap-5',
                 allowClear: true,
                 placeholder: 'Select user',
-                dropdownParent: $('#add-class-modal'),
                 ajax: {
                     url: "{{ route('user.select_search') }}",
                     dataType: 'json',

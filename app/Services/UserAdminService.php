@@ -17,6 +17,23 @@ class UserAdminService extends Service
         $this->_userRepository = $userRepository;
     }
 
+    public function getById($id)
+    {
+        try {
+            $user = $this->_userRepository->getById($id);
+
+            if ($user == null) {
+                return false;
+            }
+
+            return $user;
+        } catch (Exception $e) {
+            array_push($this->_errorMessage, "Fail to get user details.");
+
+            return null;
+        }
+    }
+
     public function getSelectOption($data)
     {
         try {

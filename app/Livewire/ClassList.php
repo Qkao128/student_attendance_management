@@ -2,8 +2,8 @@
 
 namespace App\Livewire;
 
+use App\Models\Classes;
 use Livewire\Component;
-use Illuminate\Support\Facades\DB;
 
 class ClassList extends Component
 {
@@ -41,11 +41,8 @@ class ClassList extends Component
 
     public function render()
     {
-        $newData = DB::table('classes')->select([
-            'classes.id',
-            'classes.class',
-            'classes.created_at',
-        ])->orderBy('classes.created_at', 'asc');
+        $newData = Classes::with(['courseModal:id,course', 'userModal:id,name'])
+            ->orderBy('created_at', 'asc');
 
         if (!empty($this->filter['class'])) {
             $newData->where('classes.class', 'like', '%' . $this->filter['class'] . '%');
@@ -54,7 +51,6 @@ class ClassList extends Component
         $newData = $newData->offset($this->limitPerPage * $this->page);
         $newData = $newData->limit($this->limitPerPage);
         $newData = $newData->get();
-        $newData = $newData->toArray();
 
         if ($this->page == 0) {
             $this->classes = $newData;

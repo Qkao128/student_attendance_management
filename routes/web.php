@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::name('class.')->prefix('class')->group(function () {
         Route::get('/', [ClassAdminController::class, 'index'])->name('index');
         Route::post('/', [ClassAdminController::class, 'store'])->name('store');
+        Route::get('{id}/edit', [ClassAdminController::class, 'edit'])->name('edit');
         Route::patch('{id}', [ClassAdminController::class, 'update'])->name('update');
         Route::get('{id}', [ClassAdminController::class, 'show'])->name('show');
         Route::delete('{id}', [ClassAdminController::class, 'destroy'])->name('destroy');

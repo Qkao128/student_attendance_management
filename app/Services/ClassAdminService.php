@@ -79,7 +79,9 @@ class ClassAdminService extends Service
 
         try {
             $validator = Validator::make($data, [
-                'name' => 'required|string|max:255',
+                'class' => 'required|string|max:255',
+                'course_id' => 'required|exists:courses,id',
+                'user_id' => 'required|exists:users,id',
             ]);
 
             if ($validator->fails()) {
@@ -89,7 +91,15 @@ class ClassAdminService extends Service
                 return null;
             }
 
+            if (!Gate::allows('teacher', Auth::user())) {
+                throw new Exception();
+            }
+
             $class = $this->_classRepository->getById($id);
+
+            if ($class == null) {
+                throw new Exception();
+            }
 
 
             $class = $this->_classRepository->update($data, $id);
@@ -108,6 +118,12 @@ class ClassAdminService extends Service
         DB::beginTransaction();
 
         try {
+            $class = $this->_classRepository->getById($id);
+
+            if (!Gate::allows('teacher', Auth::user()) || $class == null) {
+                throw new Exception();
+            }
+
 
             $class = $this->_classRepository->deleteById($id);
 
