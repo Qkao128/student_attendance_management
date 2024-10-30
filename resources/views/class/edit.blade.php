@@ -42,7 +42,7 @@
                     <h4 class="card-title fw-bold mt-0 ps-2">Edit Class</h5>
                         <hr class="my-3">
 
-                        <form action="{{ route('class.update', ['id' => $class->id]) }}" method="POST">
+                        <form action="{{ route('class.update', ['id' => $class->id]) }}" id="form" method="POST">
                             @method('PATCH')
                             @csrf
                             <div class="row w-100 p-2 g-3" id="edit-class-form-content">

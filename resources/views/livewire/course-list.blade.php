@@ -42,10 +42,10 @@
 
                                     <div class="col-12 mt-1">
                                         <div class="d-inline-flex gap-3">
-                                            <button class="btn btn-warning text-dark" data-bs-toggle="modal"
-                                                data-bs-target="#edit-course-modal-{{ $course->id }}">
+                                            <a href="{{ route('course.edit', ['id' => $course->id]) }}"
+                                                class="btn btn-warning text-dark">
                                                 <i class="fa-solid fa-pen-nib"></i>
-                                            </button>
+                                            </a>
 
                                             <form method="POST" action="{{ route('course.destroy', $course->id) }}">
                                                 @csrf
@@ -60,36 +60,6 @@
                                 </div>
                             </div>
 
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Modal for editing course -->
-            <div class="modal fade" id="edit-course-modal-{{ $course->id }}" tabindex="-1">
-                <div class="modal-dialog modal-lg modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title fw-bold">Edit Course</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <form action="{{ route('course.update', ['id' => $course->id]) }}" method="POST">
-                                @method('PATCH')
-                                @csrf
-                                <div class="w-100">
-                                    <div class="form-group" id="edit-course-modal-content">
-                                        <label class="form-label" for="course">Name</label>
-                                        <input type="text" class="form-control" id="course" name="course"
-                                            value="{{ old('course', $course->course) }}" placeholder="Enter name"
-                                            required>
-                                    </div>
-                                </div>
-                                <div class="text-end">
-                                    <button type="submit" class="btn btn-success text-white rounded-4">Submit</button>
-                                </div>
-                            </form>
                         </div>
                     </div>
                 </div>

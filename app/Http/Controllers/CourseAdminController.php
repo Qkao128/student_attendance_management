@@ -36,6 +36,22 @@ class CourseAdminController extends Controller
         return Redirect::route('course.index')->with('success', "Course successfully added.");
     }
 
+    public function edit($id)
+    {
+        $course = $this->_courseAdminService->getById($id);
+
+        if ($course === false) {
+            abort(404);
+        }
+
+        if ($course === false) {
+            $errorMessage = implode("<br>", $this->_courseAdminService->_errorMessage);
+            return back()->with('error', $errorMessage)->withInput();
+        }
+
+        return view('course/edit', compact('course'));
+    }
+
 
     public function update(Request $request, $id)
     {

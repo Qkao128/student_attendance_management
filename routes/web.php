@@ -35,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::name('course.')->prefix('course')->group(function () {
         Route::get('/', [CourseAdminController::class, 'index'])->name('index');
         Route::post('/', [CourseAdminController::class, 'store'])->name('store');
+        Route::get('{id}/edit', [CourseAdminController::class, 'edit'])->name('edit');
         Route::patch('{id}', [CourseAdminController::class, 'update'])->name('update');
         Route::get('select-search', [CourseAdminController::class, 'selectOption'])->name('select_search');
         Route::get('{id}', [CourseAdminController::class, 'show'])->name('show');

@@ -11,10 +11,10 @@
                         Dashboard
                     </li>
                     <li class="breadcrumb-item">
-                        Manage Class
+                        Manage Course
                     </li>
                     <li class="breadcrumb-item">
-                        Edit Class
+                        Edit Course
                     </li>
                 </ul>
 
@@ -23,11 +23,11 @@
 
         <div class="row align-items-center g-2">
             <div class="col">
-                <h4 class="header-title">Edit Class</h4>
+                <h4 class="header-title">Edit Course</h4>
             </div>
             <div class="col-12 col-md-auto mt-0">
                 <div class="d-flex float-end align-items-center">
-                    <a href="{{ route('class.index') }}" class="btn btn-dark rounded-4 text-white">
+                    <a href="{{ route('course.index') }}" class="btn btn-dark rounded-4 text-white">
                         <i class="fa-solid fa-angle-left text-white"></i>
                         Back
                     </a>
@@ -36,44 +36,24 @@
         </div>
 
 
-        <div class="container mt-4" id="edit-class-section-{{ $class->id }}">
+        <div class="container mt-4" id="edit-course-section-{{ $course->id }}">
             <div class="card">
                 <div class="card-body">
-                    <h4 class="card-title fw-bold mt-0 ps-2">Edit Class</h5>
+                    <h4 class="card-title fw-bold mt-0 ps-2">Edit Course</h5>
                         <hr class="my-3">
 
-                        <form action="{{ route('class.update', ['id' => $class->id]) }}" method="POST">
+                        <form action="{{ route('course.update', ['id' => $course->id]) }}" id="form" method="POST">
                             @method('PATCH')
                             @csrf
-                            <div class="row w-100 p-2 g-3" id="edit-class-form-content">
-                                <div class="form-group col-12 col-md-6">
-                                    <label class="form-label" for="edit-course-id">Course</label>
-                                    <select class="form-select" id="edit-course-id" name="course_id" required
-                                        style="width:100%;">
-                                        <option value="{{ $class->course_id }}">
-                                            {{ $class->courseModal->course }}
-                                        </option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group col-12 col-md-6">
-                                    <label class="form-label" for="edit-user-id">Teacher</label>
-                                    <select class="form-select" id="edit-user-id" name="user_id" required
-                                        style="width:100%;">
-                                        <option value="{{ $class->user_id }}">
-                                            {{ $class->userModal->name }}
-                                        </option>
-                                    </select>
-                                </div>
-
+                            <div class="row w-100 p-2 g-3" id="edit-course-form-content">
                                 <div class="form-group col-12">
-                                    <label class="form-label" for="class">Name</label>
-                                    <input type="text" class="form-control" id="class" name="class"
-                                        value="{{ $class->class }}" placeholder="Enter name" required>
+                                    <label class="form-label" for="course">Name</label>
+                                    <input type="text" class="form-control" id="course" name="course"
+                                        value="{{ $course->course }}" placeholder="Enter name" required>
                                 </div>
                             </div>
 
-                            <div class="text-end pe-3 mt-2">
+                            <div class="text-end pe-3 mt-5">
                                 <button type="submit" class="btn btn-success text-white rounded-4">Submit</button>
                             </div>
                         </form>
@@ -108,78 +88,6 @@
                     }
                 },
             })
-
-            $("#course_id").select2({
-                theme: 'bootstrap-5',
-                allowClear: true,
-                placeholder: 'Select course',
-                dropdownParent: $('#add-class-modal'),
-                ajax: {
-                    url: "{{ route('course.select_search') }}",
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        var query = {
-                            search_term: params.term,
-                            page: params.page,
-                            _token: "{{ csrf_token() }}"
-                        }
-                        return query;
-                    },
-                    processResults: function(data) {
-                        return {
-
-                            results: $.map(data.results, function(item) {
-                                return {
-                                    text: item.course,
-                                    id: item.id
-                                }
-                            }),
-                            pagination: {
-                                more: data.pagination.more
-                            }
-                        };
-                    },
-
-                }
-            });
-
-
-            $("#user_id").select2({
-                theme: 'bootstrap-5',
-                allowClear: true,
-                placeholder: 'Select user',
-                dropdownParent: $('#add-class-modal'),
-                ajax: {
-                    url: "{{ route('user.select_search') }}",
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        var query = {
-                            search_term: params.term,
-                            page: params.page,
-                            _token: "{{ csrf_token() }}"
-                        }
-                        return query;
-                    },
-                    processResults: function(data) {
-                        return {
-
-                            results: $.map(data.results, function(item) {
-                                return {
-                                    text: item.name,
-                                    id: item.id
-                                }
-                            }),
-                            pagination: {
-                                more: data.pagination.more
-                            }
-                        };
-                    },
-
-                }
-            });
-
 
         });
     </script>
