@@ -21,16 +21,6 @@ class ClassList extends Component
         $this->page++;
     }
 
-    public function resetFilter()
-    {
-        $this->filter = [
-            'class' => null,
-            'course_id' => null,
-            'user_id' => null,
-        ];
-        $this->applyFilter();
-    }
-
     public function filterClass($value)
     {
         $this->filter['class'] = $value;
@@ -43,21 +33,31 @@ class ClassList extends Component
         $this->render();
     }
 
+    public function resetFilter()
+    {
+        foreach ($this->filter as $key => $value) {
+            $this->filter[$key] = null;
+        }
+
+        $this->applyFilter();
+    }
+
+
     public function render()
     {
         $newData = Classes::with(['courseModal:id,course', 'userModal:id,name'])
             ->orderBy('created_at', 'asc');
 
-        if (!empty($this->filter['class'])) {
-            $newData->where('classes.class', 'like', '%' . $this->filter['class'] . '%');
+        if (isset($this->filter['class'])) {
+            $newData = $newData->where('classes.class', 'like', '%' . $this->filter['class'] . '%');
         }
 
-        if (!empty($this->filter['course_id'])) {
-            $newData->where('course_id', $this->filter['course_id']);
+        if (isset($this->filter['course_id'])) {
+            $newData = $newData->where('course_id', $this->filter['course_id']);
         }
 
-        if (!empty($this->filter['user_id'])) {
-            $newData->where('user_id', $this->filter['user_id']);
+        if (isset($this->filter['user_id'])) {
+            $newData = $newData->where('user_id', $this->filter['user_id']);
         }
 
         $newData = $newData->offset($this->limitPerPage * $this->page);

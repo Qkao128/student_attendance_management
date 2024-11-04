@@ -36,16 +36,16 @@
                     <div class="row mt-3">
                         <div class="col-12 col-md-6">
                             <div class="form-group mb-3" wire:ignore>
-                                <label class="form-label" for="filter-user_id">Teacher</label>
-                                <select class="form-select" id="filter-user_id" style="width:100%;">
+                                <label class="form-label" for="filter_user_id">Teacher</label>
+                                <select class="form-select" id="filter_user_id" style="width:100%;">
                                 </select>
                             </div>
                         </div>
 
                         <div class="col-12 col-md-6">
                             <div class="form-group mb-3" wire:ignore>
-                                <label class="form-label" for="filter-course_id">Course</label>
-                                <select class="form-select" id="filter-course_id" style="width:100%;">
+                                <label class="form-label" for="filter_course_id">Course</label>
+                                <select class="form-select" id="filter_course_id" style="width:100%;">
                                 </select>
                             </div>
                         </div>
@@ -218,10 +218,11 @@
 
 @push('scripts')
     <script>
-        $('#filter-course_id').select2({
+        $('#filter_course_id').select2({
             theme: 'bootstrap-5',
             allowClear: true,
             placeholder: 'Select course',
+            dropdownParent: $('#filter'),
             ajax: {
                 url: "{{ route('course.select_search') }}",
                 dataType: 'json',
@@ -252,10 +253,11 @@
         });
 
 
-        $('#filter-user_id').select2({
+        $('#filter_user_id').select2({
             theme: 'bootstrap-5',
             allowClear: true,
             placeholder: 'Select user',
+            dropdownParent: $('#filter'),
             ajax: {
                 url: "{{ route('user.select_search') }}",
                 dataType: 'json',

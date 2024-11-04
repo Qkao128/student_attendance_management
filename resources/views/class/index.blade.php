@@ -183,4 +183,6 @@
         });
     </script>
 
+    @stack('scripts')
+
 @endsection
