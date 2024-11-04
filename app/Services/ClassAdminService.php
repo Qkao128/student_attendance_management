@@ -4,7 +4,6 @@ namespace App\Services;
 
 use Exception;
 use App\Services\Service;
-use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
@@ -112,25 +111,6 @@ class ClassAdminService extends Service
             DB::rollBack();
             return null;
         }
-    }
-
-    public function getDataTable()
-    {
-        $data = DB::table('classes')
-            ->leftjoin('user', 'classes.user_id', '=', 'user.id')
-            ->leftjoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
-            ->select([
-                'users.id',
-                'users.profile_image',
-                'users.name',
-                'users.gender',
-                'users.created_at',
-            ]);
-
-        $result = DataTables::of($data)
-            ->make();
-
-        return $result;
     }
 
     public function deleteById($id)

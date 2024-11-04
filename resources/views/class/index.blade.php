@@ -122,7 +122,7 @@
                         var query = {
                             search_term: params.term,
                             page: params.page,
-                            _token: "{{ csrf_token() }}",
+                            _token: "{{ csrf_token() }}"
                         }
                         return query;
                     },
@@ -183,6 +183,4 @@
         });
     </script>
 
-
-    @stack('scripts');
 @endsection

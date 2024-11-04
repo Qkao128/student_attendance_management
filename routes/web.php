@@ -47,7 +47,6 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [ClassAdminController::class, 'store'])->name('store');
         Route::get('{id}/edit', [ClassAdminController::class, 'edit'])->name('edit');
         Route::patch('{id}', [ClassAdminController::class, 'update'])->name('update');
-        Route::post('datatable', [ClassAdminController::class, 'dataTable'])->name('datatable');
         Route::get('{id}', [ClassAdminController::class, 'show'])->name('show');
         Route::delete('{id}', [ClassAdminController::class, 'destroy'])->name('destroy');
     });
