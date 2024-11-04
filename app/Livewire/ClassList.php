@@ -13,7 +13,7 @@ class ClassList extends Component
     public $filter = [
         'class' => null,
         'course_id' => null,
-        'name' => null,
+        'user_id' => null,
     ];
 
     public function loadMore()
@@ -26,7 +26,7 @@ class ClassList extends Component
         $this->filter = [
             'class' => null,
             'course_id' => null,
-            'name' => null,
+            'user_id' => null,
         ];
         $this->applyFilter();
     }
@@ -48,21 +48,16 @@ class ClassList extends Component
         $newData = Classes::with(['courseModal:id,course', 'userModal:id,name'])
             ->orderBy('created_at', 'asc');
 
-        // 過濾 class 字段
         if (!empty($this->filter['class'])) {
             $newData->where('classes.class', 'like', '%' . $this->filter['class'] . '%');
         }
 
-        // 過濾 course_id 字段
         if (!empty($this->filter['course_id'])) {
             $newData->where('course_id', $this->filter['course_id']);
         }
 
-        // 過濾 name 字段
-        if (!empty($this->filter['name'])) {
-            $newData->whereHas('userModal', function ($query) {
-                $query->where('name', 'like', '%' . $this->filter['name'] . '%');
-            });
+        if (!empty($this->filter['user_id'])) {
+            $newData->where('user_id', $this->filter['user_id']);
         }
 
         $newData = $newData->offset($this->limitPerPage * $this->page);

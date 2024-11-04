@@ -35,26 +35,26 @@
 
                     <div class="row mt-3">
                         <div class="col-12 col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label" for="filter-class">Class</label>
-                                <input type="text" class="form-control" id="filter-class" wire:model="filter.class"
-                                    placeholder="Enter class">
+                            <div class="form-group mb-3" wire:ignore>
+                                <label class="form-label" for="filter-user_id">Teacher</label>
+                                <select class="form-select" id="filter-user_id" style="width:100%;">
+                                </select>
                             </div>
                         </div>
 
                         <div class="col-12 col-md-6">
                             <div class="form-group mb-3" wire:ignore>
-                                <label class="form-label" for="filter_course_id">Course</label>
-                                <select class="form-select" id="filter_course_id" style="width:100%;">
+                                <label class="form-label" for="filter-course_id">Course</label>
+                                <select class="form-select" id="filter-course_id" style="width:100%;">
                                 </select>
                             </div>
                         </div>
 
                         <div class="col-12">
                             <div class="form-group mb-3">
-                                <label class="form-label" for="filter-name">Name</label>
-                                <input type="text" class="form-control" id="filter-name" wire:model="filter.name"
-                                    placeholder="Enter name">
+                                <label class="form-label" for="filter-class">Class</label>
+                                <input type="text" class="form-control" id="filter-class" wire:model="filter.class"
+                                    placeholder="Enter class">
                             </div>
                         </div>
                     </div>
@@ -218,22 +218,19 @@
 
 @push('scripts')
     <script>
-        $("#filter_course_id").select2({
+        $('#filter-course_id').select2({
             theme: 'bootstrap-5',
             allowClear: true,
             placeholder: 'Select course',
-            dropdownParent: $('#filter'),
             ajax: {
                 url: "{{ route('course.select_search') }}",
                 dataType: 'json',
                 delay: 250,
                 data: function(params) {
-                    var query = {
+                    return {
                         search_term: params.term,
                         page: params.page,
-                        _token: "{{ csrf_token() }}",
-                    }
-                    return query;
+                    };
                 },
                 processResults: function(data) {
                     return {
@@ -241,18 +238,51 @@
                             return {
                                 text: item.course,
                                 id: item.id
-                            }
+                            };
                         }),
                         pagination: {
                             more: data.pagination.more
                         }
                     };
-                },
-
+                }
             }
         }).on('change', function(e) {
             var selectedCourseId = $(this).val();
             @this.set('filter.course_id', selectedCourseId, false);
+        });
+
+
+        $('#filter-user_id').select2({
+            theme: 'bootstrap-5',
+            allowClear: true,
+            placeholder: 'Select user',
+            ajax: {
+                url: "{{ route('user.select_search') }}",
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search_term: params.term,
+                        page: params.page,
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: $.map(data.results, function(item) {
+                            return {
+                                text: item.name,
+                                id: item.id
+                            };
+                        }),
+                        pagination: {
+                            more: data.pagination.more
+                        }
+                    };
+                }
+            }
+        }).on('change', function(e) {
+            var selectedUserId = $(this).val();
+            @this.set('filter.user_id', selectedUserId, false);
         });
     </script>
 @endpush
