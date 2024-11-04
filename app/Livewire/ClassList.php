@@ -12,11 +12,8 @@ class ClassList extends Component
     public $classes;
     public $filter = [
         'class' => null,
-<<<<<<< HEAD
-=======
         'course_id' => null,
         'user_id' => null,
->>>>>>> admin/class
     ];
 
     public function loadMore()
@@ -28,11 +25,8 @@ class ClassList extends Component
     {
         $this->filter = [
             'class' => null,
-<<<<<<< HEAD
-=======
             'course_id' => null,
             'user_id' => null,
->>>>>>> admin/class
         ];
         $this->applyFilter();
     }
@@ -58,8 +52,6 @@ class ClassList extends Component
             $newData->where('classes.class', 'like', '%' . $this->filter['class'] . '%');
         }
 
-<<<<<<< HEAD
-=======
         if (!empty($this->filter['course_id'])) {
             $newData->where('course_id', $this->filter['course_id']);
         }
@@ -68,7 +60,6 @@ class ClassList extends Component
             $newData->where('user_id', $this->filter['user_id']);
         }
 
->>>>>>> admin/class
         $newData = $newData->offset($this->limitPerPage * $this->page);
         $newData = $newData->limit($this->limitPerPage);
         $newData = $newData->get();

@@ -13,8 +13,6 @@
                     wire:keydown.debounce.250ms="filterClass($event.target.value)" wire:model="filter.class">
             </div>
         </div>
-<<<<<<< HEAD
-=======
 
         <div class="col-auto">
             <button type="button" class="btn btn-link text-secondary" onclick="toggleFilter('#filter')">
@@ -80,7 +78,6 @@
                 </div>
             </form>
         </div>
->>>>>>> admin/class
     </div>
 
 
@@ -218,8 +215,6 @@
         @endif
     </div>
 </div>
-<<<<<<< HEAD
-=======
 
 @push('scripts')
     <script>
@@ -291,4 +286,3 @@
         });
     </script>
 @endpush
->>>>>>> admin/class
