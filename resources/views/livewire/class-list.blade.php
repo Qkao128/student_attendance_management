@@ -13,6 +13,71 @@
                     wire:keydown.debounce.250ms="filterClass($event.target.value)" wire:model="filter.class">
             </div>
         </div>
+
+        <div class="col-auto">
+            <button type="button" class="btn btn-link text-secondary" onclick="toggleFilter('#filter')">
+                <i class="fa-solid fa-filter"></i>
+            </button>
+        </div>
+    </div>
+
+
+    <div id="filter" class="filter-popup-wraper d-none">
+        <div class="filter-popup-content">
+            <form wire:submit.prevent="applyFilter" id='filter-form'>
+                <div class="filter-popup-body">
+                    <h3 class="fw-bold text-center">Filter</h3>
+
+                    <button type="button" class="btn btn-link text-dark filter-popup-close-btn p-0"
+                        onclick="toggleFilter('#filter')">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+
+                    <div class="row mt-3">
+                        <div class="col-12 col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label" for="filter-class">Class</label>
+                                <input type="text" class="form-control" id="filter-class" wire:model="filter.class"
+                                    placeholder="Enter class">
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <div class="form-group mb-3" wire:ignore>
+                                <label class="form-label" for="filter_course_id">Course</label>
+                                <select class="form-select" id="filter_course_id" style="width:100%;">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-group mb-3">
+                                <label class="form-label" for="filter-name">Name</label>
+                                <input type="text" class="form-control" id="filter-name" wire:model="filter.name"
+                                    placeholder="Enter name">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-popup-footer">
+                    <div class="row g-2 p-3">
+                        <div class="col-4 col-lg-6">
+                            <button type="button" class="btn btn-danger text-white rounded-4 btn-lg w-100"
+                                wire:click="resetFilter()" onclick="toggleFilter('#filter')">
+                                Reset
+                            </button>
+                        </div>
+                        <div class="col-8 col-lg-6">
+                            <button type="submit" class="btn btn-primary text-white rounded-4 btn-lg w-100"
+                                onclick="toggleFilter('#filter')">
+                                Filter
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
 
 
@@ -150,3 +215,44 @@
         @endif
     </div>
 </div>
+
+@push('scripts')
+    <script>
+        $("#filter_course_id").select2({
+            theme: 'bootstrap-5',
+            allowClear: true,
+            placeholder: 'Select course',
+            dropdownParent: $('#filter'),
+            ajax: {
+                url: "{{ route('course.select_search') }}",
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    var query = {
+                        search_term: params.term,
+                        page: params.page,
+                        _token: "{{ csrf_token() }}",
+                    }
+                    return query;
+                },
+                processResults: function(data) {
+                    return {
+                        results: $.map(data.results, function(item) {
+                            return {
+                                text: item.course,
+                                id: item.id
+                            }
+                        }),
+                        pagination: {
+                            more: data.pagination.more
+                        }
+                    };
+                },
+
+            }
+        }).on('change', function(e) {
+            var selectedCourseId = $(this).val();
+            @this.set('filter.course_id', selectedCourseId, false);
+        });
+    </script>
+@endpush

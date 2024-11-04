@@ -112,4 +112,11 @@ class ClassAdminController extends Controller
 
         return Redirect::route('class.index')->with('success', "Class successfully deleted.");
     }
+
+    public function dataTable()
+    {
+        $data = $this->_staffAdminService->getDataTable();
+
+        return $data;
+    }
 }
