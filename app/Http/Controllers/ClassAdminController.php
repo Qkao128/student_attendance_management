@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Services\UserAdminService;
 use App\Services\ClassAdminService;
 use App\Services\CourseAdminService;
 use Illuminate\Support\Facades\Redirect;
@@ -13,13 +12,11 @@ class ClassAdminController extends Controller
 {
     private $_classAdminService;
     private $_courseAdminService;
-    private $_userAdminService;
 
-    public function __construct(ClassAdminService $classAdminService, CourseAdminService $courseAdminService, UserAdminService $userAdminService)
+    public function __construct(ClassAdminService $classAdminService, CourseAdminService $courseAdminService)
     {
         $this->_classAdminService = $classAdminService;
         $this->_courseAdminService = $courseAdminService;
-        $this->_userAdminService = $userAdminService;
     }
 
     public function index()
@@ -30,7 +27,7 @@ class ClassAdminController extends Controller
     public function store(Request $request)
     {
         $data = $request->only([
-            'class',
+            'name',
             'course_id',
             'user_id'
         ]);
@@ -66,19 +63,17 @@ class ClassAdminController extends Controller
     public function edit($id)
     {
         $class = $this->_classAdminService->getById($id);
-        $course = $this->_courseAdminService->getById($class->course_id);
-        $user = $this->_userAdminService->getById($class->user_id);
 
-        if ($class === false || $course === false || $user == false) {
+        if ($class === false) {
             abort(404);
         }
 
-        if ($class == null && $course === false && $user == false) {
+        if ($class == null) {
             $errorMessage = implode("<br>", $this->_classAdminService->_errorMessage);
             return back()->with('error', $errorMessage)->withInput();
         }
 
-        return view('class/edit', compact('class', 'course', 'user'));
+        return view('class/edit', compact('class'));
     }
 
 
@@ -86,7 +81,7 @@ class ClassAdminController extends Controller
     {
 
         $data = $request->only([
-            'class',
+            'name',
             'course_id',
             'user_id'
         ]);

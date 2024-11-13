@@ -48,8 +48,8 @@
                             <div class="row w-100 p-2 g-3" id="edit-course-form-content">
                                 <div class="form-group col-12">
                                     <label class="form-label" for="course">Name</label>
-                                    <input type="text" class="form-control" id="course" name="course"
-                                        value="{{ $course->course }}" placeholder="Enter name" required>
+                                    <input type="text" class="form-control" id="course" name="name"
+                                        value="{{ $course->name }}" placeholder="Enter name" required>
                                 </div>
                             </div>
 

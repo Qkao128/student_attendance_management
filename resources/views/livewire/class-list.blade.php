@@ -36,16 +36,16 @@
                     <div class="row mt-3">
                         <div class="col-12 col-md-6">
                             <div class="form-group mb-3" wire:ignore>
-                                <label class="form-label" for="filter_user_id">Teacher</label>
-                                <select class="form-select" id="filter_user_id" style="width:100%;">
+                                <label class="form-label" for="filter_course_id">Course</label>
+                                <select class="form-select" id="filter_course_id" style="width:100%;">
                                 </select>
                             </div>
                         </div>
 
                         <div class="col-12 col-md-6">
                             <div class="form-group mb-3" wire:ignore>
-                                <label class="form-label" for="filter_course_id">Course</label>
-                                <select class="form-select" id="filter_course_id" style="width:100%;">
+                                <label class="form-label" for="filter_user_id">Teacher</label>
+                                <select class="form-select" id="filter_user_id" style="width:100%;">
                                 </select>
                             </div>
                         </div>
@@ -96,7 +96,7 @@
                                     </div>
 
                                     <div class="col-12 mt-1">
-                                        {{ $class->class }}
+                                        {{ $class->name }}
                                     </div>
                                 </div>
                             </div>
@@ -146,7 +146,7 @@
                                             <form method="POST" action="{{ route('class.destroy', $class->id) }}">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="button" class="btn btn-danger text-dark"
+                                                <button type="button" class="btn btn-danger"
                                                     onclick="deleteFormConfirmation(event)">
                                                     <i class="fa-solid fa-trash-can"></i>
                                                 </button>
@@ -165,7 +165,7 @@
                                     </div>
 
                                     <div class="col-12 mt-1">
-                                        {{ $class->courseModal->course }}
+                                        {{ $class->course_name }}
                                     </div>
                                 </div>
                             </div>
@@ -177,11 +177,10 @@
                                     </div>
 
                                     <div class="col-12 mt-1">
-                                        {{ $class->userModal->name }}
+                                        {{ $class->user_name }}
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -237,7 +236,7 @@
                     return {
                         results: $.map(data.results, function(item) {
                             return {
-                                text: item.course,
+                                text: item.name,
                                 id: item.id
                             };
                         }),
@@ -272,7 +271,7 @@
                     return {
                         results: $.map(data.results, function(item) {
                             return {
-                                text: item.name,
+                                text: item.username,
                                 id: item.id
                             };
                         }),

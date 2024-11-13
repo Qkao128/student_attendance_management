@@ -22,7 +22,7 @@ class AuthController extends Controller
         if (Auth::check()) {
             $user = Auth::user();
 
-            if (Gate::allows('teacher')) {
+            if (Gate::allows('admin')) {
                 return Redirect::route('dashboard')->with('error', 'You are already logged.');
             } elseif (Gate::allows('monitor')) {
                 return Redirect::route('dashboard.monitor')->with('error', 'You are already logged.');
@@ -34,11 +34,11 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
-        $data = $request->only(['name', 'password']);
+        $data = $request->only(['username', 'password']);
 
         if (Auth::check()) {
             $user = Auth::user();
-            if (Gate::allows('teacher')) {
+            if (Gate::allows('admin')) {
                 return Redirect::route('dashboard')->with('error', 'You are already logged.');
             } elseif (Gate::allows('monitor')) {
                 return Redirect::route('dashboard.monitor')->with('error', 'You are already logged.');
@@ -54,7 +54,7 @@ class AuthController extends Controller
 
         $user = Auth::user();
 
-        if (Gate::allows('teacher')) {
+        if (Gate::allows('admin')) {
             return Redirect::route('dashboard')->with('success', "Login successfully.");
         } elseif (Gate::allows('monitor')) {
             return Redirect::route('dashboard.monitor')->with('success', "Login successfully.");

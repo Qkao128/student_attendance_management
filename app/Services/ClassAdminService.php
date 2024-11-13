@@ -9,15 +9,19 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Repositories\ClassRepository;
 use Illuminate\Support\Facades\Validator;
+use App\Repositories\ClassTeacherRepository;
 
 class ClassAdminService extends Service
 {
     protected $_classRepository;
+    protected $_classTeacherRepository;
 
     public function __construct(
         ClassRepository $classRepository,
+        ClassTeacherRepository $classTeacherRepository,
     ) {
         $this->_classRepository = $classRepository;
+        $this->_classTeacherRepository = $classTeacherRepository;
     }
 
     public function createClass($data)
@@ -26,7 +30,7 @@ class ClassAdminService extends Service
         try {
 
             $validator = Validator::make($data, [
-                'class' => 'required|string|max:255',
+                'name' => 'required|string|max:255',
                 'course_id' => 'required|exists:courses,id',
                 'user_id' => 'required|exists:users,id',
             ]);
@@ -39,11 +43,24 @@ class ClassAdminService extends Service
                 return null;
             }
 
-            if (!Gate::allows('teacher', Auth::user())) {
+            if (!Gate::allows('admin', Auth::user())) {
                 throw new Exception();
             }
 
+            $existingClass = $this->_classRepository->getByCourseAndName($data['course_id'], $data['name']);
+            if ($existingClass) {
+                array_push($this->_errorMessage, "This name already exists for this course.");
+
+                DB::rollBack();
+                return null;
+            }
+
+
             $class = $this->_classRepository->save($data);
+
+            $data['class_id'] = $class->id;
+            $classTeacher = $this->_classTeacherRepository->save($data);
+
 
             DB::commit();
             return $class;
@@ -79,7 +96,7 @@ class ClassAdminService extends Service
 
         try {
             $validator = Validator::make($data, [
-                'class' => 'required|string|max:255',
+                'name' => 'required|string|max:255',
                 'course_id' => 'required|exists:courses,id',
                 'user_id' => 'required|exists:users,id',
             ]);
@@ -91,18 +108,32 @@ class ClassAdminService extends Service
                 return null;
             }
 
-            if (!Gate::allows('teacher', Auth::user())) {
+
+            if (!Gate::allows('admin', Auth::user())) {
                 throw new Exception();
             }
 
             $class = $this->_classRepository->getById($id);
 
-            if ($class == null) {
+            $classTeacher = $this->_classTeacherRepository->getByClassIdAndTeacherId($id, $data['user_id']);
+
+            if ($class == null || $classTeacher == null) {
                 throw new Exception();
             }
 
 
+            $existingClass = $this->_classRepository->getByCourseAndName($data['course_id'], $data['name']);
+
+            if ($existingClass && $existingClass->id !== $id) {
+                array_push($this->_errorMessage, "This name already exists for this course.");
+
+                DB::rollBack();
+                return null;
+            }
+
             $class = $this->_classRepository->update($data, $id);
+
+            $classTeacher = $this->_classTeacherRepository->update($data, $id);
 
             DB::commit();
             return $class;
@@ -120,10 +151,9 @@ class ClassAdminService extends Service
         try {
             $class = $this->_classRepository->getById($id);
 
-            if (!Gate::allows('teacher', Auth::user()) || $class == null) {
+            if (!Gate::allows('admin', Auth::user()) || $class == null) {
                 throw new Exception();
             }
-
 
             $class = $this->_classRepository->deleteById($id);
 

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('profile_image')->nullable();
-            $table->string('name')->unique();
+            $table->string('username')->unique();
             $table->string('password');
             $table->unsignedBigInteger('teacher_user_id')->nullable();
             $table->foreign('teacher_user_id')->references('id')->on('users')->onDelete('cascade');

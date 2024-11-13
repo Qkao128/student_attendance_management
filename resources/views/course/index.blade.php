@@ -53,8 +53,8 @@
                         <div class="w-100 p-2">
                             <div class="form-group" id="add-course-modal-content">
                                 <label class="form-label" for="course">Name</label>
-                                <input type="text" class="form-control" id="course" name="course"
-                                    value="{{ old('course') }}" placeholder="Enter name" required>
+                                <input type="text" class="form-control" id="course" name="name"
+                                    value="{{ old('name') }}" placeholder="Enter name" required>
                             </div>
                         </div>
 

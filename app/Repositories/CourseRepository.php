@@ -17,7 +17,7 @@ class CourseRepository extends Repository
     public function save($data)
     {
         $model = new Course;
-        $model->course = $data['course'];
+        $model->name = $data['name'];
 
         $model->save();
         return $model->fresh();
@@ -26,7 +26,7 @@ class CourseRepository extends Repository
     public function update($data, $id)
     {
         $model = $this->_db->find($id);
-        $model->course = $data['course'] ?? $model->course;
+        $model->name = $data['name'] ?? $model->name;
 
         $model->update();
         return $model;
@@ -37,8 +37,8 @@ class CourseRepository extends Repository
 
         $course = $data['search_term'] ?? '';
 
-        $data = $this->_db->select('id', 'course')
-            ->where('course', 'LIKE', "%$course%")
+        $data = $this->_db->select('id', 'name')
+            ->where('name', 'LIKE', "%$course%")
             ->skip($data['offset'])->take($data['result_count'])
             ->get();
 
@@ -54,7 +54,7 @@ class CourseRepository extends Repository
         $course = $data['search_term'] ?? '';
 
         $totalCount = $this->_db
-            ->where('course', 'LIKE', "%$course%")
+            ->where('name', 'LIKE', "%$course%")
             ->count();
 
         return $totalCount;

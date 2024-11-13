@@ -43,12 +43,12 @@ class CourseList extends Component
     {
         $newData = DB::table('courses')->select([
             'courses.id',
-            'courses.course',
+            'courses.name',
             'courses.created_at',
-        ])->orderBy('courses.created_at', 'asc');
+        ])->orderBy('courses.created_at', 'DESC');
 
         if (!empty($this->filter['course'])) {
-            $newData->where('courses.course', 'like', '%' . $this->filter['course'] . '%');
+            $newData->where('courses.name', 'like', '%' . $this->filter['course'] . '%');
         }
 
         $newData = $newData->offset($this->limitPerPage * $this->page);

@@ -66,8 +66,8 @@
 
                             <div class="form-group col-12">
                                 <label class="form-label" for="class">Name</label>
-                                <input type="text" class="form-control" id="class" name="class"
-                                    value="{{ old('class') }}" placeholder="Enter name" required>
+                                <input type="text" class="form-control" id="class" name="name"
+                                    value="{{ old('name') }}" placeholder="Enter name" required>
                             </div>
 
                         </div>
@@ -130,7 +130,7 @@
                         return {
                             results: $.map(data.results, function(item) {
                                 return {
-                                    text: item.course,
+                                    text: item.name,
                                     id: item.id
                                 }
                             }),
@@ -166,7 +166,7 @@
 
                             results: $.map(data.results, function(item) {
                                 return {
-                                    text: item.name,
+                                    text: item.username,
                                     id: item.id
                                 }
                             }),

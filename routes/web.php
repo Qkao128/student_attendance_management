@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClassAdminController;
 use App\Http\Controllers\CourseAdminController;
 use App\Http\Controllers\UserAdminController;
+use App\Http\Controllers\StudentAdminController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -18,7 +19,7 @@ Route::name('login')->prefix('login')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         return view('dashboard.index');
-    })->name('dashboard')->middleware('can:teacher');
+    })->name('dashboard')->middleware('can:admin');
 
     Route::get('/dashboard/monitor', function () {
         return view('monitor.dashboard.index');
@@ -50,4 +51,13 @@ Route::middleware('auth')->group(function () {
         Route::get('{id}', [ClassAdminController::class, 'show'])->name('show');
         Route::delete('{id}', [ClassAdminController::class, 'destroy'])->name('destroy');
     });
+
+    Route::name('student.')->prefix('student')->group(function () {
+        Route::post('{classId}/', [StudentAdminController::class, 'store'])->name('store');
+        Route::get('{classId}/id}', [StudentAdminController::class, 'edit'])->name('edit');
+        Route::patch('{classId}/{id}', [StudentAdminController::class, 'update'])->name('update');
+        Route::delete('{classId}/{id}', [StudentAdminController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::post('datatable', [StudentAdminController::class, 'datatable'])->name('datatable');
 });

@@ -17,7 +17,7 @@
                                     </div>
 
                                     <div class="col-12 mt-1">
-                                        {{ $course->course }}
+                                        {{ $course->name }}
                                     </div>
                                 </div>
                             </div>
@@ -50,7 +50,7 @@
                                             <form method="POST" action="{{ route('course.destroy', $course->id) }}">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="button" class="btn btn-danger text-dark"
+                                                <button type="button" class="btn btn-danger"
                                                     onclick="deleteFormConfirmation(event)">
                                                     <i class="fa-solid fa-trash-can"></i>
                                                 </button>

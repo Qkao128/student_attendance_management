@@ -17,7 +17,7 @@ class UserRepository extends Repository
     public function save($data)
     {
         $model = new User;
-        $model->name = $data['name'];
+        $model->username = $data['username'];
         $model->password = $data['password'];
         $model->profile_image = $data['profile_image'] ?? null;
 
@@ -28,7 +28,7 @@ class UserRepository extends Repository
     public function update($data, $id)
     {
         $model = $this->_db->find($id);
-        $model->name = $data['name'] ?? $model->name;
+        $model->username = $data['username'] ?? $model->username;
         $model->password = ($data['password'] ?? false) ? $data['password'] : $model->password;
         $model->profile_image = (array_key_exists('profile_image', $data)) ? $data['profile_image'] : $model->profile_image;
 
@@ -41,8 +41,8 @@ class UserRepository extends Repository
 
         $user = $data['search_term'] ?? '';
 
-        $data = $this->_db->select('id', 'name')
-            ->where('name', 'LIKE', "%$user%")
+        $data = $this->_db->select('id', 'username')
+            ->where('username', 'LIKE', "%$user%")
             ->skip($data['offset'])->take($data['result_count'])
             ->get();
 
@@ -58,7 +58,7 @@ class UserRepository extends Repository
         $user = $data['search_term'] ?? '';
 
         $totalCount = $this->_db
-            ->where('name', 'LIKE', "%$user%")
+            ->where('username', 'LIKE', "%$user%")
             ->count();
 
         return $totalCount;

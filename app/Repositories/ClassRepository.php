@@ -17,9 +17,8 @@ class ClassRepository extends Repository
     public function save($data)
     {
         $model = new Classes;
-        $model->class = $data['class'];
+        $model->name = $data['name'];
         $model->course_id = $data['course_id'];
-        $model->user_id = $data['user_id'];
 
         $model->save();
         return $model->fresh();
@@ -28,11 +27,19 @@ class ClassRepository extends Repository
     public function update($data, $id)
     {
         $model = $this->_db->find($id);
-        $model->class = $data['class'] ?? $model->class;
+        $model->name = $data['name'] ?? $model->name;
         $model->course_id = $data['course_id'] ?? $model->course_id;
-        $model->user_id = $data['user_id'] ?? $model->user_id;
 
         $model->update();
         return $model;
+    }
+
+    public function getByCourseAndName($courseId, $className)
+    {
+        $data = $this->_db->where('course_id', $courseId)
+            ->where('name', $className)
+            ->first();
+
+        return $data;
     }
 }

@@ -33,7 +33,7 @@ class AuthService extends Service
             }
 
             $validator = Validator::make($data, [
-                'name' => 'required',
+                'username' => 'required',
                 'password' => 'required',
             ]);
 
@@ -45,11 +45,11 @@ class AuthService extends Service
                 return null;
             }
 
-            if (Auth::attempt(['name' => $data['name'], 'password' => $data['password']])) {
+            if (Auth::attempt(['username' => $data['username'], 'password' => $data['password']])) {
                 RateLimiter::clear($this->throttleKey($rateLimiterKey));
                 return true;
             } else {
-                array_push($this->_errorMessage, 'Invalid name or password.');
+                array_push($this->_errorMessage, 'Invalid username or password.');
                 RateLimiter::hit($this->throttleKey($rateLimiterKey), 600);
                 return null;
             }

@@ -9,13 +9,13 @@ class Classes extends Model
 {
     use HasFactory;
 
-    public function courseModal()
+    public function course()
     {
         return $this->belongsTo(Course::class, 'course_id', 'id');
     }
 
-    public function userModal()
+    public function classTeacher()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(ClassTeacher::class, 'id', 'class_id');
     }
 }

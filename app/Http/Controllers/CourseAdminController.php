@@ -24,8 +24,9 @@ class CourseAdminController extends Controller
     public function store(Request $request)
     {
         $data = $request->only([
-            'course',
+            'name',
         ]);
+
         $result = $this->_courseAdminService->createCourse($data);
 
         if ($result == null) {
@@ -57,7 +58,7 @@ class CourseAdminController extends Controller
     {
 
         $data = $request->only([
-            'course',
+            'name',
         ]);
 
         $result = $this->_courseAdminService->update($data, $id);

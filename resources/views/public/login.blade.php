@@ -31,9 +31,9 @@
                     @csrf
 
                     <div class="form-group mb-3">
-                        <label class="form-label" for="name">Name</label>
-                        <input type="text" id="name" class="form-control" placeholder="name" required name="name"
-                            value="{{ old('name') }}">
+                        <label class="form-label" for="username">Name</label>
+                        <input type="text" id="username" class="form-control" placeholder="username" required
+                            name="username" value="{{ old('username') }}">
                     </div>
 
                     <div class="form-group mb-3">

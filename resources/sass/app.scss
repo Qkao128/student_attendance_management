@@ -25,6 +25,13 @@
 //main
 @import "main";
 
+//datatable
+@import "data-tables";
+
+//datatable
+@import "~datatables.net-bs5/css/dataTables.bootstrap5.min.css";
+@import "~datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css";
+
 //select2
 @import "~select2/dist/css/select2.min.css";
 
@@ -70,6 +77,24 @@ body{
     overflow-x: hidden;
 }
 
+//start datatable
+.dt-container {
+    .dt-length {
+        margin-bottom: 15px;
+    }
+
+    @include media-breakpoint-up(md) {
+        .dt-info {
+            text-align: right;
+        }
+
+        .dt-paging {
+            float: right;
+        }
+    }
+}
+//end datatable
+
 //start notifier js
 .notifier-container {
     z-index: 1082;
@@ -92,13 +117,37 @@ body{
     }
 }
 
+.circle-img-md-wrap {
+    height: 65px;
+    width: 65px;
+    overflow: hidden;
+    position: relative;
+
+    img {
+        height: 65px;
+        left: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 65px;
+    }
+}
+
 @include media-breakpoint-down(sm) {
     .circle-img-sm-wrap {
         height: 45px;
         width: 45px;
         img {
-            height: 45px;
-            width: auto;
+            width: 45px;
+        }
+    }
+
+    .circle-img-md-wrap {
+        height: 55px;
+        width: 55px;
+        img {
+            width: 55px;
+            height: 55px;
         }
     }
 }

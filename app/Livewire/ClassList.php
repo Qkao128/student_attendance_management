@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Models\Classes;
 use Livewire\Component;
+use Illuminate\Support\Facades\DB;
 
 class ClassList extends Component
 {
@@ -45,11 +46,22 @@ class ClassList extends Component
 
     public function render()
     {
-        $newData = Classes::with(['courseModal:id,course', 'userModal:id,name'])
-            ->orderBy('created_at', 'asc');
+        $newData = DB::table('classes')
+            ->select([
+                'classes.id',
+                'classes.name',
+                'classes.created_at',
+                'class_teachers.user_id',
+                'courses.name as course_name',
+                'users.username as user_name',
+            ])
+            ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
+            ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+            ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+            ->orderBy('classes.created_at', 'DESC');
 
         if (isset($this->filter['class'])) {
-            $newData = $newData->where('classes.class', 'like', '%' . $this->filter['class'] . '%');
+            $newData = $newData->where('classes.name', 'like', '%' . $this->filter['class'] . '%');
         }
 
         if (isset($this->filter['course_id'])) {
@@ -57,7 +69,7 @@ class ClassList extends Component
         }
 
         if (isset($this->filter['user_id'])) {
-            $newData = $newData->where('user_id', $this->filter['user_id']);
+            $newData = $newData->where('class_teachers.user_id', '=', $this->filter['user_id']);
         }
 
         $newData = $newData->offset($this->limitPerPage * $this->page);

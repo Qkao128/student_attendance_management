@@ -51,7 +51,7 @@
                                     <select class="form-select" id="course_id" name="course_id" required
                                         style="width:100%;">
                                         <option value="{{ $class->course_id }}">
-                                            {{ $class->courseModal->course }}
+                                            {{ $class->course->name }}
                                         </option>
                                     </select>
                                 </div>
@@ -59,16 +59,16 @@
                                 <div class="form-group col-12 col-md-6">
                                     <label class="form-label" for="user_id">Teacher</label>
                                     <select class="form-select" id="user_id" name="user_id" required style="width:100%;">
-                                        <option value="{{ $class->user_id }}">
-                                            {{ $class->userModal->name }}
+                                        <option value="{{ $class->classTeacher->user_id }}">
+                                            {{ $class->classTeacher->user->username }}
                                         </option>
                                     </select>
                                 </div>
 
                                 <div class="form-group col-12">
                                     <label class="form-label" for="class">Name</label>
-                                    <input type="text" class="form-control" id="class" name="class"
-                                        value="{{ $class->class }}" placeholder="Enter name" required>
+                                    <input type="text" class="form-control" id="class" name="name"
+                                        value="{{ $class->name }}" placeholder="Enter name" required>
                                 </div>
                             </div>
 
@@ -129,7 +129,7 @@
 
                             results: $.map(data.results, function(item) {
                                 return {
-                                    text: item.course,
+                                    text: item.name,
                                     id: item.id
                                 }
                             }),
@@ -164,7 +164,7 @@
 
                             results: $.map(data.results, function(item) {
                                 return {
-                                    text: item.name,
+                                    text: item.username,
                                     id: item.id
                                 }
                             }),

@@ -5,6 +5,9 @@ window.SimpleBar = SimpleBar;
 import notifier from "notifier-js";
 window.notifier = notifier;
 
+import "datatables.net-bs5";
+import "datatables.net-responsive-bs5";
+
 import "select2/dist/css/select2.min.css";
 import "select2";
 
