@@ -47,8 +47,8 @@ class CourseList extends Component
             'courses.created_at',
         ])->orderBy('courses.created_at', 'DESC');
 
-        if (!empty($this->filter['course'])) {
-            $newData->where('courses.name', 'like', '%' . $this->filter['course'] . '%');
+        if (isset($this->filter['course'])) {
+            $newData = $newData->where('courses.name', 'like', '%' . $this->filter['course'] . '%');
         }
 
         $newData = $newData->offset($this->limitPerPage * $this->page);
