@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Exception;
+use App\Enums\UserType;
 use App\Models\Student;
 use App\Services\Service;
 use Illuminate\Support\Str;
@@ -44,9 +45,20 @@ class StudentAdminService extends Service
                 return null;
             }
 
+            if (!Auth::check() || !Auth::user()->hasAnyRole([UserType::SuperAdmin()->key, UserType::Admin()->key])) {
+                throw new Exception('You do not have permission to perform this action.');
+            }
+
             $class = $this->_classRepository->getById($classId);
-            if (!$class || !Gate::allows('admin', Auth::user())) {
-                throw new Exception("Unauthorized or invalid class.");
+
+            if ($class == null) {
+                throw new Exception();
+            }
+
+            if (Auth::user()->hasRole(UserType::Admin()->key)) {
+                if ($class->user_id !== Auth::user()->id) {
+                    throw new Exception('You are not authorized to manage this class.');
+                }
             }
 
             if (!empty($data['student'])) {
@@ -93,7 +105,7 @@ class StudentAdminService extends Service
         }
     }
 
-    public function update($data, $id)
+    public function update($data, $classId, $id)
     {
         DB::beginTransaction();
 
@@ -111,21 +123,32 @@ class StudentAdminService extends Service
                 return null;
             }
 
-            if (!Gate::allows('admin', Auth::user())) {
-                throw new Exception();
+            if (!Auth::check() || !Auth::user()->hasAnyRole([UserType::SuperAdmin()->key, UserType::Admin()->key])) {
+                throw new Exception('You do not have permission to perform this action.');
             }
 
-            $class = $this->_studentRepository->getById($id);
+            $class = $this->_classRepository->getById($classId);
 
             if ($class == null) {
                 throw new Exception();
             }
 
+            if (Auth::user()->hasRole(UserType::Admin()->key)) {
+                if ($class->user_id !== Auth::user()->id) {
+                    throw new Exception('You are not authorized to manage this class.');
+                }
+            }
 
-            $class = $this->_studentRepository->update($data, $id);
+            $student = $this->_studentRepository->getById($id);
+
+            if ($student == null) {
+                throw new Exception();
+            }
+
+            $student = $this->_studentRepository->update($data, $id);
 
             DB::commit();
-            return $class;
+            return $student;
         } catch (Exception $e) {
             array_push($this->_errorMessage, "Fail to update class details.");
             DB::rollBack();
@@ -150,8 +173,18 @@ class StudentAdminService extends Service
             $class = $this->_classRepository->getById($classId);
             $student = $this->_studentRepository->getById($id);
 
-            if (!Gate::allows('admin', Auth::user()) || $class == null || $student  == null) {
+            if (!Auth::check() || !Auth::user()->hasAnyRole([UserType::SuperAdmin()->key, UserType::Admin()->key])) {
+                throw new Exception('You do not have permission to perform this action.');
+            }
+
+            if ($class == null || $student == null) {
                 throw new Exception();
+            }
+
+            if (Auth::user()->hasRole(UserType::Admin()->key)) {
+                if ($class->user_id !== Auth::user()->id) {
+                    throw new Exception('You are not authorized to manage this class.');
+                }
             }
 
             $student = $this->_studentRepository->deleteById($id);

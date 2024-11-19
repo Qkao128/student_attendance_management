@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use App\Enums\UserType;
 use Illuminate\Support\Facades\Hash;
 
 class UserRepository extends Repository
@@ -18,6 +19,7 @@ class UserRepository extends Repository
     {
         $model = new User;
         $model->username = $data['username'];
+        $model->email = $data['email'];
         $model->password = $data['password'];
         $model->profile_image = $data['profile_image'] ?? null;
 
@@ -29,6 +31,7 @@ class UserRepository extends Repository
     {
         $model = $this->_db->find($id);
         $model->username = $data['username'] ?? $model->username;
+        $model->email = $data['email'] ?? $model->email;
         $model->password = ($data['password'] ?? false) ? $data['password'] : $model->password;
         $model->profile_image = (array_key_exists('profile_image', $data)) ? $data['profile_image'] : $model->profile_image;
 
@@ -43,6 +46,7 @@ class UserRepository extends Repository
 
         $data = $this->_db->select('id', 'username')
             ->where('username', 'LIKE', "%$user%")
+            ->whereNull('teacher_user_id')
             ->skip($data['offset'])->take($data['result_count'])
             ->get();
 
@@ -59,6 +63,7 @@ class UserRepository extends Repository
 
         $totalCount = $this->_db
             ->where('username', 'LIKE', "%$user%")
+            ->whereNull('teacher_user_id')
             ->count();
 
         return $totalCount;

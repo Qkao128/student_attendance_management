@@ -55,7 +55,7 @@ class StudentAdminController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $classId, $id)
     {
 
         $data = $request->only([
@@ -64,7 +64,7 @@ class StudentAdminController extends Controller
             'user_id'
         ]);
 
-        $result = $this->_studentAdminService->update($data, $id);
+        $result = $this->_studentAdminService->update($data, $classId, $id);
 
         if ($result == null) {
             $errorMessage = implode("<br>", $this->_studentAdminService->_errorMessage);

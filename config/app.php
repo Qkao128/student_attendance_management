@@ -124,7 +124,6 @@ return [
 
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
-        'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
     /*
@@ -168,6 +167,8 @@ return [
 
         App\Providers\AppServiceProvider::class,
         App\Providers\AuthServiceProvider::class,
+        App\Providers\RouteServiceProvider::class,
+        Spatie\Permission\PermissionServiceProvider::class,
         Yajra\DataTables\DataTablesServiceProvider::class,
         /*
          * Package Service Providers...

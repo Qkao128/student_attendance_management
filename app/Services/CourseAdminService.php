@@ -3,10 +3,12 @@
 namespace App\Services;
 
 use Exception;
+use App\Enums\UserType;
 use App\Services\Service;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 use App\Repositories\CourseRepository;
+use Illuminate\Support\Facades\Validator;
 
 class CourseAdminService extends Service
 {
@@ -24,7 +26,7 @@ class CourseAdminService extends Service
         try {
 
             $validator = Validator::make($data, [
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|max:255|unique:courses,name',
             ]);
 
             if ($validator->fails()) {
@@ -33,6 +35,10 @@ class CourseAdminService extends Service
                 }
 
                 return null;
+            }
+
+            if (!Auth::check() || !Auth::user()->hasRole(UserType::SuperAdmin()->key)) {
+                throw new Exception('You do not have permission to perform this action.');
             }
 
             $course = $this->_courseRepository->save($data);
@@ -71,7 +77,7 @@ class CourseAdminService extends Service
 
         try {
             $validator = Validator::make($data, [
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|max:255|unique:courses,name,' . $id,
             ]);
 
             if ($validator->fails()) {
@@ -79,6 +85,10 @@ class CourseAdminService extends Service
                     array_push($this->_errorMessage, $error);
                 }
                 return null;
+            }
+
+            if (!Auth::check() || !Auth::user()->hasRole(UserType::SuperAdmin()->key)) {
+                throw new Exception('You do not have permission to perform this action.');
             }
 
             $course = $this->_courseRepository->getById($id);
@@ -100,6 +110,16 @@ class CourseAdminService extends Service
         DB::beginTransaction();
 
         try {
+
+            $course = $this->_courseRepository->getById($id);
+
+            if (!Auth::check() || !Auth::user()->hasRole(UserType::SuperAdmin()->key)) {
+                throw new Exception('You do not have permission to perform this action.');
+            }
+
+            if ($course == null) {
+                throw new Exception();
+            }
 
             $course = $this->_courseRepository->deleteById($id);
 

@@ -3,10 +3,10 @@
 namespace App\Services;
 
 use Exception;
+use App\Enums\UserType;
 use App\Services\Service;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 use App\Repositories\ClassRepository;
 use Illuminate\Support\Facades\Validator;
 use App\Repositories\ClassTeacherRepository;
@@ -30,7 +30,7 @@ class ClassAdminService extends Service
         try {
 
             $validator = Validator::make($data, [
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|max:255|unique:classes,name',
                 'course_id' => 'required|exists:courses,id',
                 'user_id' => 'required|exists:users,id',
             ]);
@@ -43,8 +43,8 @@ class ClassAdminService extends Service
                 return null;
             }
 
-            if (!Gate::allows('admin', Auth::user())) {
-                throw new Exception();
+            if (!Auth::check() || !Auth::user()->hasRole(UserType::SuperAdmin()->key)) {
+                throw new Exception('You do not have permission to perform this action.');
             }
 
             $existingClass = $this->_classRepository->getByCourseAndName($data['course_id'], $data['name']);
@@ -96,7 +96,7 @@ class ClassAdminService extends Service
 
         try {
             $validator = Validator::make($data, [
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|max:255|unique:classes,name,' . $id,
                 'course_id' => 'required|exists:courses,id',
                 'user_id' => 'required|exists:users,id',
             ]);
@@ -108,9 +108,8 @@ class ClassAdminService extends Service
                 return null;
             }
 
-
-            if (!Gate::allows('admin', Auth::user())) {
-                throw new Exception();
+            if (!Auth::check() || !Auth::user()->hasRole(UserType::SuperAdmin()->key)) {
+                throw new Exception('You do not have permission to perform this action.');
             }
 
             $class = $this->_classRepository->getById($id);
@@ -151,8 +150,12 @@ class ClassAdminService extends Service
         try {
             $class = $this->_classRepository->getById($id);
 
-            if (!Gate::allows('admin', Auth::user()) || $class == null) {
+            if ($class == null) {
                 throw new Exception();
+            }
+
+            if (!Auth::check() || !Auth::user()->hasRole(UserType::SuperAdmin()->key)) {
+                throw new Exception('You do not have permission to perform this action.');
             }
 
             $class = $this->_classRepository->deleteById($id);

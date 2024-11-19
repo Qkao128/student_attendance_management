@@ -53,19 +53,19 @@
                         @csrf
                         <div class="row w-100 p-2 g-3" id="add-class-modal-content">
                             <div class="form-group col-12 col-md-6">
-                                <label class="form-label" for="course_id">Course</label>
+                                <label class="form-label" for="course_id">Course<span class="text-danger">*</span></label>
                                 <select class="form-select" id="course_id" name="course_id" required style="width:100%;">
                                 </select>
                             </div>
 
                             <div class="form-group col-12 col-md-6">
-                                <label class="form-label" for="user_id">Teacher</label>
+                                <label class="form-label" for="user_id">Teacher<span class="text-danger">*</span></label>
                                 <select class="form-select" id="user_id" name="user_id" required style="width:100%;">
                                 </select>
                             </div>
 
                             <div class="form-group col-12">
-                                <label class="form-label" for="class">Name</label>
+                                <label class="form-label" for="class">Name<span class="text-danger">*</span></label>
                                 <input type="text" class="form-control" id="class" name="name"
                                     value="{{ old('name') }}" placeholder="Enter name" required>
                             </div>

@@ -16,10 +16,22 @@ class UserSeeder extends Seeder
     {
         $user = User::create([
             'username' => 'admin',
-            'password' => bcrypt('12345'),
+            'email' => 'admin@admin.com',
+            'password' => bcrypt('12345678'),
             'profile_image' => null,
             'teacher_user_id' => null,
             'student_id' => null,
         ]);
+
+        $user->assignRole(UserType::SuperAdmin()->key);
+
+        $user = User::create([
+            'username' => 'teacher',
+            'email' => 'teacher@teacher.com',
+            'password' => bcrypt('12345678'),
+            'profile_image' => null,
+        ]);
+
+        $user->assignRole(UserType::Admin()->key);
     }
 }

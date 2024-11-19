@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('profile_image')->nullable();
             $table->string('username')->unique();
+            $table->string('email')->unique();
             $table->string('password');
             $table->unsignedBigInteger('teacher_user_id')->nullable();
             $table->foreign('teacher_user_id')->references('id')->on('users')->onDelete('cascade');

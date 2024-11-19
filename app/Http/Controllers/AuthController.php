@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserType;
 use Illuminate\Http\Request;
 use App\Services\AuthService;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
+
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Redirect;
 
 class AuthController extends Controller
 {
@@ -19,31 +22,12 @@ class AuthController extends Controller
 
     public function loginIndex()
     {
-        if (Auth::check()) {
-            $user = Auth::user();
-
-            if (Gate::allows('admin')) {
-                return Redirect::route('dashboard')->with('error', 'You are already logged.');
-            } elseif (Gate::allows('monitor')) {
-                return Redirect::route('dashboard.monitor')->with('error', 'You are already logged.');
-            }
-        }
-
         return view('public/login');
     }
 
     public function login(Request $request)
     {
         $data = $request->only(['username', 'password']);
-
-        if (Auth::check()) {
-            $user = Auth::user();
-            if (Gate::allows('admin')) {
-                return Redirect::route('dashboard')->with('error', 'You are already logged.');
-            } elseif (Gate::allows('monitor')) {
-                return Redirect::route('dashboard.monitor')->with('error', 'You are already logged.');
-            }
-        }
 
         $result = $this->_authService->loginUser($data);
 
@@ -52,11 +36,9 @@ class AuthController extends Controller
             return back()->with('error', $errorMessage)->withInput();
         }
 
-        $user = Auth::user();
-
-        if (Gate::allows('admin')) {
+        if (Auth::user()->hasRole(UserType::SuperAdmin()->key)) {
             return Redirect::route('dashboard')->with('success', "Login successfully.");
-        } elseif (Gate::allows('monitor')) {
+        } elseif (Auth::user()->hasRole(UserType::Monitor()->key)) {
             return Redirect::route('dashboard.monitor')->with('success', "Login successfully.");
         }
 
