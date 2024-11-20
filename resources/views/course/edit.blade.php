@@ -21,20 +21,12 @@
             </div>
         </div>
 
-        <div class="row align-items-center g-2">
-            <div class="col">
-                <h4 class="header-title">Edit Course</h4>
-            </div>
-            <div class="col-12 col-md-auto mt-0">
-                <div class="d-flex float-end align-items-center">
-                    <a href="{{ route('course.index') }}" class="btn btn-dark rounded-4 text-white">
-                        <i class="fa-solid fa-angle-left text-white"></i>
-                        Back
-                    </a>
-                </div>
-            </div>
+        <div class="text-end">
+            <a href="{{ route('course.index') }}" class="btn btn-dark rounded-4 text-white">
+                <i class="fa-solid fa-angle-left text-white"></i>
+                Back
+            </a>
         </div>
-
 
         <div class="container mt-4" id="edit-course-section-{{ $course->id }}">
             <div class="card">
