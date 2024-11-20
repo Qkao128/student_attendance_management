@@ -8,15 +8,7 @@
                 <i class="fa-solid fa-circle-xmark fs-3"></i>
             </button>
 
-            <li class="sidebar-logo text-center p-2">
-                <a href="{{ route('dashboard') }}">
-                    <img src="{{ asset('img/logo.png') }}" />
-                </a>
-            </li>
-
-            <hr class="m-0">
-
-            <li class="text-muted sidebar-header my-3">
+            <li class="text-muted sidebar-header mb-3">
                 Dashboard
             </li>
 
@@ -70,12 +62,22 @@
                 </a>
             </li>
 
-            <li class="sidebar-item  ">
+            <li class="sidebar-item">
                 <a class="sidebar-link" href="">
-                    <span class="pc-micon" style="margin-left: -3px !important;">
+                    <span class="pc-micon" style="margin-left: -2px !important;">
                         <i class="fa-solid fa-chart-column"></i>
                     </span>
                     Attendance Statistics
+
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="">
+                    <span class="pc-micon" style="margin-left: -2px !important;">
+                        <i class="fa-solid fa-calendar-days"></i>
+                    </span>
+                    Manage Holidays
 
                 </a>
             </li>

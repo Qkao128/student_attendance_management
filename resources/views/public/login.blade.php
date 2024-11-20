@@ -11,9 +11,6 @@
         <div class="col-sm-2 col-md-3"></div>
         <div class="col card border-5">
             <div class="card-header bg-light d-flex flex-column justify-content-center align-items-center mb-4 mt-4">
-                <div class="auth-logo-container mb-3" style="max-width: 300px">
-                    <img class="w-100" src="{{ asset('img/logo.png') }}" id="auth-logo">
-                </div>
                 <h1 class="fw-bold" style="text-shadow: 1px 5px rgb(221, 221, 221);">Login</h1>
             </div>
             <div class="card-body pt-0 mb-4">
