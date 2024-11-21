@@ -188,7 +188,7 @@ class StudentAdminService extends Service
 
         try {
             $class = $this->_classRepository->getById($classId);
-            $student = $this->_studentRepository->getById($id);
+            $student = $this->_studentRepository->getStudentByClassIdAndId($classId, $id);
 
             if (!Auth::check() || !Auth::user()->hasAnyRole([UserType::SuperAdmin()->key, UserType::Admin()->key])) {
                 throw new Exception('You do not have permission to perform this action.');
