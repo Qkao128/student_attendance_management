@@ -309,7 +309,7 @@
                         render: function(data, type, row) {
                             var imageUrl = data.profile_image ?
                                 `{{ asset('storage/profile_image') }}/${data.profile_image}` :
-                                `{{ asset('img/default-avatar.png') }}`;
+                                `{{ asset('img/default-teacher-avatar.png') }}`;
                             var name = data.name;
                             return `
                                 <div class="d-flex align-items-center">
