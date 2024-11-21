@@ -44,4 +44,9 @@ class StudentRepository extends Repository
         $model->update();
         return $model;
     }
+
+    public function getStudentByClassIdAndId($classId, $id)
+    {
+        return $this->_db->where('class_id', $classId)->where('id', $id)->get();
+    }
 }
