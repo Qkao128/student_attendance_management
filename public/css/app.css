@@ -22669,11 +22669,6 @@ readers do not read off random characters that represent icons */
   padding: 30px 20px;
   margin-bottom: 0;
 }
-#admin-portal #sidebar .sidebar-nav .sidebar-logo img {
-  width: 80%;
-  margin-bottom: 20px;
-  padding-right: 10px;
-}
 #admin-portal #sidebar .sidebar-nav .sidebar-item {
   margin-bottom: 10px;
   text-decoration: none;
@@ -22758,10 +22753,6 @@ readers do not read off random characters that represent icons */
   }
   #admin-portal #sidebar #sidebar-background {
     width: 300px;
-  }
-  #admin-portal #sidebar .sidebar-logo img {
-    width: 150px !important;
-    padding-right: 0px;
   }
   #admin-portal .main {
     margin: 0px;
@@ -22858,11 +22849,6 @@ readers do not read off random characters that represent icons */
   padding-bottom: 20px;
   margin-bottom: 0;
 }
-#main-portal #sidebar .sidebar-nav .sidebar-logo img {
-  width: 80%;
-  margin-bottom: 20px;
-  padding-right: 10px;
-}
 #main-portal #sidebar .sidebar-nav .sidebar-item {
   margin-bottom: 10px;
   border-top-right-radius: 20px;
@@ -22911,10 +22897,6 @@ readers do not read off random characters that represent icons */
   }
   #main-portal #sidebar #sidebar-background {
     width: 100vw;
-  }
-  #main-portal #sidebar .sidebar-logo img {
-    width: 300px !important;
-    padding-right: 0px;
   }
   #main-portal .main {
     margin: 0px;
@@ -23632,6 +23614,21 @@ body {
   top: 50%;
   transform: translate(-50%, -50%);
   width: 65px;
+}
+
+.circle-img-lg-wrap {
+  height: 130px;
+  width: 130px;
+  overflow: hidden;
+  position: relative;
+}
+.circle-img-lg-wrap img {
+  height: 130px;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: auto;
 }
 
 @media (max-width: 575.98px) {

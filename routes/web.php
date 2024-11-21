@@ -65,7 +65,7 @@ Route::prefix('admin')->middleware(['auth', 'check_role:' . UserType::SuperAdmin
     // 學生管理
     Route::name('student.')->prefix('student')->group(function () {
         Route::post('{classId}/', [StudentAdminController::class, 'store'])->name('store');
-        Route::get('{classId}/{id}', [StudentAdminController::class, 'edit'])->name('edit');
+        Route::get('{classId}/{id}/edit', [StudentAdminController::class, 'edit'])->name('edit');
         Route::patch('{classId}/{id}', [StudentAdminController::class, 'update'])->name('update');
         Route::delete('{classId}/{id}', [StudentAdminController::class, 'destroy'])->name('destroy');
     });

@@ -294,11 +294,14 @@
                 columns: [{
                         data: null,
                         name: "id",
-                        orderable: true, // 允许排序
+                        orderable: true,
                         searchable: false,
                         render: function(data, type, row, meta) {
-                            // 使用DataTables提供的行索引生成序号
-                            return meta.row + 1;
+                            var order = meta.settings.aaSorting[0];
+                            var isDesc = order[1] === 'desc';
+                            var totalRows = meta.settings.json ? meta.settings.json.recordsTotal :
+                                0;
+                            return isDesc ? totalRows - meta.row : meta.row + 1;
                         }
                     }, {
                         data: null,
@@ -306,7 +309,7 @@
                         render: function(data, type, row) {
                             var imageUrl = data.profile_image ?
                                 `{{ asset('storage/profile_image') }}/${data.profile_image}` :
-                                `{{ asset('img/default-teacher-avatar.png') }}`;
+                                `{{ asset('img/default-avatar.png') }}`;
                             var name = data.name;
                             return `
                                 <div class="d-flex align-items-center">
@@ -340,7 +343,7 @@
                         searchable: false,
                         render: function(data, type, row) {
                             var editUrl =
-                                `{{ route('student.update', ['classId' => ':classId', 'id' => ':id']) }}`
+                                `{{ route('student.edit', ['classId' => ':classId', 'id' => ':id']) }}`
                                 .replace(':classId', row.class_id)
                                 .replace(':id', row.id);
                             var deleteUrl =
