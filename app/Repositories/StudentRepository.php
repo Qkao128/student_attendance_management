@@ -37,7 +37,9 @@ class StudentRepository extends Repository
     public function update($data, $id)
     {
         $model = $this->_db->find($id);
-        $model->student = $data['student'] ?? $model->student;
+        $model->name = $data['name'] ?? $model->name;
+        $model->gender = $data['gender'] ?? $model->gender;
+        $model->profile_image = (array_key_exists('profile_image', $data)) ? $data['profile_image'] : $model->profile_image;
 
         $model->update();
         return $model;

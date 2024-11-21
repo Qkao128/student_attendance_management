@@ -111,9 +111,9 @@ class StudentAdminService extends Service
 
         try {
             $validator = Validator::make($data, [
-                'class' => 'required|string|max:255',
-                'course_id' => 'required|exists:courses,id',
-                'user_id' => 'required|exists:users,id',
+                'profile_image' => 'nullable|file|mimes:jpeg,png,jpg|max:512000',
+                'name' => 'required|string|max:255',
+                'gender' => 'required|string|in:male,female',
             ]);
 
             if ($validator->fails()) {
@@ -143,6 +143,23 @@ class StudentAdminService extends Service
 
             if ($student == null) {
                 throw new Exception();
+            }
+
+            if (isset($data['profile_image'])) {
+                if (!empty($data['profile_image'])) {
+                    if ($student['profile_image'] != null && Storage::exists('public/profile_image/' . $student['profile_image'])) {
+                        Storage::delete('public/profile_image/' . $student['profile_image']);
+                    }
+
+                    $fileName = $this->generateFileName();
+                    $fileExtension = $data['profile_image']->extension();
+                    $fileName = $fileName . '.' . $fileExtension;
+
+                    $data['profile_image']->storeAs('public/profile_image', $fileName);
+                    $data['profile_image'] = $fileName;
+                } else {
+                    $data['profile_image'] = null;
+                }
             }
 
             $student = $this->_studentRepository->update($data, $id);

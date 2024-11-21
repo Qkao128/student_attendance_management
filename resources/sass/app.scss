@@ -133,6 +133,22 @@ body{
     }
 }
 
+.circle-img-lg-wrap {
+    height: 130px;
+    width: 130px;
+    overflow: hidden;
+    position: relative;
+
+    img {
+        height: 130px;
+        left: 50%;
+        position: absolute;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: auto;
+    }
+}
+
 @include media-breakpoint-down(sm) {
     .circle-img-sm-wrap {
         height: 45px;

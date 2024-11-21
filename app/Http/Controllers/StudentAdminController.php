@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Student;
 use Illuminate\Http\Request;
-use Yajra\DataTables\DataTables;
-use Illuminate\Support\Facades\DB;
+use App\Services\ClassAdminService;
 use App\Services\StudentAdminService;
 use Illuminate\Support\Facades\Redirect;
 
@@ -13,10 +11,12 @@ use Illuminate\Support\Facades\Redirect;
 class StudentAdminController extends Controller
 {
     private $_studentAdminService;
+    private $_classAdminService;
 
-    public function __construct(StudentAdminService $studentAdminService)
+    public function __construct(StudentAdminService $studentAdminService, ClassAdminService $classAdminService)
     {
         $this->_studentAdminService = $studentAdminService;
+        $this->_classAdminService = $classAdminService;
     }
 
     public function store(Request $request, $classId)
@@ -38,20 +38,21 @@ class StudentAdminController extends Controller
         return Redirect::route('class.show', $classId)->with('success', "Student successfully added.");
     }
 
-    public function edit($id)
+    public function edit($classId, $id)
     {
-        $course = $this->_studentAdminService->getById($id);
+        $class = $this->_classAdminService->getById($classId);
+        $student = $this->_studentAdminService->getById($id);
 
-        if ($course === false) {
+        if ($student === false || $class === false) {
             abort(404);
         }
 
-        if ($course === false) {
+        if ($student === false || $class === false) {
             $errorMessage = implode("<br>", $this->_studentAdminService->_errorMessage);
             return back()->with('error', $errorMessage)->withInput();
         }
 
-        return view('class/edit', compact('class', 'course', 'user'));
+        return view('class/student/edit', compact('class', 'student'));
     }
 
 
@@ -59,10 +60,11 @@ class StudentAdminController extends Controller
     {
 
         $data = $request->only([
-            'class',
-            'course_id',
-            'user_id'
+            'profile_image',
+            'name',
+            'gender',
         ]);
+
 
         $result = $this->_studentAdminService->update($data, $classId, $id);
 
@@ -71,7 +73,7 @@ class StudentAdminController extends Controller
             return back()->with('error', $errorMessage)->withInput();
         }
 
-        return Redirect::route('class.index')->with('success', "Student details successfully updated.");
+        return Redirect::route('class.show', $classId)->with('success', "Student details successfully updated.");
     }
 
     public function destroy($classId, $id)
