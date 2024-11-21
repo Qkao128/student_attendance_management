@@ -348,6 +348,7 @@
                                 .replace(':id', row.id);
                             var deleteUrl =
                                 `{{ route('student.destroy', ['classId' => ':classId', 'id' => ':id']) }}`
+                                .replace(':classId', row.class_id)
                                 .replace(':id', row.id);
                             return `<div class="d-flex justify-content-center align-items-center gap-2">
                                 <a href="${editUrl}" class="btn btn-warning rounded-pill"><i class="fa-solid fa-pen-nib"></i></a>
