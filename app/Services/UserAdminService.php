@@ -3,11 +3,14 @@
 namespace App\Services;
 
 use Exception;
+use App\Enums\UserType;
 use App\Services\Service;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use App\Repositories\UserRepository;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class UserAdminService extends Service
@@ -26,8 +29,9 @@ class UserAdminService extends Service
         try {
 
             $validator = Validator::make($data, [
-                'profile_image' => 'nullable|file|mimes:jpeg,png,jpg|max:512000',
+                'profile_image' => 'nullable|mimes:jpeg,png,jpg|max:512000',
                 'username' => 'required|string|max:255|unique:users,username',
+                'email' => 'required|email|unique:users,email',
                 'password' => 'required|confirmed|min:8',
             ]);
 
@@ -35,12 +39,25 @@ class UserAdminService extends Service
                 foreach ($validator->errors()->all() as $error) {
                     array_push($this->_errorMessage, $error);
                 }
-
                 return null;
             }
 
+            if (Auth::user()->hasAnyRole(UserType::SuperAdmin()->key)) {
+                throw new Exception();
+            }
+
+            if (isset($data['profile_image']) && !empty($data['profile_image'])) {
+                $fileName = $this->generateFileName();
+                $fileExtension = $data['profile_image']->extension();
+                $fileName = $fileName . '.' . $fileExtension;
+
+                $data['profile_image']->storeAs('public/profile_image', $fileName);
+
+                $data['profile_image'] = $fileName;
+            }
 
             $user = $this->_userRepository->save($data);
+            $user->assignRole(UserType::Admin()->key);
 
             DB::commit();
             return $user;
@@ -77,9 +94,10 @@ class UserAdminService extends Service
 
         try {
             $validator = Validator::make($data, [
-                'name' => 'required|string|max:255',
-                'course_id' => 'required|exists:courses,id',
-                'user_id' => 'required|exists:users,id',
+                'profile_image' => 'nullable|file|mimes:jpeg,png,jpg|max:512000',
+                'username' => 'required|string|max:255|unique:users,username' . $id,
+                'email' => 'required|email|unique:users,email' . $id,
+                'password' => 'required|confirmed|min:8',
             ]);
 
             if ($validator->fails()) {
@@ -89,26 +107,23 @@ class UserAdminService extends Service
                 return null;
             }
 
-
-            if (!Gate::allows('admin', Auth::user())) {
-                throw new Exception();
-            }
-
             $user = $this->_userRepository->getById($id);
 
-
-            if ($user == null) {
+            if ($user == null || $user->hasAnyRole(UserType::Admin()->key) != true || $user->hasAnyRole(UserType::SuperAdmin()->key) != true) {
                 throw new Exception();
             }
 
+            if (!empty($data['profile_image'])) {
+                if ($user['profile_image'] != null && Storage::exists('public/profile_image/' . $user['profile_image'])) {
+                    Storage::delete('public/profile_image/' . $user['profile_image']);
+                }
 
-            $existingClass = $this->_userRepository->getByCourseAndName($data['course_id'], $data['name']);
+                $fileName = $this->generateFileName();
+                $fileExtension = $data['profile_image']->extension();
+                $fileName = $fileName . '.' . $fileExtension;
 
-            if ($existingClass && $existingClass->id !== $id) {
-                array_push($this->_errorMessage, "This name already exists for this course.");
-
-                DB::rollBack();
-                return null;
+                $data['profile_image']->storeAs('public/profile_image', $fileName);
+                $data['profile_image'] = $fileName;
             }
 
             $user = $this->_userRepository->update($data, $id);
@@ -116,20 +131,64 @@ class UserAdminService extends Service
             DB::commit();
             return $user;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to update user details.");
+            array_push($this->_errorMessage, "Fail to update staff details.");
+
             DB::rollBack();
             return null;
         }
     }
+
+    public function updatePassword($data, $id)
+    {
+        DB::beginTransaction();
+
+        try {
+            $validator = Validator::make($data, [
+                'password' => 'required|confirmed|min:8',
+            ]);
+
+            if ($validator->fails()) {
+                foreach ($validator->errors()->all() as $error) {
+                    array_push($this->_errorMessage, $error);
+                }
+
+                return null;
+            }
+
+            $user = $this->_userRepository->getById($id);
+
+            if ($user == null || $user->hasAnyRole(UserType::Admin()->key) != true) {
+                throw new Exception();
+            }
+
+            $user = $this->_userRepository->update($data, $id);
+
+            DB::commit();
+            return $user;
+        } catch (Exception $e) {
+            array_push($this->_errorMessage, "Fail to update password.");
+
+            DB::rollBack();
+            return null;
+        }
+    }
+
 
     public function deleteById($id)
     {
         DB::beginTransaction();
 
         try {
+            if ($id == Auth::id()) {
+                array_push($this->_errorMessage, "You are not allowed to delete own account");
+
+                DB::rollBack();
+                return null;
+            }
+
             $user = $this->_userRepository->getById($id);
 
-            if (!Gate::allows('admin', Auth::user()) || $user == null) {
+            if ($user == null || $user->hasAnyRole(UserType::Admin()->key) != true) {
                 throw new Exception();
             }
 
@@ -138,7 +197,7 @@ class UserAdminService extends Service
             DB::commit();
             return $user;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to delete user details.");
+            array_push($this->_errorMessage, "Fail to delete account.");
 
             DB::rollBack();
             return null;
@@ -168,5 +227,11 @@ class UserAdminService extends Service
             DB::rollBack();
             return null;
         }
+    }
+
+
+    public function generateFileName()
+    {
+        return Str::random(5) . Str::uuid() . Str::random(5);
     }
 }

@@ -1,6 +1,6 @@
 @extends('layout/layout')
 
-@section('page_title', 'Dashboard')
+@section('page_title', 'Course')
 
 @section('content')
     <div id="admin-course">

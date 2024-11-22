@@ -31,10 +31,11 @@ Route::prefix('admin')->middleware(['auth', 'check_role:' . UserType::SuperAdmin
     })->name('dashboard');
 
     // 使用者管理
-    Route::name('user.')->prefix('user')->group(function () {
+    Route::name('user.')->prefix('account')->group(function () {
         Route::get('/', [UserAdminController::class, 'index'])->name('index');
         Route::post('/', [UserAdminController::class, 'store'])->name('store');
         Route::get('{id}/edit', [UserAdminController::class, 'edit'])->name('edit');
+        Route::patch('change-password/{id}', [UserAdminController::class, 'updatePassword'])->name('password.update');
         Route::patch('{id}', [UserAdminController::class, 'update'])->name('update');
         Route::get('select-search', [UserAdminController::class, 'selectOption'])->name('select_search');
         Route::get('{id}', [UserAdminController::class, 'show'])->name('show');

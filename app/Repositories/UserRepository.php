@@ -20,7 +20,7 @@ class UserRepository extends Repository
         $model = new User;
         $model->username = $data['username'];
         $model->email = $data['email'];
-        $model->password = $data['password'];
+        $model->password = Hash::make($data['password']);
         $model->profile_image = $data['profile_image'] ?? null;
 
         $model->save();

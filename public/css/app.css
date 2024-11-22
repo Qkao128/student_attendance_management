@@ -23623,12 +23623,12 @@ body {
   position: relative;
 }
 .circle-img-lg-wrap img {
-  height: 130px;
+  width: 130px;
   left: 50%;
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: auto;
+  height: auto;
 }
 
 @media (max-width: 575.98px) {

@@ -89,8 +89,8 @@
                 Setting
             </li>
 
-            <li class="sidebar-item">
-                <a class="sidebar-link" href="{{ route('dashboard') }}">
+            <li class="sidebar-item {{ Request::routeIs('user.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('user.index') }}">
                     <span class="pc-micon" style="margin-top: -2px !important;margin-left: -4px !important;">
                         <i class="fa-solid fa-user-tie"></i>
                     </span>

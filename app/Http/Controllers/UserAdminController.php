@@ -18,7 +18,7 @@ class UserAdminController extends Controller
 
     public function index()
     {
-        return view('user/index');
+        return view('account/index');
     }
 
     public function store(Request $request)
@@ -26,10 +26,10 @@ class UserAdminController extends Controller
         $data = $request->only([
             'profile_image',
             'username',
+            'email',
             'password',
             'password_confirmation',
         ]);
-
         $result = $this->_userAdminService->createUser($data);
 
 
@@ -38,7 +38,7 @@ class UserAdminController extends Controller
             return back()->with('error', $errorMessage)->withInput();
         }
 
-        return Redirect::route('user.index')->with('success', "User successfully added.");
+        return Redirect::route('user.index')->with('success', "Account successfully added.");
     }
 
     public function show($id)
@@ -54,7 +54,7 @@ class UserAdminController extends Controller
             return back()->with('error', $errorMessage)->withInput();
         }
 
-        return view('user/show', compact('user'));
+        return view('account/show', compact('user'));
     }
 
 
@@ -71,7 +71,7 @@ class UserAdminController extends Controller
             return back()->with('error', $errorMessage)->withInput();
         }
 
-        return view('user/edit', compact('user'));
+        return view('account/edit', compact('user'));
     }
 
 
@@ -79,9 +79,9 @@ class UserAdminController extends Controller
     {
 
         $data = $request->only([
-            'name',
-            'course_id',
-            'user_id'
+            'profile_image',
+            'username',
+            'email',
         ]);
 
         $result = $this->_userAdminService->update($data, $id);
@@ -91,11 +91,29 @@ class UserAdminController extends Controller
             return back()->with('error', $errorMessage)->withInput();
         }
 
-        return Redirect::route('user.index')->with('success', "User details successfully updated.");
+        return Redirect::route('user.index')->with('success', "Account details successfully updated.");
+    }
+
+    public function updatePassword(Request $request, $id)
+    {
+        $data = $request->only([
+            'password',
+            'password_confirmation',
+        ]);
+
+        $result = $this->_userAdminService->updatePassword($data, $id);
+
+        if ($result == null) {
+            $errorMessage = implode("<br>", $this->_userAdminService->_errorMessage);
+            return back()->with('error', $errorMessage)->withInput();
+        }
+
+        return back()->with('success', "Password successfully updated.");
     }
 
     public function destroy($id)
     {
+
         $result = $this->_userAdminService->deleteById($id);
 
         if ($result == null) {
@@ -103,7 +121,7 @@ class UserAdminController extends Controller
             return back()->with('error', $errorMessage)->withInput();
         }
 
-        return Redirect::route('user.index')->with('success', "User successfully deleted.");
+        return Redirect::route('user.index')->with('success', "Account successfully deleted.");
     }
 
 
