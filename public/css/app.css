@@ -22798,6 +22798,63 @@ readers do not read off random characters that represent icons */
   color: #747474;
   opacity: 1;
 }
+#admin-portal .status-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 44px;
+  height: 44px;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+#admin-portal .status-updated-icon {
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+#admin-portal .status-updated-icon.selected {
+  color: #fff !important;
+}
+#admin-portal .status-updated-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+#admin-portal .detail-text {
+  display: block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+#admin-portal .border-present {
+  border: 3px solid #32CD32;
+  color: #32CD32;
+}
+#admin-portal .border-absence {
+  border: 3px solid #EE0000;
+  color: #EE0000;
+}
+#admin-portal .border-medical {
+  border: 3px solid #2222FF;
+  color: #2222FF;
+}
+#admin-portal .border-late {
+  border: 3px solid #007777;
+  color: #007777;
+}
+#admin-portal .border-leave-approval {
+  border: 3px solid #000000;
+  color: #000000;
+}
+#admin-portal #icon {
+  margin-bottom: -10px;
+}
 
 #main-portal {
   font-family: "Plus Jakarta Sans", sans-serif !important;
@@ -23593,12 +23650,11 @@ body {
   position: relative;
 }
 .circle-img-sm-wrap img {
-  height: 55px;
+  width: 55px;
   left: 50%;
   position: absolute;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: auto;
 }
 
 .circle-img-md-wrap {
@@ -23617,6 +23673,7 @@ body {
 }
 
 .circle-img-lg-wrap {
+  background-color: #000000;
   height: 130px;
   width: 130px;
   overflow: hidden;

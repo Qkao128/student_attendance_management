@@ -223,4 +223,67 @@
             }
         }
     }
+
+
+
+    .status-icon {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 44px;
+        height: 44px;
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .status-updated-icon {
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+
+        &.selected {
+            color: #fff !important;
+        }
+    }
+
+    .status-updated-icon{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 36px;
+        height: 36px;
+        font-size: 14px;
+        font-weight: bold;
+        text-transform: uppercase;
+    }
+
+    .border-present {
+        border: 3px solid #32CD32;
+        color: #32CD32;
+    }
+
+    .border-absence {
+        border: 3px solid #EE0000;
+        color: #EE0000;
+    }
+
+    .border-medical {
+        border: 3px solid #2222FF;
+        color: #2222FF;
+    }
+
+    .border-late {
+        border: 3px solid #007777;
+        color: #007777;
+    }
+
+    .border-leave-approval{
+        border: 3px solid #000000;
+        color: #000000;
+    }
+
+    #icon{
+        margin-bottom: -10px;
+    }
+
 }

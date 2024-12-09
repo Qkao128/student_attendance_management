@@ -49,4 +49,15 @@ class StudentRepository extends Repository
     {
         return $this->_db->where('class_id', $classId)->where('id', $id)->get();
     }
+
+    public function getByClassId($id)
+    {
+
+        return $this->_db->where('class_id', $id)->get();
+    }
+
+    public function getStudentCountByClassId($classId)
+    {
+        return $this->_db->where('class_id', $classId)->count();
+    }
 }

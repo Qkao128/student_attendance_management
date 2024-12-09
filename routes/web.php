@@ -7,6 +7,7 @@ use App\Http\Controllers\UserAdminController;
 use App\Http\Controllers\ClassAdminController;
 use App\Http\Controllers\CourseAdminController;
 use App\Http\Controllers\StudentAdminController;
+use App\Http\Controllers\AttendanceAdminController;
 
 
 Route::get('/', function () {
@@ -65,14 +66,21 @@ Route::prefix('admin')->middleware(['auth', 'check_role:' . UserType::SuperAdmin
 
     // 學生管理
     Route::name('student.')->prefix('student')->group(function () {
-        Route::post('{classId}/', [StudentAdminController::class, 'store'])->name('store');
+        Route::post('{classId}', [StudentAdminController::class, 'store'])->name('store');
         Route::get('{classId}/{id}/edit', [StudentAdminController::class, 'edit'])->name('edit');
         Route::patch('{classId}/{id}', [StudentAdminController::class, 'update'])->name('update');
         Route::delete('{classId}/{id}', [StudentAdminController::class, 'destroy'])->name('destroy');
     });
 
     Route::post('datatable', [StudentAdminController::class, 'datatable'])->name('datatable');
-    //
+
+    // 出席管理
+    Route::name('attendance.')->prefix('attendance')->group(function () {
+        Route::get('/', [AttendanceAdminController::class, 'index'])->name('index');
+        Route::post('{classId}/{date?}', [AttendanceAdminController::class, 'store'])->name('store');
+        Route::get('{id}/{date?}', [AttendanceAdminController::class, 'show'])->name('show');
+        Route::delete('{id}', [AttendanceAdminController::class, 'destroy'])->name('destroy');
+    });
 });
 
 

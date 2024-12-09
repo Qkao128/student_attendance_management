@@ -99,7 +99,41 @@ class StudentAdminService extends Service
 
             return $class;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to get class details.");
+            array_push($this->_errorMessage, "Fail to get student details.");
+
+            return null;
+        }
+    }
+
+    public function getByClassId($id)
+    {
+        try {
+            $student = $this->_studentRepository->getByClassId($id);
+
+            if ($student == null) {
+                return false;
+            }
+
+            return $student;
+        } catch (Exception $e) {
+            array_push($this->_errorMessage, "Fail to get student details.");
+
+            return null;
+        }
+    }
+
+    public function getStudentCountByClassId($classId)
+    {
+        try {
+            $student = $this->_studentRepository->getStudentCountByClassId($classId);
+
+            if ($student == null) {
+                return false;
+            }
+
+            return $student;
+        } catch (Exception $e) {
+            array_push($this->_errorMessage, "Fail to get student details.");
 
             return null;
         }

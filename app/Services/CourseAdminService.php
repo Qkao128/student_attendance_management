@@ -70,6 +70,22 @@ class CourseAdminService extends Service
         }
     }
 
+    public function getByCourseId($id)
+    {
+        try {
+            $course = $this->_courseRepository->getByCourseId($id);
+
+            if ($course == null) {
+                return false;
+            }
+            return $course;
+        } catch (Exception $e) {
+            array_push($this->_errorMessage, "Fail to get course details.");
+
+            return null;
+        }
+    }
+
 
     public function update($data, $id)
     {
