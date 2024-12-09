@@ -2,7 +2,7 @@
     <div id="sidebar-background"></div>
 
 
-    <div class="sidebar-content" data-simplebar>
+    <div class="sidebar-content">
         <ul class="sidebar-nav">
             <button id="close-sidebar-btn" type="button" class="btn d-lg-none" onclick="toggleMobileNavigation()">
                 <i class="fa-solid fa-circle-xmark fs-3"></i>
@@ -53,8 +53,8 @@
                 Attendance
             </li>
 
-            <li class="sidebar-item">
-                <a class="sidebar-link" href="{{ route('dashboard') }}">
+            <li class="sidebar-item {{ Request::routeIs('attendance.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('attendance.index') }}">
                     <span class="pc-micon">
                         <i class="fa-solid fa-user-check"></i>
                     </span>
@@ -99,15 +99,22 @@
                 </a>
             </li>
 
-            <li class="sidebar-item  ">
-                <a class="sidebar-link" href="">
-                    <span class="pc-micon" style="margin-top: -2px !important;margin-left: -4px !important;">
-                        <i class="fa-solid fa-gear"></i>
-                    </span>
-                    Setting
 
-                </a>
+            <li class="sidebar-item">
+                <button type="button" class="dropdown-item" style="margin-left: 6px"
+                    onclick="$('#logout-form').submit();">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </div>
+                </button>
+
+
+                <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                    @csrf
+                </form>
+
             </li>
+
 
         </ul>
     </div>

@@ -59,4 +59,9 @@ class CourseRepository extends Repository
 
         return $totalCount;
     }
+
+    public function getByCourseId($courseId)
+    {
+        return $this->_db->where('id', $courseId)->first();
+    }
 }
