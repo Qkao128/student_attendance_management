@@ -54,10 +54,13 @@ class ClassList extends Component
                 'class_teachers.user_id',
                 'courses.name as course_name',
                 'users.username as user_name',
+                DB::raw('COUNT(students.id) as member_count'),
             ])
             ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
             ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
             ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+            ->leftJoin('students', 'classes.id', '=', 'students.class_id')
+            ->groupBy('classes.id', 'class_teachers.user_id', 'courses.name', 'users.username', 'classes.created_at')
             ->orderBy('classes.created_at', 'DESC');
 
         if (isset($this->filter['class'])) {

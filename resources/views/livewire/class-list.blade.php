@@ -108,7 +108,8 @@
                                     </div>
 
                                     <div class="col-12 mt-1">
-                                        {{ $class->created_at }}
+                                        <span class="badge bg-primary">{{ $class->member_count ?? 0 }}</span>
+                                        <i class="fa-solid fa-user ms-2"></i>
                                     </div>
                                 </div>
                             </div>
