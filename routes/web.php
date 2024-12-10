@@ -81,6 +81,13 @@ Route::prefix('admin')->middleware(['auth', 'check_role:' . UserType::SuperAdmin
         Route::get('{id}/{date?}', [AttendanceAdminController::class, 'show'])->name('show');
         Route::delete('{id}', [AttendanceAdminController::class, 'destroy'])->name('destroy');
     });
+
+    Route::name('holiday.')->prefix('holiday')->group(function () {
+        Route::get('/', [HolidayAdminController::class, 'index'])->name('index');
+        Route::post('{classId}/{date?}', [HolidayAdminController::class, 'store'])->name('store');
+        Route::get('{id}/{date?}', [HolidayAdminController::class, 'show'])->name('show');
+        Route::delete('{id}', [HolidayAdminController::class, 'destroy'])->name('destroy');
+    });
 });
 
 
