@@ -11,7 +11,7 @@
                         Dashboard
                     </li>
                     <li class="breadcrumb-item">
-                        Class Management
+                        Manage Attendance
                     </li>
                 </ul>
 
@@ -20,7 +20,7 @@
 
         <div class="row align-items-center my-1">
             <div class="col">
-                <h4 class="header-title">Manage Class</h4>
+                <h4 class="header-title">Manage Attendance</h4>
             </div>
         </div>
 

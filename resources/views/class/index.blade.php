@@ -11,7 +11,7 @@
                         Dashboard
                     </li>
                     <li class="breadcrumb-item">
-                        Class Management
+                        Manage Class
                     </li>
                 </ul>
 
