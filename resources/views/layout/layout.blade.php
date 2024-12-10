@@ -8,7 +8,6 @@
 
     <title>@yield('page_title') | Student Attendance Management</title>
 
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/favicon.png') }}">
     <link rel="apple-touch-icon" sizes="128x128" href="{{ asset('img/app-icon.png') }}">
     <link rel="shortcut icon" href="{{ asset('img/app-icon.png') }}">
 

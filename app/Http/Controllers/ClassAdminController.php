@@ -45,7 +45,7 @@ class ClassAdminController extends Controller
 
     public function show($id)
     {
-        $class = $this->_classAdminService->getById($id);
+        $class = $this->_classAdminService->getByIdWithDetails($id);
 
         if ($class === false) {
             abort(404);
@@ -83,7 +83,8 @@ class ClassAdminController extends Controller
         $data = $request->only([
             'name',
             'course_id',
-            'user_id'
+            'user_id',
+            'is_disabled',
         ]);
 
         $result = $this->_classAdminService->update($data, $id);

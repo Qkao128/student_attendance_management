@@ -99,8 +99,7 @@
     <div class="card border-0 card-shadow px-1">
         <div class="card-body px-md-4">
             <div class="row g-2 g-md-3 align-items-center">
-
-                <div class="col">
+                <div class="col-12 col-sm">
                     <div class="row gap-2 d-md-block">
                         <div class="col-12 text-muted">
                             Name :
@@ -112,30 +111,70 @@
                     </div>
                 </div>
 
+                <div class="col-12 col-sm">
+                    <div class="row gap-2 d-md-block">
+                        <div class="col-12 text-muted">
+                            Member :
+                        </div>
+
+                        <div class="col-12 mt-1">
+                            <span class="badge bg-primary">{{ $class->member_count ?? 0 }}</span>
+                            <i class="fa-solid fa-user ms-2"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-auto">
+                    <div class="row gap-2 d-md-block">
+                        <div class="col-12 text-muted">
+                            Created At :
+                        </div>
+
+                        <div class="col-12 mt-1">
+                            {{ Carbon::parse($class->created_at)->format('d-m-Y h:i A') }}
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="mb-0">
+
                 <div class="col-12 col-md">
                     <div class="row gap-2 d-md-block">
                         <div class="col-12 text-muted">
-                            Created At :
+                            Course :
                         </div>
 
                         <div class="col-12 mt-1">
-                            {{ Carbon::parse($class->created_at)->format('d-m-Y h:i A') }}
+                            {{ $class->course_name }}
                         </div>
                     </div>
                 </div>
 
-                <div class="col-12 col-md-auto">
+                <div class="col-12 col-md">
                     <div class="row gap-2 d-md-block">
                         <div class="col-12 text-muted">
-                            Created At :
+                            Teacher :
                         </div>
 
                         <div class="col-12 mt-1">
-                            {{ Carbon::parse($class->created_at)->format('d-m-Y h:i A') }}
+                            {{ $class->user_name }}
                         </div>
                     </div>
                 </div>
 
+                @if ($class->is_disabled)
+                    <div class="col-auto ms-auto text-end">
+                        <div class="badge bg-danger">
+                            Disabled
+                        </div>
+                    </div>
+                @else
+                    <div class="col-auto ms-auto text-end">
+                        <div class="badge bg-success">
+                            Active
+                        </div>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -188,7 +227,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold">
-                        Add New Class
+                        Add New Student
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -316,7 +355,7 @@
                         render: function(data, type, row) {
                             var imageUrl = data.profile_image ?
                                 `{{ asset('storage/profile_image') }}/${data.profile_image}` :
-                                `{{ asset('img/default-teacher-avatar.png') }}`;
+                                `{{ asset('img/default-student-avatar.png') }}`;
                             var name = data.name;
                             return `
                                 <div class="d-flex align-items-center">

@@ -59,10 +59,23 @@
                                     </select>
                                 </div>
 
-                                <div class="form-group col-12">
+                                <div class="form-group col-12 col-md-6">
                                     <label class="form-label" for="class">Name<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="class" name="name"
                                         value="{{ $class->name }}" placeholder="Enter name" required>
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <div class="form-group">
+                                        <label class="form-label" for="is_disabled">Set as Disabled</label>
+                                        <select class="form-control form-select" id="is_disabled" name="is_disabled"
+                                            required>
+                                            <option value="1" {{ $class->is_disabled ? 'selected' : '' }}>Yes
+                                            </option>
+                                            <option value="0" {{ !$class->is_disabled ? 'selected' : '' }}>No
+                                            </option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
 

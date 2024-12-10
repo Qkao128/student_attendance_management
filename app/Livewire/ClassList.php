@@ -15,6 +15,7 @@ class ClassList extends Component
         'class' => null,
         'course_id' => null,
         'user_id' => null,
+        'is_disabled' => null,
     ];
 
     public function loadMore()
@@ -50,6 +51,7 @@ class ClassList extends Component
             ->select([
                 'classes.id',
                 'classes.name',
+                'classes.is_disabled',
                 'classes.created_at',
                 'class_teachers.user_id',
                 'courses.name as course_name',
@@ -73,6 +75,10 @@ class ClassList extends Component
 
         if (isset($this->filter['user_id'])) {
             $newData = $newData->where('class_teachers.user_id', '=', $this->filter['user_id']);
+        }
+
+        if (isset($this->filter['is_disabled'])) {
+            $newData = $newData->where('classes.is_disabled', '=', $this->filter['is_disabled']);
         }
 
         $newData = $newData->offset($this->limitPerPage * $this->page);

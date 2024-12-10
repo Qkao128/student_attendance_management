@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('classes', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();;
+            $table->string('name');
             $table->foreignId('course_id')->constrained('courses');
+            $table->boolean('is_disabled');
             $table->timestamps();
         });
     }

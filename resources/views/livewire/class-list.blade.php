@@ -50,11 +50,23 @@
                             </div>
                         </div>
 
-                        <div class="col-12">
+                        <div class="col-12 col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label" for="filter-class">Class</label>
                                 <input type="text" class="form-control" id="filter-class" wire:model="filter.class"
                                     placeholder="Enter class">
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <div class="form-group mb-3">
+                                <label class="form-label" for="filter-is_disabled">Status</label>
+                                <select class="form-control form-select" id="filter-is_disabled"
+                                    wire:model="filter.is_disabled">
+                                    <option value="" hidden>Please select</option>
+                                    <option value="0">Active</option>
+                                    <option value="1">Disabled</option>
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -85,7 +97,8 @@
     <div class="row g-4 mt-2">
         @foreach ($classes as $class)
             <div class="col-12">
-                <div class="card border-0 card-shadow px-1">
+                <div class="card border-0 card-shadow px-1"
+                    style="background-color: {{ $class->is_disabled ? '#e8e8e8' : '#F4F6FA' }};">
                     <div class="card-body px-md-4">
                         <div class="row g-2 g-md-3 align-items-center">
 
@@ -182,6 +195,20 @@
                                     </div>
                                 </div>
                             </div>
+
+                            @if ($class->is_disabled)
+                                <div class="col-auto ms-auto text-end">
+                                    <div class="badge bg-danger">
+                                        Disabled
+                                    </div>
+                                </div>
+                            @else
+                                <div class="col-auto ms-auto text-end">
+                                    <div class="badge bg-success">
+                                        Active
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>

@@ -19,7 +19,6 @@
     <meta property="og:image:height" content="@yield('og:image:height', '630')" />
     <meta property="og:image:type" content="@yield('og:image:type', 'image/png')" />
 
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('img/favicon.png') }}">
     <link rel="apple-touch-icon" sizes="128x128" href="{{ asset('img/app-icon.png') }}">
     <link rel="shortcut icon" href="{{ asset('img/app-icon.png') }}">
 

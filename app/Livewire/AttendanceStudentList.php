@@ -34,6 +34,7 @@ class AttendanceStudentList extends Component
                     ->whereRaw('DATE(attendances.created_at) = ?', [$this->date]);
             })
             ->where('students.class_id', $this->classId)
+            ->whereDate('students.created_at', '<=', $this->date) // 添加过滤条件
             ->orderBy('students.created_at', 'DESC')
             ->get();
 

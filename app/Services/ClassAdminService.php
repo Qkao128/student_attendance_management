@@ -30,7 +30,7 @@ class ClassAdminService extends Service
         try {
 
             $validator = Validator::make($data, [
-                'name' => 'required|string|max:255|unique:classes,name',
+                'name' => 'required|string|max:255',
                 'course_id' => 'required|exists:courses,id',
                 'user_id' => 'required|exists:users,id',
             ]);
@@ -47,15 +47,7 @@ class ClassAdminService extends Service
                 throw new Exception('You do not have permission to perform this action.');
             }
 
-            $existingClass = $this->_classRepository->getByCourseAndName($data['course_id'], $data['name']);
-            if ($existingClass) {
-                array_push($this->_errorMessage, "This name already exists for this course.");
-
-                DB::rollBack();
-                return null;
-            }
-
-
+            $data['is_disabled'] = false;
             $class = $this->_classRepository->save($data);
 
             $data['class_id'] = $class->id;
@@ -89,6 +81,22 @@ class ClassAdminService extends Service
         }
     }
 
+    public function getByIdWithDetails($id)
+    {
+        try {
+            $class = $this->_classRepository->getByIdWithDetails($id);
+
+            if ($class == null) {
+                return false;
+            }
+
+            return $class;
+        } catch (Exception $e) {
+            array_push($this->_errorMessage, "Fail to get class details.");
+            return null;
+        }
+    }
+
 
     public function update($data, $id)
     {
@@ -96,9 +104,10 @@ class ClassAdminService extends Service
 
         try {
             $validator = Validator::make($data, [
-                'name' => 'required|string|max:255|unique:classes,name,' . $id,
+                'name' => 'required|string|max:255',
                 'course_id' => 'required|exists:courses,id',
                 'user_id' => 'required|exists:users,id',
+                'is_disabled' => 'required|boolean',
             ]);
 
             if ($validator->fails()) {
@@ -118,16 +127,6 @@ class ClassAdminService extends Service
 
             if ($class == null || $classTeacher == null) {
                 throw new Exception();
-            }
-
-
-            $existingClass = $this->_classRepository->getByCourseAndName($data['course_id'], $data['name']);
-
-            if ($existingClass && $existingClass->id !== $id) {
-                array_push($this->_errorMessage, "This name already exists for this course.");
-
-                DB::rollBack();
-                return null;
             }
 
             $class = $this->_classRepository->update($data, $id);

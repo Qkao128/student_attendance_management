@@ -155,10 +155,14 @@
 
                                     <div class="col-12 mt-1 text-muted">
                                         @if ($attendance['attendance_summary']['student_count'] == 0)
-                                            {{ $attendance['attendance_summary']['arrived_count'] ?? '-' }}
+                                            <span class="badge bg-primary">
+                                                {{ $attendance['attendance_summary']['arrived_count'] ?? '0' }}
+                                            </span>
                                         @else
-                                            {{ $attendance['attendance_summary']['arrived_count'] ?? '0' }} /
-                                            {{ $attendance['attendance_summary']['student_count'] }}
+                                            <span class="badge bg-primary">
+                                                {{ $attendance['attendance_summary']['arrived_count'] ?? '0' }} /
+                                                {{ $attendance['attendance_summary']['student_count'] }}
+                                            </span>
                                         @endif
                                         <i class="fa fa-user ms-2"></i>
                                     </div>

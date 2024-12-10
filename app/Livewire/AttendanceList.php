@@ -102,6 +102,8 @@ class AttendanceList extends Component
                 'latest_attendance.class_id',
                 'classes.id'
             )
+            ->whereDate('classes.created_at', '<=', $this->filter['date'])
+            ->where('classes.is_disabled', false)
             ->orderBy('latest_attendance.latest_updated_at', 'desc');
 
         // 根據提交狀態篩選
@@ -153,7 +155,9 @@ class AttendanceList extends Component
     // 獲取考勤統計數據
     protected function getAttendanceSummary($classId, $date)
     {
-        $studentCount = Student::where('class_id', $classId)->count();
+        $studentCount = Student::where('class_id', $classId)
+            ->whereDate('created_at', '<=', $date)
+            ->count();
 
         $statusCounts = Attendance::selectRaw('status, COUNT(*) as count')
             ->where('class_id', $classId)
