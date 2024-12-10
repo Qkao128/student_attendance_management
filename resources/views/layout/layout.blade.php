@@ -21,6 +21,8 @@
 <body id="admin-portal">
     @include('layout/side-bar')
 
+    <div id="overlay" class="d-none" onclick="toggleMobileNavigation()"></div>
+
     <div class="main">
         <div class="container-fluid px-1 px-md-2">
             @include('layout/top-bar')
@@ -83,12 +85,18 @@
             })
         @endif
 
+
         function toggleMobileNavigation() {
-            if ($("#sidebar").hasClass("show")) {
-                $("#sidebar").removeClass("show");
+            const sidebar = $("#sidebar");
+            const overlay = $("#overlay");
+
+            if (sidebar.hasClass("show")) {
+                sidebar.removeClass("show");
+                overlay.addClass("d-none");
                 $("body").css("overflow-y", "auto");
             } else {
-                $("#sidebar").addClass("show");
+                sidebar.addClass("show");
+                overlay.removeClass("d-none");
                 $("body").css("overflow-y", "hidden");
             }
         }

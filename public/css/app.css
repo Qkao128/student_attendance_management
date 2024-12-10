@@ -22712,6 +22712,26 @@ readers do not read off random characters that represent icons */
 #admin-portal #sidebar .sidebar-nav .sidebar-link .pc-micon i {
   vertical-align: middle;
 }
+#admin-portal #overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1025;
+  transition: opacity 0.3s ease;
+  opacity: 1;
+}
+#admin-portal #overlay.d-none {
+  display: none;
+  opacity: 0;
+}
+@media (min-width: 992px) {
+  #admin-portal #overlay {
+    display: none;
+  }
+}
 #admin-portal .main {
   position: relative;
   min-height: 100vh;
@@ -22824,13 +22844,6 @@ readers do not read off random characters that represent icons */
   font-size: 14px;
   font-weight: bold;
   text-transform: uppercase;
-}
-#admin-portal .detail-text {
-  display: block;
-  width: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 #admin-portal .border-present {
   border: 3px solid #32CD32;
