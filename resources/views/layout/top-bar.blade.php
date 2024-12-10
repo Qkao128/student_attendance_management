@@ -14,8 +14,8 @@
         <div class="col-auto">
             <div class="circle-img-sm-wrap rounded-circle border" role="button" data-bs-toggle="dropdown">
 
-                <img src="{{ auth()->user()->profile_image ? asset('storage/profile_image/' . auth()->user()->profile_image) : asset('img/default.png') }}"
-                    onerror="this.onerror=null;this.src='{{ asset('img/default.png') }}'">
+                <img src="{{ auth()->user()->profile_image ? asset('storage/profile_image/' . auth()->user()->profile_image) : asset('img/default-teacher-avatar.png') }}"
+                    onerror="this.onerror=null;this.src='{{ asset('img/default-teacher-avatar.png') }}'">
             </div>
 
             <ul class="dropdown-menu">

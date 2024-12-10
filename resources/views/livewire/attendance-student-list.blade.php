@@ -19,8 +19,8 @@
 
                             <div class="d-flex justify-content-center flex-column align-items-center mt-3">
                                 <div class="circle-img-lg-wrap rounded-circle border">
-                                    <img src="{{ $student->profile_image ? asset('storage/profile_image/' . $student->profile_image) : asset('img/default-avatar.png') }}"
-                                        onerror="this.onerror=null;this.src='{{ asset('img/default-avatar.png') }}'">
+                                    <img src="{{ $student->profile_image ? asset('storage/profile_image/' . $student->profile_image) : asset('img/default-student-avatar.png') }}"
+                                        onerror="this.onerror=null;this.src='{{ asset('img/default-student-avatar.png') }}'">
                                 </div>
                                 <div class="fw-bold mt-3">{{ $student->name }}</div>
                             </div>
@@ -138,9 +138,9 @@
 
     </form>
 
-    @if ($students->isEmpty())
+    @if (count($students) === 0)
         <div class="text-center">
-            <img class="no-data-found-icon" src="{{ asset('img/no-data-found.png') }}">
+            <img class="no-data-found mt-2" src="{{ asset('img/no-data-found.png') }}">
             <div class="mt-4 h5 text-muted">
                 No data found
             </div>

@@ -47,10 +47,10 @@
                                         <div class="card-body">
                                             <div class="d-flex justify-content-center">
                                                 <div class="circle-img-lg-wrap rounded-circle border">
-                                                    <img src="{{ $user['profile_image'] ? asset('storage/profile_image/' . $user['profile_image']) : asset('img/default-avatar.png') }}"
+                                                    <img src="{{ $user['profile_image'] ? asset('storage/profile_image/' . $user['profile_image']) : asset('img/default-teacher-avatar.png') }}"
                                                         id="profile-image-display"
-                                                        onerror="this.onerror=null;this.src='{{ asset('img/default-avatar.png') }}'"
-                                                        data-initial-image="{{ $user['profile_image'] ? asset('storage/profile_image/' . $user['profile_image']) : asset('img/default-avatar.png') }}">
+                                                        onerror="this.onerror=null;this.src='{{ asset('img/default-teacher-avatar.png') }}'"
+                                                        data-initial-image="{{ $user['profile_image'] ? asset('storage/profile_image/' . $user['profile_image']) : asset('img/default-teacher-avatar.png') }}">
                                                 </div>
                                             </div>
 
@@ -145,7 +145,7 @@
         });
 
         var initialImage = $("#profile-image-display").data("initial-image");
-        var defaultImage = '{{ asset('img/default-avatar.png') }}';
+        var defaultImage = '{{ asset('img/default-teacher-avatar.png') }}';
 
         $("#profile-image").change(function() {
             const file = this.files[0];

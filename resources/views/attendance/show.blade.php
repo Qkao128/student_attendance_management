@@ -258,8 +258,8 @@
                                             <div class="col-12 col-lg-3">
                                                 <div class="d-flex align-items-center justify-content-center">
                                                     <div class="circle-img-md-wrap rounded-circle border">
-                                                        <img src="{{ $entry['student']['profile_image'] ? asset('storage/profile_image/' . $entry['student']['profile_image']) : asset('img/default-avatar.png') }}"
-                                                            onerror="this.onerror=null;this.src='{{ asset('img/default-avatar.png') }}'">
+                                                        <img src="{{ $entry['student']['profile_image'] ? asset('storage/profile_image/' . $entry['student']['profile_image']) : asset('img/default-student-avatar.png') }}"
+                                                            onerror="this.onerror=null;this.src='{{ asset('img/default-student-avatar.png') }}'">
                                                     </div>
                                                 </div>
                                             </div>

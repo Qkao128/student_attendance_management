@@ -205,9 +205,9 @@
             </div>
         </div>
 
-        @if (empty($classes))
+        @if (count($classes) === 0)
             <div class="text-center" wire:loading.remove>
-                <img class="no-data-found-icon" src="{{ asset('img/no-data-found.png') }}">
+                <img class="no-data-found mt-2" src="{{ asset('img/no-data-found.png') }}">
                 <div class="mt-4 h5 text-muted">
                     No data found
                 </div>

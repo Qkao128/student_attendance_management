@@ -58,9 +58,10 @@
                                     <div class="card-body mt-3">
                                         <div class="d-flex justify-content-center">
                                             <div class="circle-img-lg-wrap rounded-circle border">
-                                                <img src="{{ asset('img/default-avatar.png') }}" id="profile-image-display"
-                                                    onerror="this.onerror=null;this.src='{{ asset('img/default-avatar.png') }}'"
-                                                    data-initial-image="{{ asset('img/default-avatar.png') }}">
+                                                <img src="{{ asset('img/default-teacher-avatar.png') }}"
+                                                    id="profile-image-display"
+                                                    onerror="this.onerror=null;this.src='{{ asset('img/default-teacher-avatar.png') }}'"
+                                                    data-initial-image="{{ asset('img/default-teacher-avatar.png') }}">
                                             </div>
                                         </div>
 

@@ -14,7 +14,13 @@
 
         .student-column-content {
             background-color: #F4F6FA;
-            width: max-content;
+            width: 100%;
+        }
+
+        @media (max-width: 992px) {
+            .student-column-content {
+                width: max-content;
+            }
         }
 
         .profile_image_container {
@@ -196,8 +202,9 @@
                                     <label class="form-label">Profile Image :</label>
                                     <div class="d-flex justify-content-center">
                                         <div class="circle-img-md-wrap rounded-circle border">
-                                            <img src="{{ asset('img/default.png') }}" id="profile-image-display-1"
-                                                data-initial-image="{{ asset('img/default.png') }}">
+                                            <img src="{{ asset('img/default-student-avatar.png') }}"
+                                                id="profile-image-display-1"
+                                                data-initial-image="{{ asset('img/default-student-avatar.png') }}">
                                         </div>
                                         <div class="d-flex justify-content-center align-items-center ms-2">
                                             <input type="file" class="form-control student-profile-image me-2"
@@ -366,7 +373,7 @@
                 language: {
                     emptyTable: `
                         <div class="text-center">
-                            <img class="no-data-found" src="{{ asset('img/rabbit.png') }}">
+                            <img class="no-data-found mt-2" src="{{ asset('img/no-data-found.png') }}">
                             <div>
                                 No data found
                             </div>
@@ -378,7 +385,7 @@
             $("#filter-name").on("keyup", function() {
                 var $table = $('#table').DataTable();
                 const name = $(this).val();
-                $table.column(0).search(name).draw();
+                $table.column(1).search(name).draw();
             });
         });
 
@@ -410,7 +417,7 @@
         }
 
         function resetProfileImage(rowId) {
-            const defaultImage = "{{ asset('img/default.png') }}";
+            const defaultImage = "{{ asset('img/default-student-avatar.png') }}";
             $(`#profile-image-display-${rowId}`).attr('src', defaultImage);
             $(`#remove-profile-image-btn-${rowId}`).addClass('d-none');
         }
@@ -433,8 +440,8 @@
                         <label class="form-label">Profile Image :</label>
                         <div class="d-flex justify-content-center">
                             <div class="circle-img-md-wrap rounded-circle border">
-                                <img src="{{ asset('img/default.png') }}" class="profile-image-display" id="profile-image-display-${studentCount}"
-                                    data-initial-image="{{ asset('img/default.png') }}">
+                                <img src="{{ asset('img/default-student-avatar.png') }}" class="profile-image-display" id="profile-image-display-${studentCount}"
+                                    data-initial-image="{{ asset('img/default-student-avatar.png') }}">
                             </div>
                             <div class="d-flex justify-content-center align-items-center ms-2">
                                 <input type="file" class="form-control student-profile-image me-2" name="student[${studentCount}][profile_image]"

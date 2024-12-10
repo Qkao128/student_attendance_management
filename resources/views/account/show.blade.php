@@ -77,8 +77,8 @@
                         <div class="card-body py-4 card-shadow">
                             <div class="d-flex justify-content-center">
                                 <div class="circle-img-lg-wrap rounded-circle border">
-                                    <img src="{{ $user['profile_image'] ? asset('storage/profile_image/' . $user['profile_image']) : asset('img/default-avatar.png') }}"
-                                        onerror="this.onerror=null;this.src='{{ asset('img/default-avatar.png') }}'">
+                                    <img src="{{ $user['profile_image'] ? asset('storage/profile_image/' . $user['profile_image']) : asset('img/default-teacher-avatar.png') }}"
+                                        onerror="this.onerror=null;this.src='{{ asset('img/default-teacher-avatar.png') }}'">
                                 </div>
                             </div>
                         </div>
@@ -117,13 +117,13 @@
                 <div class="card">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-12 col-md-5">
+                            <div class="col-12 col-md-4">
                                 <div class="my-5 text-center">
                                     <i class="fa-solid fa-lock" style="font-size:150px;"></i>
                                 </div>
                             </div>
 
-                            <div class="col-12 col-md-7 pt-2">
+                            <div class="col-12 col-md-8 pt-2">
                                 <div class="form-group mb-4">
                                     <label class="form-label" for="password">New Password:<span
                                             class="text-danger">*</span></label>
