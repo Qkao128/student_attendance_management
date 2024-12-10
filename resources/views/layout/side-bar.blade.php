@@ -86,7 +86,7 @@
             <hr class="m-0">
 
             <li class="text-muted sidebar-header my-3">
-                Setting
+                Other
             </li>
 
             <li class="sidebar-item {{ Request::routeIs('user.*') ? 'active' : '' }}">

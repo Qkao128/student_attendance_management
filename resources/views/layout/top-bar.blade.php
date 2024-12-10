@@ -29,14 +29,6 @@
 
 
                 <li>
-                    <a class="dropdown-item" href="">
-                        <div class="d-flex align-items-center gap-2">
-                            <i class="fa-solid fa-gear"></i> Setting
-                        </div>
-                    </a>
-                </li>
-
-                <li>
                     <hr class="dropdown-divider">
                 </li>
 
