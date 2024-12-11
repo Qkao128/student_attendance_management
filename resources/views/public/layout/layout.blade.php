@@ -26,7 +26,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
 </head>
 
-<body class="p-2" id="auth-layout" style="background-image: url('{{ asset('img/background.png') }}');">
+<body id="auth-layout">
     @yield('content')
 
 

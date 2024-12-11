@@ -1,7 +1,81 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
 #auth-layout{
     background-size: cover;
     background-repeat: no-repeat;
     background-position: bottom center;
     background-attachment: fixed;
     height: 100vh;
+}
+#Login-Bg{
+    position: relative;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    height: 100vh;
+    width: 100vw;
+}
+
+@media (max-width: 768px) {
+    .big-con {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+    
+        @supports (-webkit-touch-callout: none) {
+            height: -webkit-fill-available; /* Fix for mobile browsers */
+        }
+    }
+    
+    // .card-header h1 {
+    //     font-size: 16px;
+    //     z-index: 1;
+    // }
+    .con {
+        border-radius: 0 !important;
+    }
+
+    .card-header {
+        padding: 25px;
+        margin: 0 !important;
+        border-top-left-radius: 0 !important;
+        border-top-right-radius: 0 !important;
+    }
+    .card-header .auth-logo-container {
+        width: 200px;
+        z-index: 0;
+        min-width: 200px;
+    } 
+    .card-con{
+        min-width: 100%;
+        
+    }
+    .big-con .con{
+        width: 100vw;
+        height: 100vh;
+        min-height: 100vh;
+        overflow: hidden;
+
+        @supports (-webkit-touch-callout: none) {
+            height: -webkit-fill-available; // Fix for mobile browsers
+            width: -webkit-fill-available; // Fix for mobile browsers
+        }
+    }
+    
+    
+    
 }
