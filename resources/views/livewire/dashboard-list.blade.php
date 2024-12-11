@@ -3,130 +3,105 @@
     use App\Enums\Status;
 @endphp
 
-<div id="attendance-list">
-
-    <div class="row align-items-center g-3 mt-1">
-        <div class="col-12 col-sm-5">
-            <div class="d-flex justify-content-between align-items-center"
-                style=" box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
-                <!-- 顯示當前日期 -->
-                <div class="input-group">
-                    <span class="input-group-text" role="button" wire:click="changeDate(false)"
-                        style="background-color: #F4F6FA;">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </span>
-                    <input class="form-control text-center" type="date" wire:model="filter.date"
-                        wire:change="applyFilter()" style="background-color: #F4F6FA;" onclick="this.showPicker()">
-                    <span class="input-group-text" role="button" wire:click="changeDate(true)"
-                        style="background-color: #F4F6FA;">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </span>
-                </div>
-            </div>
-        </div>
-
-
-        <div class="col-10 col-sm">
-            <div class="search-input-group">
-                <div class="search-input-icon">
-                    <i class="fa fa-search"></i>
-                </div>
-                <input type="text" class="form-control search-input" placeholder="Search class"
-                    wire:keydown.debounce.250ms="filterClass($event.target.value)" wire:model="filter.class">
-            </div>
-        </div>
-
-        <div class="col-2 col-sm-auto">
-            <button type="button" class="btn btn-link text-secondary" onclick="toggleFilter('#filter')">
-                <i class="fa-solid fa-filter"></i>
-            </button>
+<div>
+    <div class="d-flex justify-content-between align-items-center"
+        style=" box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
+        <!-- 顯示當前日期 -->
+        <div class="input-group">
+            <span class="input-group-text" role="button" wire:click="changeDate(false)" style="background-color: #F4F6FA;">
+                <i class="fa-solid fa-chevron-left"></i>
+            </span>
+            <input class="form-control text-center" type="date" wire:model="filter.date" wire:change="applyFilter()"
+                style="background-color: #F4F6FA;" onclick="this.showPicker()">
+            <span class="input-group-text" role="button" wire:click="changeDate(true)"
+                style="background-color: #F4F6FA;">
+                <i class="fa-solid fa-chevron-right"></i>
+            </span>
         </div>
     </div>
 
 
-    <div id="filter" class="filter-popup-wraper d-none">
-        <div class="filter-popup-content">
-            <form wire:submit.prevent="applyFilter" id='filter-form'>
-                <div class="filter-popup-body">
-                    <h3 class="fw-bold text-center">Filter</h3>
+    <div class="row g-3 mt-3">
+        <div class="col-12 col-sm-6 col-md-4">
 
-                    <button type="button" class="btn btn-link text-dark filter-popup-close-btn p-0"
-                        onclick="toggleFilter('#filter')">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-
-                    <div class="row mt-3">
-                        <div class="col-12 col-md-6">
-                            <div class="form-group mb-3" wire:ignore>
-                                <label class="form-label" for="filter_course_id">Course</label>
-                                <select class="form-select" id="filter_course_id" style="width:100%;">
-                                </select>
-                            </div>
+            <div class="card border-0 card-shadow px-1 h-100 mb-0">
+                <div class="card-body px-md-4 my-3">
+                    <h5 class="mb-3">Class Attendance Summary :</h5>
+                    <div class="justify-content-around d-flex align-items-center mt-4 mb-3">
+                        <div class="ms-2 ms-sm-3 fs-5">
+                            @if ($dashboards['class_summary']['attended'] == 0 && $dashboards['class_summary']['total'] == 0)
+                                {{ '-' }}
+                            @else
+                                {{ $dashboards['class_summary']['attended'] ?? '0' }} /
+                                {{ $dashboards['class_summary']['total'] }}
+                            @endif
                         </div>
-
-                        <div class="col-12 col-md-6">
-                            <div class="form-group mb-3" wire:ignore>
-                                <label class="form-label" for="filter_user_id">Teacher</label>
-                                <select class="form-select" id="filter_user_id" style="width:100%;">
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="col-12 col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label" for="filter-class">Class</label>
-                                <input type="text" class="form-control" id="filter-class" wire:model="filter.class"
-                                    placeholder="Enter class">
-                            </div>
-                        </div>
-
-                        <div class="col-12 col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label" for="filter-class">Date</label>
-                                <input class="form-control text-center" type="date" wire:model="filter.date"
-                                    style="background-color: #F4F6FA;" onclick="this.showPicker()">
-                            </div>
-                        </div>
-
-
-                    </div>
-                </div>
-
-                <div class="filter-popup-footer">
-                    <div class="row g-2 p-3">
-                        <div class="col-4 col-lg-6">
-                            <button type="button" class="btn btn-danger btn-lg w-100" wire:click="resetFilter()"
-                                onclick="toggleFilter('#filter')">
-                                Reset
-                            </button>
-                        </div>
-                        <div class="col-8 col-lg-6">
-                            <button type="submit" class="btn btn-primary btn-lg w-100"
-                                onclick="toggleFilter('#filter')">
-                                Filter
-                            </button>
+                        <div>
+                            <i class="fa-solid fa-users-rectangle" id="icon-class"></i>
                         </div>
                     </div>
+
                 </div>
-            </form>
+            </div>
+
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4">
+
+            <div class="card border-0 card-shadow px-1 h-100 mb-0">
+                <div class="card-body px-md-4 my-3">
+                    <h5 class="mb-3">Student Attendance Summary :</h5>
+                    <div class="justify-content-around d-flex align-items-center mt-4 mb-3">
+                        <div class="ms-2 ms-sm-3 fs-5">
+                            @if ($dashboards['student_summary']['attended'] == 0 && $dashboards['student_summary']['total'] == 0)
+                                {{ '-' }}
+                            @else
+                                {{ $dashboards['student_summary']['attended'] ?? '0' }} /
+                                {{ $dashboards['student_summary']['total'] }}
+                            @endif
+                        </div>
+                        <div class="d-flex align-self-center">
+                            <i class="fa-solid fa-user-check" id="icon-student"></i>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-12 col-sm-6 col-md-4">
+
+            <div class="card border-0 card-shadow px-1 h-100 mb-0">
+                <div class="card-body px-md-4 my-3">
+                    <h5 class="mb-3">Today Attendance Statistics :</h5>
+                    <div class="justify-content-around d-flex align-items-center mt-4 mb-3">
+                        <div class="ms-2 ms-sm-3 fs-5">
+                            I am statistics
+                        </div>
+                        <div class="d-flex align-self-center">
+                            <i class="fa-solid fa-user-check" id="icon-student"></i>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <h5 class="my-3">
-        <span
-            class="badge text-black fw-normal {{ $filter['is_submitted'] === true ? 'border' : '' }} {{ $filter['is_submitted'] === true ? 'text-white' : '' }}"
-            wire:click="updateSubmittedStatus(true)" role="button"
-            style="background-color: {{ $filter['is_submitted'] === true ? '#007bff' : '#F4F6FA' }};box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
-            Submitted
-        </span>
+    <div class="mt-5">
+        <h4 class="header-title">Attendance Submitted Classes :</h4>
+    </div>
 
-        <span
-            class="badge text-black fw-normal {{ $filter['is_submitted'] === true ? 'border' : '' }} ms-sm-2  {{ $filter['is_submitted'] === false ? 'text-white' : '' }}"
-            wire:click="updateSubmittedStatus(false)" role="button"
-            style="background-color: {{ $filter['is_submitted'] === false ? '#007bff' : '#F4F6FA' }};box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
-            Not Submitted
-        </span>
-    </h5>
+    <div class="search-input-group mt-4">
+        <div class="search-input-icon">
+            <i class="fa fa-search"></i>
+        </div>
+        <input type="text" class="form-control search-input" placeholder="Search class"
+            wire:keydown.debounce.250ms="filterClass($event.target.value)" wire:model="filter.class">
+    </div>
+
 
     <div class="row g-4 mt-1">
         @foreach ($attendances as $attendance)
@@ -186,24 +161,6 @@
                                 </div>
                             </div>
 
-                            <hr class="d-block d-sm-none">
-
-                            <div class="col-12 col-md-auto">
-                                <div class="row gap-2 d-md-block">
-                                    <div class="col-12">
-                                        Action :
-                                    </div>
-
-                                    <div class="col-12 mt-1">
-                                        <div class="d-inline-flex gap-3">
-                                            <a href="{{ route('attendance.show', ['id' => $attendance['class_id'], 'date' => $filter['date'] ?? now()->format('Y-m-d')]) }}"
-                                                class="btn btn-info rounded-4">
-                                                <i class="fa-solid fa-eye"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
 
                             <div class="col-12 col-md-auto text-end ms-3 mt-2 mt-md-0">
                                 @if ($attendance['attendance_summary']['arrived_count'] > 0)
@@ -319,9 +276,7 @@
             <input type="hidden" wire:model="filter.user_id">
             <input type="hidden" wire:model="filter.course_id">
         @endforeach
-
     </div>
-
 
 
     <div class="d-grid mt-4">
@@ -347,77 +302,9 @@
             </div>
         @endif
     </div>
+
 </div>
 
 @push('scripts')
-    <script>
-        $('#filter_course_id').select2({
-            theme: 'bootstrap-5',
-            allowClear: true,
-            placeholder: 'Select course',
-            dropdownParent: $('#filter'),
-            ajax: {
-                url: "{{ route('course.select_search') }}",
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        search_term: params.term,
-                        page: params.page,
-                    };
-                },
-                processResults: function(data) {
-                    return {
-                        results: $.map(data.results, function(item) {
-                            return {
-                                text: item.name,
-                                id: item.id
-                            };
-                        }),
-                        pagination: {
-                            more: data.pagination.more
-                        }
-                    };
-                }
-            }
-        }).on('change', function(e) {
-            var selectedCourseId = $(this).val();
-            @this.set('filter.course_id', selectedCourseId, false);
-        });
-
-
-        $('#filter_user_id').select2({
-            theme: 'bootstrap-5',
-            allowClear: true,
-            placeholder: 'Select user',
-            dropdownParent: $('#filter'),
-            ajax: {
-                url: "{{ route('user.select_search') }}",
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        search_term: params.term,
-                        page: params.page,
-                    };
-                },
-                processResults: function(data) {
-                    return {
-                        results: $.map(data.results, function(item) {
-                            return {
-                                text: item.username,
-                                id: item.id
-                            };
-                        }),
-                        pagination: {
-                            more: data.pagination.more
-                        }
-                    };
-                }
-            }
-        }).on('change', function(e) {
-            var selectedUserId = $(this).val();
-            @this.set('filter.user_id', selectedUserId, false);
-        });
-    </script>
+    <script></script>
 @endpush

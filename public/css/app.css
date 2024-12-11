@@ -22868,6 +22868,12 @@ readers do not read off random characters that represent icons */
 #admin-portal #icon {
   margin-bottom: -10px;
 }
+#admin-portal #icon-class {
+  font-size: 34px;
+}
+#admin-portal #icon-student {
+  font-size: 34px;
+}
 
 #main-portal {
   font-family: "Plus Jakarta Sans", sans-serif !important;
@@ -23661,6 +23667,7 @@ body {
 }
 
 .circle-img-sm-wrap {
+  background-color: #000000;
   height: 55px;
   width: 55px;
   overflow: hidden;
@@ -23675,6 +23682,7 @@ body {
 }
 
 .circle-img-md-wrap {
+  background-color: #000000;
   height: 65px;
   width: 65px;
   overflow: hidden;
