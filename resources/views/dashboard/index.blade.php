@@ -30,47 +30,27 @@
 
 @section('content')
 
-    <div class="row mb-3">
-        <div class="col">
-            <ul class="breadcrumb text-muted">
-                <li class="breadcrumb-item">
-                    Dashboard
-                </li>
-                <li class="breadcrumb-item">
-                    Home
-                </li>
-            </ul>
-        </div>
-
-        <div class="col-12 col-md-auto">
-            <div class="d-flex float-end gap-2">
-            </div>
-        </div>
+    <div>
+        <ul class="breadcrumb text-muted mb-2">
+            <li class="breadcrumb-item">
+                Dashboard
+            </li>
+            <li class="breadcrumb-item">
+                Home
+            </li>
+        </ul>
     </div>
 
-    <div class="row g-3">
-        <div class="col-6">
-            {{-- <a class="dashboard-menu-button">
-                <div class="card border-0 bg-white rounded-4 card-shadow card-hover">
-                    <div class="card-body p-2 py-4 p-md-4 text-center">
-                        <div>
-                            <i class="fa-solid fa-user-group text-muted"></i>
-                        </div>
-
-                        <div class="mt-1 fw-bold text-muted">
-                            vsdv
-                        </div>
-                    </div>
-                </div>
-            </a> --}}
-        </div>
-
-
+    <div>
+        <h4 class="header-title">Dashboard</h4>
     </div>
+
+    <div class="mt-4">
+        @livewire('dashboard-list')
+    </div>
+
 @endsection
 
 @section('script')
-    <script>
-        $(function() {});
-    </script>
+    @stack('scripts')
 @endsection

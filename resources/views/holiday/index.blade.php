@@ -62,6 +62,7 @@
                     <div class="col-12 col-md-6">
                         <div class="form-group mb-3">
                             <label class="form-label" for="date">Date</label>
+
                             <input type="date" class="form-control" id="date" name="date"
                                 value="{{ Carbon::now()->toDateString() }}" placeholder="Enter date" required>
                         </div>
