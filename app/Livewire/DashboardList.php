@@ -31,15 +31,16 @@ class DashboardList extends Component
     public function changeDate($isForward)
     {
         $currentDate = Carbon::parse($this->filter['date']);
-        if ($isForward) {
-            $this->filter['date'] = $currentDate->addDay()->format('Y-m-d'); // 增加一天
-        } else {
-            $this->filter['date'] = $currentDate->subDay()->format('Y-m-d'); // 減少一天
-        }
+        $this->filter['date'] = $isForward
+            ? $currentDate->addDay()->format('Y-m-d') // 增加一天
+            : $currentDate->subDay()->format('Y-m-d'); // 減少一天
 
         $this->attendances = [];
         $this->page = 0;
         $this->loadDashboardData();
+
+        // 確保數據與當前日期同步
+        $this->dispatch('update-pie-chart', statusStatistics: $this->dashboards['status_statistics']);
     }
 
     public function filterClass($className)
@@ -116,6 +117,17 @@ class DashboardList extends Component
 
         $attendedStudents = array_sum(array_column(array_column($this->attendances, 'attendance_summary'), 'arrived_count'));
 
+        $unavailableStudents = 0;
+        if (!empty($statusStatistics['total_status_counts'])) {
+            $unavailableStudents =
+                ($statusStatistics['total_status_counts']['Medical'] ?? 0) +
+                ($statusStatistics['total_status_counts']['Absence'] ?? 0);
+        }
+
+
+        $statusStatistics = $this->getStatusStatistics($date);
+
+
         $this->dashboards = [
             'class_summary' => [
                 'attended' => $attendedClasses,
@@ -124,7 +136,9 @@ class DashboardList extends Component
             'student_summary' => [
                 'attended' => $attendedStudents,
                 'total' => $totalStudentsInClasses,
+                'unavailable' => $unavailableStudents,
             ],
+            'status_statistics' => $statusStatistics, // 新增字段
         ];
     }
 
@@ -132,9 +146,19 @@ class DashboardList extends Component
     {
         // 获取学生总数
         $studentCount = DB::table('students')
-            ->where('class_id', $classId)
-            ->whereDate('created_at', '<=', $date) // 确保学生创建时间小于等于指定日期
+            ->leftJoin('classes', 'students.class_id', '=', 'classes.id')
+            ->where('classes.id', $classId)
+            ->where('classes.is_disabled', false)
+            ->whereDate('students.created_at', '<=', $date) // 确保学生创建时间小于等于指定日期
             ->count();
+
+        $totalStudents = DB::table('students')
+            ->join('classes', 'students.class_id', '=', 'classes.id')
+            ->where('classes.is_disabled', false)
+            ->whereDate('students.created_at', '<=', $date)
+            ->count();
+
+
 
         // 统计不同考勤状态的数量
         $statusCounts = DB::table('attendances')
@@ -164,6 +188,22 @@ class DashboardList extends Component
             'arrived_count' => $arrivedCount,
             'status_counts' => $statusCounts,
             'latest_attendance_time' => $latestAttendanceTime ? Carbon::parse($latestAttendanceTime)->format('d-m-Y h:i A') : null,
+        ];
+    }
+
+    public function getStatusStatistics($date)
+    {
+
+        // 获取不同状态的学生数量
+        $totalStatusCounts = DB::table('attendances')
+            ->selectRaw('status, COUNT(*) as count')
+            ->whereDate('created_at', $date)
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+
+        return [
+            'total_status_counts' => $totalStatusCounts, // 每个状态对应的数量
         ];
     }
 

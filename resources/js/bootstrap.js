@@ -14,6 +14,9 @@ import "select2";
 import { createPopper } from '@popperjs/core';
 window.Popper = createPopper;
 
+
+import { Chart, registerables } from "chart.js";
+
 try {
     window.$ = window.jQuery = require("jquery");
     window.moment = require("moment-timezone");
@@ -24,6 +27,9 @@ try {
     window.ProgressBar = require('progressbar.js');
     window.Swal = require("sweetalert2");
     window.moment = require("moment-timezone");
+
+    Chart.register(...registerables);
+    window.Chart = Chart;
 } catch (e) {}
 
 /**

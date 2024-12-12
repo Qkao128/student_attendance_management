@@ -11,8 +11,10 @@
             <span class="input-group-text" role="button" wire:click="changeDate(false)" style="background-color: #F4F6FA;">
                 <i class="fa-solid fa-chevron-left"></i>
             </span>
-            <input class="form-control text-center" type="date" wire:model="filter.date" wire:change="applyFilter()"
-                style="background-color: #F4F6FA;" onclick="this.showPicker()">
+            <input class="form-control text-center" type="date" wire:model.live="filter.date"
+                wire:change="applyFilter()" style="background-color: #F4F6FA;" onchange="updatePieChart()"
+                onclick="this.showPicker()" />
+
             <span class="input-group-text" role="button" wire:click="changeDate(true)"
                 style="background-color: #F4F6FA;">
                 <i class="fa-solid fa-chevron-right"></i>
@@ -22,71 +24,90 @@
 
 
     <div class="row g-3 mt-3">
-        <div class="col-12 col-sm-6 col-md-4">
+        <div class="col-12 col-md-4">
 
-            <div class="card border-0 card-shadow px-1 h-100 mb-0">
-                <div class="card-body px-md-4 my-3">
-                    <h5 class="mb-3">Class Attendance Summary :</h5>
-                    <div class="justify-content-around d-flex align-items-center mt-4 mb-3">
-                        <div class="ms-2 ms-sm-3 fs-5">
-                            @if ($dashboards['class_summary']['attended'] == 0 && $dashboards['class_summary']['total'] == 0)
-                                {{ '-' }}
-                            @else
-                                {{ $dashboards['class_summary']['attended'] ?? '0' }} /
-                                {{ $dashboards['class_summary']['total'] }}
-                            @endif
-                        </div>
-                        <div>
-                            <i class="fa-solid fa-users-rectangle" id="icon-class"></i>
+            <div class="row g-3">
+                <div class="col-12 col-sm-4 col-md-12">
+                    <div class="card border-0 card-shadow px-1 h-100 mb-0">
+                        <div class="card-body px-md-4">
+                            <h5 class="mb-3">Class Attendance Summary :</h5>
+                            <div class="justify-content-around d-flex align-items-center mt-4 mb-3">
+                                <div class="ms-2 ms-sm-3 fs-5">
+                                    @if ($dashboards['class_summary']['attended'] == 0 && $dashboards['class_summary']['total'] == 0)
+                                        {{ '-' }}
+                                    @else
+                                        {{ $dashboards['class_summary']['attended'] ?? '0' }} /
+                                        {{ $dashboards['class_summary']['total'] }}
+                                    @endif
+                                </div>
+                                <div>
+                                    <i class="fa-solid fa-users-rectangle" id="icon-class"></i>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
-
                 </div>
+
+
+                <div class="col-12 col-sm-4 col-md-12">
+                    <div class="card border-0 card-shadow px-1 h-100 mb-0">
+                        <div class="card-body px-md-4">
+                            <h5 class="mb-3">Student Attendance Summary :</h5>
+                            <div class="justify-content-around d-flex align-items-center mt-4 mb-3">
+                                <div class="ms-2 ms-sm-3 fs-5">
+                                    @if ($dashboards['student_summary']['attended'] == 0 && $dashboards['student_summary']['total'] == 0)
+                                        {{ '-' }}
+                                    @else
+                                        {{ $dashboards['student_summary']['attended'] ?? '0' }} /
+                                        {{ $dashboards['student_summary']['total'] }}
+                                    @endif
+                                </div>
+                                <div class="d-flex align-self-center">
+                                    <i class="fa-solid fa-user-check" id="icon-student-check"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-sm-4 col-md-12">
+                    <div class="card border-0 card-shadow px-1 h-100 mb-0">
+                        <div class="card-body px-md-4">
+                            <h5 class="mb-3">Unavailable Students :</h5>
+                            <div class="justify-content-around d-flex align-items-center mt-4 mb-3">
+                                <div class="ms-3 ms-sm-4 fs-5">
+                                    @if ($dashboards['student_summary']['total'] == 0)
+                                        {{ '-' }}
+                                    @else
+                                        {{ $dashboards['student_summary']['unavailable'] ?? '0' }}
+                                    @endif
+                                </div>
+                                <div class="d-flex align-self-center ms-4">
+                                    <i class="fa-solid fa-user-xmark" id="icon-student-xmark"></i>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
         </div>
 
-        <div class="col-12 col-sm-6 col-md-4">
-
+        <div class="col-12 col-md-8">
             <div class="card border-0 card-shadow px-1 h-100 mb-0">
-                <div class="card-body px-md-4 my-3">
-                    <h5 class="mb-3">Student Attendance Summary :</h5>
-                    <div class="justify-content-around d-flex align-items-center mt-4 mb-3">
-                        <div class="ms-2 ms-sm-3 fs-5">
-                            @if ($dashboards['student_summary']['attended'] == 0 && $dashboards['student_summary']['total'] == 0)
-                                {{ '-' }}
-                            @else
-                                {{ $dashboards['student_summary']['attended'] ?? '0' }} /
-                                {{ $dashboards['student_summary']['total'] }}
-                            @endif
-                        </div>
-                        <div class="d-flex align-self-center">
-                            <i class="fa-solid fa-user-check" id="icon-student"></i>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-        </div>
-
-        <div class="col-12 col-sm-6 col-md-4">
-
-            <div class="card border-0 card-shadow px-1 h-100 mb-0">
-                <div class="card-body px-md-4 my-3">
+                <div class="card-body px-md-4 my-3" id="today-attendance-statistics-content">
                     <h5 class="mb-3">Today Attendance Statistics :</h5>
-                    <div class="justify-content-around d-flex align-items-center mt-4 mb-3">
-                        <div class="ms-2 ms-sm-3 fs-5">
-                            I am statistics
-                        </div>
-                        <div class="d-flex align-self-center">
-                            <i class="fa-solid fa-user-check" id="icon-student"></i>
-                        </div>
+                    <div class="w-100 d-flex align-self-center justify-content-center px-3"
+                        id="today-attendance-statistics">
+                        <canvas id="attendancePieChart"></canvas>
                     </div>
 
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -141,6 +162,7 @@
                                                 {{ $attendance['attendance_summary']['student_count'] }}
                                             </span>
                                         @endif
+
                                         <i class="fa fa-user ms-2"></i>
                                     </div>
 
@@ -278,7 +300,6 @@
         @endforeach
     </div>
 
-
     <div class="d-grid mt-4">
         <div x-intersect.full="$wire.loadMore()">
         </div>
@@ -306,5 +327,95 @@
 </div>
 
 @push('scripts')
-    <script></script>
+    <script>
+        $(document).ready(function() {
+            let attendancePieChart;
+
+            function renderPieChart(data) {
+                const ctx = document.getElementById('attendancePieChart').getContext('2d');
+
+                if (attendancePieChart) {
+                    attendancePieChart.destroy();
+                }
+
+                // 根據螢幕寬度決定圖例位置
+                const legendPosition = window.innerWidth <= 1200 ? 'top' : 'left';
+
+                attendancePieChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: [
+                            'Present',
+                            'Absence',
+                            'Medical',
+                            'Late',
+                            'Leave Approval',
+                            'Not Submitted'
+                        ],
+                        datasets: [{
+                            data: [
+                                data.total_status_counts.Present || 0,
+                                data.total_status_counts.Absence || 0,
+                                data.total_status_counts.Medical || 0,
+                                data.total_status_counts.Late || 0,
+                                data.total_status_counts.LeaveApproval || 0,
+                                {{ $dashboards['student_summary']['total'] }} - Object.values(
+                                    data.total_status_counts).reduce((a, b) => a + b, 0)
+                            ],
+                            backgroundColor: [
+                                '#32CD32', // Present
+                                '#EE0000', // Absent
+                                '#2222FF', // Medical
+                                '#007777', // Late
+                                '#000000', // Leave Approval
+                                'rgba(211, 211, 211, 0.5)' // Not Submitted
+                            ],
+                            borderColor: [
+                                '#32CD32',
+                                '#EE0000',
+                                '#2222FF',
+                                '#007777',
+                                '#000000',
+                                'rgba(211, 211, 211, 0.5)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: legendPosition,
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        const value = tooltipItem.raw;
+                                        return `${tooltipItem.label}: ${value}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 初始渲染
+            renderPieChart(@json($dashboards['status_statistics']));
+
+            // 監聽視窗大小變化並重新渲染
+            $(window).resize(function() {
+                renderPieChart(@json($dashboards['status_statistics']));
+            });
+
+            // 監聽 Livewire 派發的事件
+            window.addEventListener('update-pie-chart', event => {
+                renderPieChart(event.detail.statusStatistics);
+            });
+
+            function updatePieChart() {
+                @this.dispatch('update-pie-chart');
+            }
+        });
+    </script>
 @endpush
