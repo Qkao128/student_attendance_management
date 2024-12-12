@@ -166,7 +166,6 @@ class AttendanceList extends Component
             ->pluck('count', 'status')
             ->toArray();
 
-
         $arrivedCount = Attendance::where('class_id', $classId)
             ->whereDate('created_at', $date)
             ->whereIn('status', [
@@ -181,12 +180,17 @@ class AttendanceList extends Component
             ->orderBy('updated_at', 'desc')
             ->value('updated_at');
 
+        // 檢查是否存在任何考勤記錄
+        $hasAttendance = Attendance::where('class_id', $classId)
+            ->whereDate('created_at', $date)
+            ->exists();
 
         return [
             'student_count' => $studentCount,
             'arrived_count' => $arrivedCount,
             'status_counts' => $statusCounts,
             'latest_attendance_time' => $latestAttendanceTime ? Carbon::parse($latestAttendanceTime)->format('d-m-Y h:i A') : null,
+            'has_attendance' => $hasAttendance, // 新增字段
         ];
     }
 
