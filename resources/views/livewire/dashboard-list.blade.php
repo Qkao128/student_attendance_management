@@ -183,7 +183,7 @@
 
 
                             <div class="col-12 col-md-auto text-end ms-3 mt-2 mt-md-0">
-                                @if ($attendance['attendance_summary']['arrived_count'] > 0)
+                                @if (!empty($attendance['attendance_summary']))
                                     <span class="badge bg-success p-2">Submitted</span>
                                 @else
                                     <span class="badge bg-danger p-2">Not Submitted</span>
