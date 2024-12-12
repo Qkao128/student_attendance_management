@@ -78,11 +78,9 @@
                             <h5 class="mb-3">Unavailable Students :</h5>
                             <div class="justify-content-around d-flex align-items-center mt-4 mb-3">
                                 <div class="ms-3 ms-sm-4 fs-5">
-                                    @if ($dashboards['student_summary']['total'] == 0)
-                                        {{ '-' }}
-                                    @else
-                                        {{ $dashboards['student_summary']['unavailable'] ?? '0' }}
-                                    @endif
+
+                                    {{ $dashboards['student_summary']['unavailable'] }}
+
                                 </div>
                                 <div class="d-flex align-self-center ms-4">
                                     <i class="fa-solid fa-user-xmark" id="icon-student-xmark"></i>

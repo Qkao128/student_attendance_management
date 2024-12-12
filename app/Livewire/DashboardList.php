@@ -117,16 +117,12 @@ class DashboardList extends Component
 
         $attendedStudents = array_sum(array_column(array_column($this->attendances, 'attendance_summary'), 'arrived_count'));
 
-        $unavailableStudents = 0;
-        if (!empty($statusStatistics['total_status_counts'])) {
-            $unavailableStudents =
-                ($statusStatistics['total_status_counts']['Medical'] ?? 0) +
-                ($statusStatistics['total_status_counts']['Absence'] ?? 0);
-        }
-
+        $unavailableStudents = DB::table('attendances')
+            ->whereDate('created_at', $date)
+            ->whereIn('status', ['Medical', 'Absence'])
+            ->count();
 
         $statusStatistics = $this->getStatusStatistics($date);
-
 
         $this->dashboards = [
             'class_summary' => [
