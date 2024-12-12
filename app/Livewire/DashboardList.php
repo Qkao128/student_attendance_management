@@ -62,7 +62,7 @@ class DashboardList extends Component
     {
         $date = $this->filter['date'];
 
-        // 只选择未禁用且符合日期条件的班级，并加入最新考勤时间的子查询
+        // 查詢班級數據
         $classesQuery = DB::table('classes')
             ->select(
                 'classes.id as class_id',
@@ -75,31 +75,34 @@ class DashboardList extends Component
             ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
             ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
             ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
-            ->whereDate('classes.created_at', '<=', $date) // 只包括创建时间小于指定日期的班级
-            ->where('classes.is_disabled', false) // 过滤掉禁用的班级
-            ->orderBy('latest_updated_at', 'desc'); // 根据最新的考勤时间排序
+            ->whereDate('classes.created_at', '<=', $date)
+            ->where('classes.is_disabled', false)
+            ->orderBy('latest_updated_at', 'desc');
 
-        // 可选的班级名称筛选条件
+        // 可選的班級名稱篩選條件
         if (!empty($this->filter['class'])) {
             $classesQuery->where('classes.name', 'like', '%' . $this->filter['class'] . '%');
         }
 
-        // 获取所有符合条件的班级
+        // 獲取班級
         $classes = $classesQuery->get();
 
-        // 处理考勤数据并生成考勤统计
+        // 過濾出當天有提交記錄的班級
         $this->attendances = $classes->map(function ($class) use ($date) {
-            $attendanceSummary = $this->getAttendanceSummary($class->class_id, $date);
-            $class->attendance_summary = $attendanceSummary;
+            $hasAttendance = DB::table('attendances')
+                ->where('class_id', $class->class_id)
+                ->whereDate('created_at', $date)
+                ->exists();
 
-            // 只返回那些有到达人数的班级
-            if ($attendanceSummary['arrived_count'] > 0) {
+            if ($hasAttendance) {
+                $attendanceSummary = $this->getAttendanceSummary($class->class_id, $date);
+                $class->attendance_summary = $attendanceSummary;
                 return (array) $class;
             }
             return null;
         })->filter()->toArray();
 
-        // 班级统计数据
+        // 班級統計數據
         $classCount = DB::table('classes')
             ->where('is_disabled', false)
             ->whereDate('created_at', '<=', $date)
@@ -107,12 +110,12 @@ class DashboardList extends Component
 
         $attendedClasses = count($this->attendances);
 
-        // 学生统计数据
+        // 學生統計數據
         $totalStudentsInClasses = DB::table('students')
             ->join('classes', 'students.class_id', '=', 'classes.id')
             ->where('classes.is_disabled', false)
             ->whereDate('classes.created_at', '<=', $date)
-            ->whereDate('students.created_at', '<=', $date) // 确保学生的创建日期符合条件
+            ->whereDate('students.created_at', '<=', $date)
             ->count();
 
         $attendedStudents = array_sum(array_column(array_column($this->attendances, 'attendance_summary'), 'arrived_count'));
@@ -134,7 +137,7 @@ class DashboardList extends Component
                 'total' => $totalStudentsInClasses,
                 'unavailable' => $unavailableStudents,
             ],
-            'status_statistics' => $statusStatistics, // 新增字段
+            'status_statistics' => $statusStatistics,
         ];
     }
 
