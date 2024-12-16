@@ -32,15 +32,14 @@ class DashboardList extends Component
     {
         $currentDate = Carbon::parse($this->filter['date']);
         $this->filter['date'] = $isForward
-            ? $currentDate->addDay()->format('Y-m-d') // 增加一天
-            : $currentDate->subDay()->format('Y-m-d'); // 減少一天
+            ? $currentDate->addDay()->format('Y-m-d')
+            : $currentDate->subDay()->format('Y-m-d');
 
-        $this->attendances = [];
-        $this->page = 0;
         $this->loadDashboardData();
 
-        // 確保數據與當前日期同步
-        $this->dispatch('update-pie-chart', statusStatistics: $this->dashboards['status_statistics']);
+        $this->dispatch('update-pie-chart', [
+            'statusStatistics' => $this->dashboards['status_statistics'],
+        ]);
     }
 
     public function filterClass($className)
@@ -69,13 +68,11 @@ class DashboardList extends Component
                 'classes.name as class_name',
                 'courses.name as course_name',
                 'users.username as teacher_name',
-                'classes.created_at',
                 DB::raw("(SELECT MAX(updated_at) FROM attendances WHERE attendances.class_id = classes.id AND DATE(attendances.created_at) = '$date') as latest_updated_at")
             )
             ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
             ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
             ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
-            ->whereDate('classes.created_at', '<=', $date)
             ->where('classes.is_disabled', false)
             ->orderBy('latest_updated_at', 'desc');
 
@@ -114,7 +111,6 @@ class DashboardList extends Component
         $totalStudentsInClasses = DB::table('students')
             ->join('classes', 'students.class_id', '=', 'classes.id')
             ->where('classes.is_disabled', false)
-            ->whereDate('classes.created_at', '<=', $date)
             ->whereDate('students.created_at', '<=', $date)
             ->count();
 
