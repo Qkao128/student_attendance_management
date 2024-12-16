@@ -27,6 +27,55 @@ html, body {
     height: 100vh;
     width: 100vw;
 }
+.big-con,.card-header,.card-con{
+    min-height: 69vh;
+    height: 69vh;
+}
+.form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%; /* This will make the form-container take up the full height of the card-body */
+}
+#form {
+    height: 100%; /* This will make the form take up the full height of the form-container */
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    justify-content: center;
+}
+// .form-text {
+//     position: absolute;
+//     top: 0;
+//     margin-top: 20px;
+//     left: 50%;
+//     transform: translateX(-50%);
+//     width: 100%;
+//     text-align: center;
+// }
+.bar{
+    height: 30px;
+}
+.bar2{
+    height: 0px;
+}
+.bar3{
+    height: 25px;
+}
+// .center-form {
+//     position: absolute;
+//     top: 55%;
+//     left: 50%;
+//     transform: translate(-50%, -50%);
+//     width: 100%;
+// }
+// .form-text{
+//     top: 0;
+// }
+// .center-form{
+//     margin-top: 30px;
+// }
+
 
 @media (max-width: 768px) {
     .big-con {
@@ -50,6 +99,9 @@ html, body {
     }
 
     .card-header {
+        min-width: none;
+        min-height: 0px;
+        height: auto;
         padding: 25px;
         margin: 0 !important;
         border-top-left-radius: 0 !important;
@@ -76,6 +128,14 @@ html, body {
         }
     }
     
+    // .form-text,.center-form{
+    //     position: relative;
+    // }
+    
+    .bar,.bar2,.bar3{
+        height: 0px;
+    }
+
     
     
 }

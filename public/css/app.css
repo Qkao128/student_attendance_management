@@ -22519,6 +22519,38 @@ html, body {
   width: 100vw;
 }
 
+.big-con, .card-header, .card-con {
+  min-height: 69vh;
+  height: 69vh;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%; /* This will make the form-container take up the full height of the card-body */
+}
+
+#form {
+  height: 100%; /* This will make the form take up the full height of the form-container */
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  justify-content: center;
+}
+
+.bar {
+  height: 30px;
+}
+
+.bar2 {
+  height: 0px;
+}
+
+.bar3 {
+  height: 25px;
+}
+
 @media (max-width: 768px) {
   .big-con {
     margin: 0 !important;
@@ -22536,6 +22568,9 @@ html, body {
     border-radius: 0 !important;
   }
   .card-header {
+    min-width: none;
+    min-height: 0px;
+    height: auto;
     padding: 25px;
     margin: 0 !important;
     border-top-left-radius: 0 !important;
@@ -22560,6 +22595,9 @@ html, body {
       height: -webkit-fill-available;
       width: -webkit-fill-available;
     }
+  }
+  .bar, .bar2, .bar3 {
+    height: 0px;
   }
 }
 #admin-portal {
