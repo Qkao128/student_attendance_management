@@ -19,13 +19,11 @@
             </div>
 
             <ul class="dropdown-menu">
-                <li>
-                    <a class="dropdown-item" href="">
-                        <div class="d-flex align-items-center gap-2">
-                            <i class="fa-solid fa-user-tie"></i> Account managment
-                        </div>
-                    </a>
-                </li>
+                <a class="dropdown-item" href="{{ route('user.show', ['id' => Auth::user()->id]) }}">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="fa-solid fa-user-tie"></i> Account Management
+                    </div>
+                </a>
 
 
                 <li>

@@ -23,6 +23,8 @@
     <link rel="shortcut icon" href="{{ asset('img/app-icon.png') }}">
 
     <link rel="stylesheet" type="text/css" href="{{ asset('css/app.css') }}">
+
+    @yield('style')
 </head>
 
 <body class="p-2" id="auth-layout" style="background-image: url('{{ asset('img/background.png') }}');">
