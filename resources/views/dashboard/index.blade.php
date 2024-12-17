@@ -122,6 +122,14 @@
             <div class="card border-0 card-shadow px-1 h-100 mb-0">
                 <div class="card-body px-md-4 my-3" id="today-attendance-statistics-content">
                     <h5 class="mb-3">Today Attendance Statistics :</h5>
+
+                    <div class="text-center no-data-found-container mt-2 mt-md-5 p-2" style="display: none;">
+                        <img class="no-data-found mt-2" src="{{ asset('img/no-data-found.png') }}">
+                        <div class="mt-4 h5 text-muted">
+                            No data found
+                        </div>
+                    </div>
+
                     <div class="w-100 mt-2 mt-md-5 mt-lg-4 d-flex align-self-center justify-content-center px-3"
                         id="today-attendance-statistics">
                         <canvas id="attendancePieChart"></canvas>
@@ -179,16 +187,33 @@
 
             // 渲染圖表
             function renderPieChart(data) {
-                const ctx = document.getElementById('attendancePieChart').getContext('2d');
+                const canvas = document.getElementById('attendancePieChart');
+                const noDataContainer = document.querySelector('.no-data-found-container');
+
+                const totalStudents = data.total_students || 0;
+                const statusCounts = data.total_status_counts || {};
+
+                const notSubmittedCount = totalStudents - Object.values(statusCounts).reduce((a, b) => a + b, 0);
+
+                // 判斷是否所有數據都為 0
+                const hasData = Object.values(statusCounts).some(value => value > 0) || notSubmittedCount > 0;
+
+                if (!hasData) {
+                    // 如果沒有數據，顯示 "No data found" 圖片，隱藏 canvas
+                    noDataContainer.style.display = 'block'; // 顯示圖片
+                    canvas.style.display = 'none'; // 隱藏 canvas
+                    return; // 終止圖表渲染
+                } else {
+                    // 如果有數據，顯示 canvas，隱藏 "No data found" 圖片
+                    noDataContainer.style.display = 'none'; // 隱藏圖片
+                    canvas.style.display = 'block'; // 顯示 canvas
+                }
+
+                const ctx = canvas.getContext('2d');
 
                 if (attendancePieChart) {
                     attendancePieChart.destroy(); // 銷毀舊圖表，重新渲染
                 }
-
-                const totalStudents = data.total_students;
-                const statusCounts = data.total_status_counts;
-
-                const notSubmittedCount = totalStudents - Object.values(statusCounts).reduce((a, b) => a + b, 0);
 
                 attendancePieChart = new Chart(ctx, {
                     type: 'pie',
@@ -231,10 +256,10 @@
                     },
                     options: {
                         responsive: true,
-                        maintainAspectRatio: false, // 讓圖表自由調整大小
+                        maintainAspectRatio: false,
                         plugins: {
                             legend: {
-                                position: getLegendPosition(), // 根據視窗大小設置位置
+                                position: getLegendPosition(),
                             },
                             tooltip: {
                                 callbacks: {
