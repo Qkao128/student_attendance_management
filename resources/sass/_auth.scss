@@ -1,3 +1,15 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html, body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
 #auth-layout{
     background-size: cover;
     background-repeat: no-repeat;
@@ -72,12 +84,12 @@
         width: 100vw;
         height: 100vh;
         overflow: hidden;
-
+    
         @supports (-webkit-touch-callout: none) {
             height: -webkit-fill-available; /* Fix for mobile browsers */
         }
     }
-
+    
     // .card-header h1 {
     //     font-size: 16px;
     //     z-index: 1;
@@ -99,10 +111,10 @@
         width: 200px;
         z-index: 0;
         min-width: 200px;
-    }
+    } 
     .card-con{
         min-width: 100%;
-
+        
     }
     .big-con .con{
         width: 100vw;
@@ -115,15 +127,15 @@
             width: -webkit-fill-available; // Fix for mobile browsers
         }
     }
-
+    
     // .form-text,.center-form{
     //     position: relative;
     // }
-
+    
     .bar,.bar2,.bar3{
         height: 0px;
     }
 
-
-
+    
+    
 }

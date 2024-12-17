@@ -22612,6 +22612,19 @@ readers do not read off random characters that represent icons */
   content: "\f3f6";
 }
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
 #auth-layout {
   background-size: cover;
   background-repeat: no-repeat;
