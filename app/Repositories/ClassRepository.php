@@ -57,4 +57,12 @@ class ClassRepository extends Repository
             ->where('classes.id', $id)
             ->first();
     }
+
+    public function getClassCount($date)
+    {
+        return DB::table('classes')
+            ->where('is_disabled', false)
+            ->whereDate('created_at', '<=', $date)
+            ->count();
+    }
 }

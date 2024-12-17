@@ -2,64 +2,58 @@
 
 namespace App\Livewire;
 
-use Livewire\Component;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use Livewire\Component;
+use Livewire\Attributes\On;
+use Illuminate\Support\Facades\DB;
 
 class DashboardList extends Component
 {
-    public $dashboards;
-    public $attendances;
-    public $filter = [
-        'date' => null,
-    ];
+    public $attendances; // 只保留考勤数据
+    public $filterDate;
+    public $filter = []; // 用来存储过滤条件
     public $page = 0;
     public $limitPerPage = 50;
 
-    public function mount()
+    public function mount($date = null)
     {
-        $this->filter['date'] = now()->format('Y-m-d');
+        // 初始化日期
+        $this->filterDate = $date ?? now()->format('Y-m-d');
         $this->loadDashboardData();
     }
-
     public function loadMore()
     {
+        // 加载更多数据
         $this->page++;
         $this->loadDashboardData();
     }
 
-    public function changeDate($isForward)
-    {
-        $currentDate = Carbon::parse($this->filter['date']);
-        $this->filter['date'] = $isForward
-            ? $currentDate->addDay()->format('Y-m-d')
-            : $currentDate->subDay()->format('Y-m-d');
-
-        $this->loadDashboardData();
-
-        $this->dispatch('update-pie-chart', [
-            'statusStatistics' => $this->dashboards['status_statistics'],
-        ]);
-    }
-
     public function filterClass($className)
     {
+        // 按班级名称过滤
         $this->filter['class'] = $className;
         $this->applyFilter();
     }
 
-
     public function applyFilter()
     {
+        // 应用过滤条件，重置分页
         $this->page = 0;
         $this->attendances = [];
         $this->loadDashboardData();
     }
 
 
+    #[On('updateDate')] // 監聽來自前端的事件
+    public function updateDate($date)
+    {
+        $this->filterDate = $date;
+        $this->loadDashboardData();
+    }
+
     private function loadDashboardData()
     {
-        $date = $this->filter['date'];
+        $date = $this->filterDate;
 
         // 查詢班級數據
         $classesQuery = DB::table('classes')
@@ -76,15 +70,15 @@ class DashboardList extends Component
             ->where('classes.is_disabled', false)
             ->orderBy('latest_updated_at', 'desc');
 
-        // 可選的班級名稱篩選條件
+        // 可选的班级名称筛选条件
         if (!empty($this->filter['class'])) {
             $classesQuery->where('classes.name', 'like', '%' . $this->filter['class'] . '%');
         }
 
-        // 獲取班級
+        // 获取班级数据
         $classes = $classesQuery->get();
 
-        // 過濾出當天有提交記錄的班級
+        // 过滤出当天有考勤记录的班级
         $this->attendances = $classes->map(function ($class) use ($date) {
             $hasAttendance = DB::table('attendances')
                 ->where('class_id', $class->class_id)
@@ -98,43 +92,6 @@ class DashboardList extends Component
             }
             return null;
         })->filter()->toArray();
-
-        // 班級統計數據
-        $classCount = DB::table('classes')
-            ->where('is_disabled', false)
-            ->whereDate('created_at', '<=', $date)
-            ->count();
-
-        $attendedClasses = count($this->attendances);
-
-        // 學生統計數據
-        $totalStudentsInClasses = DB::table('students')
-            ->join('classes', 'students.class_id', '=', 'classes.id')
-            ->where('classes.is_disabled', false)
-            ->whereDate('students.created_at', '<=', $date)
-            ->count();
-
-        $attendedStudents = array_sum(array_column(array_column($this->attendances, 'attendance_summary'), 'arrived_count'));
-
-        $unavailableStudents = DB::table('attendances')
-            ->whereDate('created_at', $date)
-            ->whereIn('status', ['Medical', 'Absence'])
-            ->count();
-
-        $statusStatistics = $this->getStatusStatistics($date);
-
-        $this->dashboards = [
-            'class_summary' => [
-                'attended' => $attendedClasses,
-                'total' => $classCount,
-            ],
-            'student_summary' => [
-                'attended' => $attendedStudents,
-                'total' => $totalStudentsInClasses,
-                'unavailable' => $unavailableStudents,
-            ],
-            'status_statistics' => $statusStatistics,
-        ];
     }
 
     protected function getAttendanceSummary($classId, $date)
@@ -146,14 +103,6 @@ class DashboardList extends Component
             ->where('classes.is_disabled', false)
             ->whereDate('students.created_at', '<=', $date) // 确保学生创建时间小于等于指定日期
             ->count();
-
-        $totalStudents = DB::table('students')
-            ->join('classes', 'students.class_id', '=', 'classes.id')
-            ->where('classes.is_disabled', false)
-            ->whereDate('students.created_at', '<=', $date)
-            ->count();
-
-
 
         // 统计不同考勤状态的数量
         $statusCounts = DB::table('attendances')
@@ -186,26 +135,9 @@ class DashboardList extends Component
         ];
     }
 
-    public function getStatusStatistics($date)
-    {
-
-        // 获取不同状态的学生数量
-        $totalStatusCounts = DB::table('attendances')
-            ->selectRaw('status, COUNT(*) as count')
-            ->whereDate('created_at', $date)
-            ->groupBy('status')
-            ->pluck('count', 'status')
-            ->toArray();
-
-        return [
-            'total_status_counts' => $totalStatusCounts, // 每个状态对应的数量
-        ];
-    }
-
     public function render()
     {
         return view('livewire.dashboard-list', [
-            'dashboards' => $this->dashboards,
             'attendances' => $this->attendances,
         ]);
     }

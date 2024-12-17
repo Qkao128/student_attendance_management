@@ -97,4 +97,53 @@ class AttendanceRepository extends Repository
             ->whereIn('status', [Status::Present()->key, Status::Late()->key, Status::LeaveApproval()->key])
             ->count();
     }
+
+    public function getAttendedClassCount($date)
+    {
+        return DB::table('attendances')
+            ->whereDate('created_at', $date)
+            ->distinct('class_id')
+            ->count('class_id');
+    }
+
+    public function getAttendedStudentCount($date)
+    {
+        return DB::table('attendances')
+            ->whereDate('created_at', $date)
+            ->whereIn('status', ['Present', 'Late', 'LeaveApproval'])
+            ->count();
+    }
+
+    public function getUnavailableStudentCount($date)
+    {
+        return DB::table('attendances')
+            ->whereDate('created_at', $date)
+            ->whereIn('status', ['Medical', 'Absence'])
+            ->count();
+    }
+
+
+    public function getStatusCounts($date)
+    {
+        // 获取不同状态的学生数量
+        $totalStatusCounts = DB::table('attendances')
+            ->selectRaw('status, COUNT(*) as count')
+            ->whereDate('created_at', $date)
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+
+        // 确保每个状态都有返回值，避免为 null
+        $statusList = ['Present', 'Absence', 'Medical', 'Late', 'LeaveApproval', 'NotSubmitted'];
+
+        foreach ($statusList as $status) {
+            if (!isset($totalStatusCounts[$status])) {
+                $totalStatusCounts[$status] = 0;
+            }
+        }
+
+        return [
+            'total_status_counts' => $totalStatusCounts, // 每个状态对应的数量
+        ];
+    }
 }

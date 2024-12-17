@@ -7,6 +7,7 @@ use App\Http\Controllers\UserAdminController;
 use App\Http\Controllers\ClassAdminController;
 use App\Http\Controllers\CourseAdminController;
 use App\Http\Controllers\StudentAdminController;
+use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\AttendanceAdminController;
 
 
@@ -27,9 +28,10 @@ Route::group(['middleware' => 'auth'], function () {
 
 Route::prefix('admin')->middleware(['auth', 'check_role:' . UserType::SuperAdmin()->key . '|' . UserType::Admin()->key])->group(function () {
     // 管理員路由
-    Route::get('/dashboard', function () {
-        return view('dashboard.index');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardAdminController::class, 'index'])->name('dashboard');
+    Route::post('/dashboard/data', [DashboardAdminController::class, 'data'])->name('dashboard.data');
+    Route::post('/dashboard/pieChartData', [DashboardAdminController::class, 'pieChartData'])->name('dashboard.pieChartData');
+
 
     // 使用者管理
     Route::name('user.')->prefix('account')->group(function () {

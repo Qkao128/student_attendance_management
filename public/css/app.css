@@ -22880,46 +22880,6 @@ readers do not read off random characters that represent icons */
   font-size: 34px;
   color: #FFC354;
 }
-#admin-portal #today-attendance-statistics-content {
-  max-height: 358px;
-}
-#admin-portal #today-attendance-statistics {
-  max-height: 438px;
-  margin-top: -50px;
-}
-@media (min-width: 1200px) {
-  #admin-portal #today-attendance-statistics-content {
-    max-height: 358px;
-  }
-  #admin-portal #today-attendance-statistics {
-    max-height: 438px;
-    margin-top: -50px;
-  }
-}
-@media (max-width: 1199.98px) {
-  #admin-portal #today-attendance-statistics {
-    max-height: 390px;
-    margin-top: 0px;
-  }
-}
-@media (max-width: 767.98px) {
-  #admin-portal #today-attendance-statistics-content {
-    max-height: 408px;
-  }
-  #admin-portal #today-attendance-statistics {
-    max-height: 358px;
-    margin-top: -10px;
-  }
-}
-@media (max-width: 575.98px) {
-  #admin-portal #today-attendance-statistics-content {
-    height: auto;
-  }
-  #admin-portal #today-attendance-statistics {
-    height: auto;
-    margin-top: 0px;
-  }
-}
 
 #main-portal {
   font-family: "Plus Jakarta Sans", sans-serif !important;
