@@ -150,4 +150,14 @@ class AttendanceAdminService extends Service
             return 0;
         }
     }
+
+    public function getStatusCounts($date)
+    {
+        try {
+            return $this->_attendanceRepository->getStatusCounts($date);
+        } catch (Exception $e) {
+            array_push($this->_errorMessage, "Fail to get status status.");
+            return 0;
+        }
+    }
 }
