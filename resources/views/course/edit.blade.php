@@ -2,6 +2,14 @@
 
 @section('page_title', 'Class')
 
+@section('style')
+    <style>
+        .form-control {
+            background-color: #FAFAFA !important;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div id="admin-course">
         <div class="row mt-2">

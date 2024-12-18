@@ -3,6 +3,14 @@
     use App\Enums\Status;
 @endphp
 
+@section('style')
+    <style>
+        .form-control {
+            background-color: #FAFAFA !important;
+        }
+    </style>
+@endsection
+
 <div id="attendance-student-list">
     <form action="{{ route('attendance.store', ['classId' => $classId, 'date' => $date]) }}" id="form" method="POST"
         style="background-color: #edf0f2">
@@ -210,8 +218,8 @@
                     // 顯示輸入框並隱藏原始文本
                     detailContainer.html(inputField);
                     iconContainer.html(`
-            <i class="fa-solid fa-check save-icon ms-2" data-student-id="${studentId}" style="font-size: 16px;"></i>
-            <i class="fa-solid fa-xmark cancel-icon ms-2" data-student-id="${studentId}" style="font-size: 16px;"></i>
+            <i class="fa-solid fa-check save-icon ms-2 mt-2" data-student-id="${studentId}" style="font-size: 16px;"></i>
+            <i class="fa-solid fa-xmark cancel-icon ms-2 mt-2" data-student-id="${studentId}" style="font-size: 16px;"></i>
             `);
                 }
             });
@@ -285,8 +293,8 @@
 
                 detailContainer.html(inputField);
                 iconContainer.html(`
-                <i class="fa-solid fa-check save-icon ms-2" data-student-id="${studentId}"></i>
-                <i class="fa-solid fa-xmark cancel-icon ms-2" data-student-id="${studentId}"></i>
+                <i class="fa-solid fa-check save-icon ms-2 mt-2" data-student-id="${studentId}"></i>
+                <i class="fa-solid fa-xmark cancel-icon ms-2 mt-2" data-student-id="${studentId}"></i>
                 `);
             });
 
