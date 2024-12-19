@@ -42,7 +42,7 @@ class UserAdminService extends Service
                 return null;
             }
 
-            if (Auth::user()->hasAnyRole(UserType::SuperAdmin()->key)) {
+            if (!Auth::user()->hasAnyRole(UserType::SuperAdmin()->key)) {
                 throw new Exception();
             }
 
