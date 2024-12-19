@@ -212,6 +212,34 @@
         }
     }
 
+    #add-holiday-modal{
+        #add-holiday-modal-content{
+            margin-bottom: 100px;
+        }
+    }
+
+    #customer-column-calculation-container {
+        overflow-x: auto;
+        width: 100%;
+
+        .customer-column-calculation-content {
+            display: inline-flex;
+            background-color: #e9ecef;
+            width: 100%;
+
+            @media (max-width: 650px) {
+                width: max-content;
+            }
+        }
+    }
+
+    .fc-day-today {
+        background-color: #dbeafe !important;
+        border: 2px solid #3b82f6 !important;
+        color: #1e3a8a !important;
+    }
+
+
     .search-input-group {
         display: flex;
         flex-direction: row;

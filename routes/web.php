@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserAdminController;
 use App\Http\Controllers\ClassAdminController;
 use App\Http\Controllers\CourseAdminController;
+use App\Http\Controllers\HolidayAdminController;
 use App\Http\Controllers\StudentAdminController;
 use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\AttendanceAdminController;
@@ -84,11 +85,12 @@ Route::prefix('admin')->middleware(['auth', 'check_role:' . UserType::SuperAdmin
         Route::delete('{id}', [AttendanceAdminController::class, 'destroy'])->name('destroy');
     });
 
+    // 假期管理
     Route::name('holiday.')->prefix('holiday')->group(function () {
         Route::get('/', [HolidayAdminController::class, 'index'])->name('index');
-        Route::post('{classId}/{date?}', [HolidayAdminController::class, 'store'])->name('store');
-        Route::get('{id}/{date?}', [HolidayAdminController::class, 'show'])->name('show');
-        Route::delete('{id}', [HolidayAdminController::class, 'destroy'])->name('destroy');
+        Route::post('/', [HolidayAdminController::class, 'store'])->name('store');
+        Route::patch('{id}', [HolidayAdminController::class, 'update'])->name('update');
+        Route::post('holidays', [HolidayAdminController::class, 'getHolidays'])->name('getHolidays');
     });
 });
 

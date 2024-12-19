@@ -2,9 +2,9 @@
     use Carbon\Carbon;
 @endphp
 
-@extends('admin/layout/layout')
+@extends('layout/layout')
 
-@section('page_title', 'Web Transfer')
+@section('page_title', 'Holidays')
 
 @section('content')
     <div id="admin-course">
@@ -15,7 +15,7 @@
                         Dashboard
                     </li>
                     <li class="breadcrumb-item">
-                        Class Management
+                        Manage Holidays
                     </li>
                 </ul>
 
@@ -24,107 +24,153 @@
 
         <div class="row align-items-center my-1">
             <div class="col">
-                <h4 class="header-title">Manage Class</h4>
+                <h4 class="header-title">Manage Holidays</h4>
+            </div>
+
+            <div class="col-12 col-md-auto mt-0 mt-md-1">
+                <div class="d-flex float-end align-items-center">
+                    <button type="button" class="btn btn-success text-white rounded-4" data-bs-toggle="modal"
+                        data-bs-target="#add-holiday-modal">
+                        Add
+                    </button>
+                </div>
             </div>
         </div>
-
-        <div>
-            @livewire('attendance-list')
-        </div>
     </div>
 
-
-
-    <div class="row">
-        <div class="col-12 col-md-5">
-            @livewire('admin.web-transfer-list')
+    <div class="row mt-4">
+        <div class="col-12 col-xl-4">
+            @livewire('holiday-list', ['year' => now()->year, 'month' => now()->month])
         </div>
 
-        <div class="col-12 col-md-7">
-            <form action="{{ route('admin.web_transfer.store') }}" id="form" method="POST">
-                @csrf
-
-                <div class="row">
-                    <div class="col-12">
-                        <div class="form-group mb-3">
-                            <textarea class="form-control" name="table_content" id="table_content" rows="10" required>{{ old('table_content') }}</textarea>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-md-6">
-                        <div class="form-group mb-3">
-                            <label class="form-label" for="domain_id">Domain</label>
-                            <select class="form-select" id="domain_id" name="domain_id" required style="width:100%;">
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-12 col-md-6">
-                        <div class="form-group mb-3">
-                            <label class="form-label" for="date">Date</label>
-
-                            <input type="date" class="form-control" id="date" name="date"
-                                value="{{ Carbon::now()->toDateString() }}" placeholder="Enter date" required>
+        <div class="col-12 col-xl-8 mt-4 mt-xl-0">
+            <div class="mb-3 w-100" id="customer-column-container">
+                <div class="px-1" id="customer-column-calculation-container">
+                    <div class="form-group customer-column-calculation-content rounded">
+                        <div class="d-flex p-3 rounded w-100">
+                            <div id="calendar" class="w-100" style="min-width: 570px;min-height: 600px;"></div>
                         </div>
                     </div>
                 </div>
-
-                <div class="text-center">
-                    <button type="button" class="btn btn-primary text-white rounded-4"
-                        onclick="calculate()">calculate</button>
-                </div>
-
-            </form>
+            </div>
         </div>
     </div>
 
-
-
-    <div class="modal fade" id="transfer-summary-modal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
+    <div class="modal fade" id="add-holiday-modal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title fw-bold">
-                        Transfer Summary
+                        Add New Holidays
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th class="bg-primary text-white p-2 px-sm-3">Customer</th>
-                                    <th class="bg-primary text-white text-end p-2 px-sm-3" style="width: 1%;">Amount
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody id="transfer-summary-modal-row">
+                    <form action="{{ route('holiday.store') }}" id="form" method="POST">
+                        @csrf
 
-                            </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td class="text-end fw-bold border-bottom-0 p-2 px-sm-3">Total:</td>
-                                    <td class="text-end fw-bold border-bottom-0 p-2 px-sm-3"
-                                        id="transfer-summary-modal-total">0.0</td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                        <div class="row" id="add-holiday-modal-content">
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="date_from">Date form<span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="date_from" name="date_from"
+                                        value="{{ Carbon::now()->toDateString() }}" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="date_to">Date to<span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="date_to" name="date_to"
+                                        value="{{ Carbon::now()->toDateString() }}" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label" for="title">Title<span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="title" name="title"
+                                    value="{{ old('title') }}" placeholder="Enter title" required>
+
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label" for="background_color">Custom background colour<span
+                                        class="text-danger">*</span></label>
+                                <div class="form-group justify-content-between d-flex">
+                                    <div>
+                                        <input type="color" class="form-control" id="background_color"
+                                            name="background_color" style="min-width: 100px;height: 37px;" required>
+                                    </div>
+
+                                    <div>
+                                        <i class="fa-solid fa-palette me-3" style="margin-top: 9px;"></i>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+
+                            <div class="col-12">
+                                <div class="form-group mt-3">
+                                    <label class="form-label" for="details">Details</label>
+                                    <textarea class="form-control" style="resize: none;" name="details" rows="5" id="details"
+                                        placeholder="Add detail for this holidays...">{{ old('details') }}</textarea>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="d-flex float-end gap-2">
+                            <button type="submit" class="btn btn-primary text-white rounded-4" id="submit-btn"
+                                form="form">Submit</button>
+                        </div>
+
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="eventDetailsModal" tabindex="-1" aria-labelledby="eventDetailsLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventDetailsLabel">
+                        <p class="fw-bold mb-0" id="event-title"></p>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" style="height: 550px;">
+                    <div class="row">
+                        <div class="col-12 col-sm-6">
+                            <label class="form-label">Started At :</label>
+                            <p class="fst-italic text-muted" id="event-start"></p>
+                        </div>
+
+                        <div class="col-12 col-sm-6">
+                            <label class="form-label">Ended At :</label>
+                            <p class="fst-italic text-muted" id="event-end"></p>
+                        </div>
+
+                        <div class="col-12 mt-1">
+                            <label class="form-label">Details :</label>
+                            <div class="form-control" style="height: 300px; max-height: 300px;overflow-y: auto;">
+                                <p id="event-details"></p>
+                            </div>
+                        </div>
+
                     </div>
-
-                    <div class="alert alert-danger" id="transfer-summary-not-zero-warning">
-                        <span class="fw-bold">WARNING:</span> Total is not ZERO, please check!
-                    </div>
-
-
-
-
-                    <div class="d-flex float-end gap-2">
-                        <button type="submit" class="btn btn-primary text-white rounded-4" id="submit-btn"
-                            form="form">Submit</button>
-                        <button type="button" data-bs-dismiss="modal" class="btn btn-secondary rounded-4">Cancel</button>
-                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 </div>
             </div>
         </div>
@@ -132,6 +178,7 @@
 @endsection
 
 @section('script')
+
     <script>
         $(function() {
             $('#form').validate({
@@ -155,107 +202,77 @@
                 }
             })
 
-            $("#domain_id").select2({
-                theme: 'bootstrap-5',
-                allowClear: true,
-                placeholder: 'Select domain',
-                ajax: {
-                    url: "{{ route('admin.domain.select_search') }}",
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        var query = {
-                            search_term: params.term,
-                            page: params.page,
-                            except_transaction_date: $('#date').val()
-                        }
-                        return query;
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data.results, function(item) {
-                                return {
-                                    text: item.name,
-                                    id: item.id,
-                                }
-                            }),
-                            pagination: {
-                                more: data.pagination.more
-                            }
-                        };
-                    },
+            $('#date_to').attr('min', $('#date_form').val());
 
+            // 當 date_form 的值改變時
+            $('#date_form').on('change', function() {
+                let dateFormValue = $(this).val();
+                let dateToValue = $('#date_to').val();
+
+                // 更新 date_to 的最小值為 date_form 的值
+                $('#date_to').attr('min', dateFormValue);
+
+                // 如果 date_form 的日期大於 date_to 的日期，將 date_to 設為 date_form 的日期
+                if (dateToValue < dateFormValue) {
+                    $('#date_to').val(dateFormValue);
                 }
             });
+
+            const calendarEl = $('#calendar')[0]; // jQuery 轉換為 DOM 元素
+
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                plugins: [FullCalendar.dayGridPlugin],
+                initialView: 'dayGridMonth',
+                themeSystem: 'bootstrap5',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,dayGridWeek,dayGridDay'
+                },
+                events: function(fetchInfo, successCallback, failureCallback) {
+                    $.ajax({
+                        url: "{{ route('holiday.getHolidays') }}",
+                        method: "POST",
+                        data: {
+                            _token: "{{ csrf_token() }}"
+                        },
+                        success: function(response) {
+                            successCallback(response);
+                        }
+                    });
+                },
+                eventDidMount: function(info) {
+                    $(info.el).css('cursor', 'pointer');
+                },
+                eventClick: function(info) {
+                    const eventTitle = info.event.title;
+                    const eventStart = info.event.start.toLocaleDateString();
+                    const eventEnd = info.event.end.toLocaleDateString();
+                    const eventDetails = info.event.extendedProps.details ||
+                        'No additional details provided.';
+
+                    $('#event-title').text(`${eventTitle}`);
+                    $('#event-start').text(`${eventStart}`);
+                    $('#event-end').text(`${eventEnd}`);
+                    $('#event-details').text(`${eventDetails}`);
+
+                    $('#eventDetailsModal').modal('show');
+                },
+                datesSet: function(dateInfo) {
+                    const currentYear = dateInfo.view.currentStart.getFullYear();
+                    const currentMonth = dateInfo.view.currentStart.getMonth() + 1;
+
+                    Livewire.dispatch('updateDate', {
+                        currentYear: currentYear,
+                        currentMonth: currentMonth
+                    });
+                }
+            });
+
+            // 渲染日曆
+            calendar.render();
+
         });
-
-
-        function calculate() {
-            if ($('#form').valid()) {
-                $.ajax({
-                    type: "POST",
-                    url: "{{ route('admin.web_transfer.calculate') }}",
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        table_content: $('#table_content').val(),
-                        domain_id: $('#domain_id').val(),
-                    },
-                    success: function(result) {
-                        $("#transfer-summary-modal-row").html('');
-
-                        let total = 0;
-
-                        result.forEach(data => {
-                            let amount = parseFloat(data.amount);
-                            let amountFormatted = amount.toFixed(2);
-
-                            if ($(`#customer-summary-${data.user_id}`).length == 0) {
-                                $("#transfer-summary-modal-row").append(`
-                                    <tr>
-                                        <td class="p-2 px-sm-3">${data.username}</td>
-                                        <td id="customer-summary-${data.user_id}" class="text-end p-2 px-sm-3 ${amount < 0 ? 'text-danger' : ''}">
-                                            ${amountFormatted}
-                                        </td>
-                                    </tr>
-                                `);
-                            } else {
-
-                                let currentAmount = parseFloat($(`#customer-summary-${data.user_id}`)
-                                    .text());
-                                currentAmount += amount;
-
-                                $(`#customer-summary-${data.user_id}`).text(currentAmount.toFixed(2))
-                                    .toggleClass('text-danger', currentAmount < 0);
-                            }
-
-                            total += amount;
-                        });
-
-                        $("#transfer-summary-modal-total").text(total.toFixed(2));
-
-                        if (total != 0) {
-                            $("#transfer-summary-not-zero-warning").removeClass('d-none');
-                        } else {
-                            $("#transfer-summary-not-zero-warning").addClass('d-none');
-                        }
-
-                        if (total < 0) {
-                            $("#transfer-summary-modal-total").addClass('text-danger');
-                        } else {
-                            $("#transfer-summary-modal-total").removeClass('text-danger');
-                        }
-
-                        $("#transfer-summary-modal").modal('show');
-
-                        if (result.length == 0) {
-                            $("#submit-btn").addClass('d-none');
-                        } else {
-                            $("#submit-btn").removeClass('d-none');
-                        }
-                    },
-                });
-            }
-        }
     </script>
 
     @stack('scripts')
