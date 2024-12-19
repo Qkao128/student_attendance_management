@@ -157,7 +157,7 @@ class UserAdminService extends Service
 
             $user = $this->_userRepository->getById($id);
 
-            if ($user == null || $user->hasAnyRole(UserType::Admin()->key) != true) {
+            if ($user == null || $user->hasAnyRole(UserType::Admin()->key) != true || $user->hasAnyRole(UserType::SuperAdmin()->key) != true) {
                 throw new Exception();
             }
 

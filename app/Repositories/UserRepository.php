@@ -32,7 +32,7 @@ class UserRepository extends Repository
         $model = $this->_db->find($id);
         $model->username = $data['username'] ?? $model->username;
         $model->email = $data['email'] ?? $model->email;
-        $model->password = ($data['password'] ?? false) ? $data['password'] : $model->password;
+        $model->password = ($data['password'] ?? false) ? Hash::make($data['password']) : $model->password;
         $model->profile_image = (array_key_exists('profile_image', $data)) ? $data['profile_image'] : $model->profile_image;
 
         $model->update();
