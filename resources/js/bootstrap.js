@@ -14,8 +14,15 @@ import "select2";
 import { createPopper } from '@popperjs/core';
 window.Popper = createPopper;
 
-
 import { Chart, registerables } from "chart.js";
+
+// Import FullCalendar core and plugins
+import { Calendar } from '@fullcalendar/core'
+import interactionPlugin from '@fullcalendar/interaction'
+import dayGridPlugin from '@fullcalendar/daygrid'
+
+// Example: Expose Calendar globally (optional, depending on your use case)
+window.FullCalendar = { Calendar, dayGridPlugin, interactionPlugin };
 
 try {
     window.$ = window.jQuery = require("jquery");

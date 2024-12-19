@@ -73,8 +73,8 @@
                 </a>
             </li>
 
-            <li class="sidebar-item">
-                <a class="sidebar-link" href="">
+            <li class="sidebar-item {{ Request::routeIs('holiday.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('holiday.index') }}">
                     <span class="pc-micon" style="margin-left: -2px !important;">
                         <i class="fa-solid fa-calendar-days"></i>
                     </span>

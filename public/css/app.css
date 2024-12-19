@@ -22781,6 +22781,29 @@ readers do not read off random characters that represent icons */
 #admin-portal #add-class-modal #add-class-modal-content {
   margin-bottom: 120px;
 }
+#admin-portal #add-holiday-modal #add-holiday-modal-content {
+  margin-bottom: 100px;
+}
+#admin-portal #customer-column-calculation-container {
+  overflow-x: auto;
+  width: 100%;
+}
+#admin-portal #customer-column-calculation-container .customer-column-calculation-content {
+  display: inline-flex;
+  background-color: #e9ecef;
+  width: 100%;
+}
+@media (max-width: 650px) {
+  #admin-portal #customer-column-calculation-container .customer-column-calculation-content {
+    width: -moz-max-content;
+    width: max-content;
+  }
+}
+#admin-portal .fc-day-today {
+  background-color: #dbeafe !important;
+  border: 2px solid #3b82f6 !important;
+  color: #1e3a8a !important;
+}
 #admin-portal .search-input-group {
   display: flex;
   flex-direction: row;
@@ -23637,6 +23660,12 @@ div.dataTables_wrapper div.dt-row {
   --bs-btn-disabled-color: #fff !important;
   --bs-btn-disabled-bg: #FFC354 !important;
   --bs-btn-disabled-border-color: #FFC354 !important;
+}
+
+.form-control, .custom-select,
+.dataTable-selector,
+.dataTable-input, .datatable-input {
+  background-color: #F4F6FA;
 }
 
 body {
