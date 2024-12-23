@@ -37,12 +37,12 @@ class AccountMonitorList extends Component
 
     public function render()
     {
-        $newData = DB::table('users')
-            ->leftjoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-            ->leftjoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
-            ->leftjoin('students', 'users.student_id', '=', 'students.id')
-            ->leftjoin('classes', 'students.class_id', '=', 'classes.id')
-            ->leftjoin('courses', 'classes.course_id', '=', 'courses.id')
+        $query = DB::table('users')
+            ->leftJoin('students', 'users.student_id', '=', 'students.id')
+            ->leftJoin('classes', 'students.class_id', '=', 'classes.id')
+            ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
+            ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+            ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
             ->select([
                 'users.id',
                 'users.username',
@@ -53,20 +53,23 @@ class AccountMonitorList extends Component
                 'students.name as student_name',
                 'classes.name as class_name',
                 'courses.name as course_name',
+                DB::raw('GROUP_CONCAT(roles.name) as roles') // 將角色名稱合併
             ])
-            ->where('roles.name', '=', UserType::Monitor()->key)
-            ->where('teacher_user_id', $this->teacherId)
-            ->where('users.deleted_at', '=', null)
+            ->where('users.teacher_user_id', $this->teacherId)
+            ->whereNull('users.deleted_at')
+            ->groupBy('users.id') // 防止重複
             ->orderBy('users.created_at', 'DESC');
 
-
+        // 篩選條件
         if (!empty($this->filter['user'])) {
-            $newData->where('username', 'like', '%' . $this->filter['user'] . '%');
+            $query->where('username', 'like', '%' . $this->filter['user'] . '%');
         }
 
-        $newData = $newData->offset($this->limitPerPage * $this->page)
+        // 分頁邏輯
+        $newData = $query->offset($this->limitPerPage * $this->page)
             ->limit($this->limitPerPage)
             ->get();
+
 
         if ($this->page == 0) {
             $this->users = $newData;

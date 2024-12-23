@@ -31,6 +31,12 @@
                                     </div>
 
                                     <div class="col-12 mt-1">
+                                        @php
+                                            $roles = explode(',', $user->roles); // 分割角色名稱為數組
+                                        @endphp
+                                        @if (in_array('Monitor', $roles))
+                                            <i class="fa-solid fa-crown" style="color: #8C4623"></i>
+                                        @endif
                                         {{ $user->username }}
                                     </div>
                                 </div>
