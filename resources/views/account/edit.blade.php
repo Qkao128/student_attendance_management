@@ -89,10 +89,10 @@
                                         <h5 class="mb-3 px-3 py-2">Basic Information</h5>
                                         <div class="card-body">
                                             <div class="form-group mb-4">
-                                                <label class="form-label" for="username">Name<span
+                                                <label class="form-label" for="username">Username<span
                                                         class="text-danger">*</span></label>
                                                 <input type="text" class="form-control" id="username" name="username"
-                                                    value="{{ old('username') }}" placeholder="Enter username" required>
+                                                    value="{{ $user->username }}" placeholder="Enter username" required>
                                             </div>
 
 
@@ -100,7 +100,7 @@
                                                 <label class="form-label" for="email">Email<span
                                                         class="text-danger">*</span></label>
                                                 <input type="email" class="form-control" id="email" name="email"
-                                                    value="{{ old('email') }}" placeholder="Enter email" required>
+                                                    value="{{ $user->course_id }}" placeholder="Enter email" required>
                                             </div>
 
                                         </div>

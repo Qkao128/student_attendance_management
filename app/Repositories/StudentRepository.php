@@ -69,4 +69,34 @@ class StudentRepository extends Repository
             ->whereDate('students.created_at', '<=', $date)
             ->count();
     }
+
+    public function getAllBySearchTermAndClass_id($data)
+    {
+
+        $name = $data['search_term'] ?? '';
+
+        $data = $this->_db->select('id', 'name')
+            ->where('name', 'LIKE', "%$name%")
+            ->where('class_id', '=', $data['class_id'])
+            ->skip($data['offset'])->take($data['result_count'])
+            ->get();
+
+        if (empty($data)) {
+            return null;
+        }
+        return $data;
+    }
+
+    public function getTotalCountBySearchTermAndClass_id($data)
+    {
+
+        $name = $data['search_term'] ?? '';
+
+        $totalCount = $this->_db
+            ->where('name', 'LIKE', "%$name%")
+            ->where('class_id', '=', $data['class_id'])
+            ->count();
+
+        return $totalCount;
+    }
 }

@@ -44,6 +44,12 @@ Route::prefix('admin')->middleware(['auth', 'check_role:' . UserType::SuperAdmin
         Route::get('select-search', [UserAdminController::class, 'selectOption'])->name('select_search');
         Route::get('{id}', [UserAdminController::class, 'show'])->name('show');
         Route::delete('{id}', [UserAdminController::class, 'destroy'])->name('destroy');
+        Route::post('{teacherId}/monitor', [UserAdminController::class, 'storeMonitor'])->name('monitor.store');
+        Route::get('{teacherId}/monitor/{id}/edit', [UserAdminController::class, 'editMonitor'])->name('monitor.edit');
+        Route::patch('{teacherId}/change-password/{id}', [UserAdminController::class, 'updateMonitorPassword'])->name('password.monitor.update');
+        Route::patch('{teacherId}/monitor/{id}', [UserAdminController::class, 'updateMonitor'])->name('monitor.update');
+        Route::get('{teacherId}/monitor/{id}', [UserAdminController::class, 'showMonitor'])->name('monitor.show');
+        Route::delete('{teacherId}/monitor/{id}', [UserAdminController::class, 'destroyMonitor'])->name('monitor.destroy');
     });
 
     // 課程管理
@@ -63,6 +69,7 @@ Route::prefix('admin')->middleware(['auth', 'check_role:' . UserType::SuperAdmin
         Route::post('/', [ClassAdminController::class, 'store'])->name('store');
         Route::get('{id}/edit', [ClassAdminController::class, 'edit'])->name('edit');
         Route::patch('{id}', [ClassAdminController::class, 'update'])->name('update');
+        Route::get('select-search', [ClassAdminController::class, 'selectOption'])->name('select_search');
         Route::get('{id}', [ClassAdminController::class, 'show'])->name('show');
         Route::delete('{id}', [ClassAdminController::class, 'destroy'])->name('destroy');
     });
@@ -72,6 +79,7 @@ Route::prefix('admin')->middleware(['auth', 'check_role:' . UserType::SuperAdmin
         Route::post('{classId}', [StudentAdminController::class, 'store'])->name('store');
         Route::get('{classId}/{id}/edit', [StudentAdminController::class, 'edit'])->name('edit');
         Route::patch('{classId}/{id}', [StudentAdminController::class, 'update'])->name('update');
+        Route::get('select-search', [StudentAdminController::class, 'selectOption'])->name('select_search');
         Route::delete('{classId}/{id}', [StudentAdminController::class, 'destroy'])->name('destroy');
     });
 

@@ -29,9 +29,10 @@ class UserAdminController extends Controller
             'email',
             'password',
             'password_confirmation',
+            'permission'
         ]);
-        $result = $this->_userAdminService->createUser($data);
 
+        $result = $this->_userAdminService->createUser($data);
 
         if ($result == null) {
             $errorMessage = implode("<br>", $this->_userAdminService->_errorMessage);
@@ -91,7 +92,7 @@ class UserAdminController extends Controller
             return back()->with('error', $errorMessage)->withInput();
         }
 
-        return Redirect::route('user.index')->with('success', "Account details successfully updated.");
+        return Redirect::route('user.show', $id)->with('success', "Account details successfully updated.");
     }
 
     public function updatePassword(Request $request, $id)
@@ -102,6 +103,23 @@ class UserAdminController extends Controller
         ]);
 
         $result = $this->_userAdminService->updatePassword($data, $id);
+
+        if ($result == null) {
+            $errorMessage = implode("<br>", $this->_userAdminService->_errorMessage);
+            return back()->with('error', $errorMessage)->withInput();
+        }
+
+        return back()->with('success', "Password successfully updated.");
+    }
+
+    public function updateMonitorPassword(Request $request, $teacherId, $id)
+    {
+        $data = $request->only([
+            'password',
+            'password_confirmation',
+        ]);
+
+        $result = $this->_userAdminService->updateMonitorPassword($data, $teacherId, $id);
 
         if ($result == null) {
             $errorMessage = implode("<br>", $this->_userAdminService->_errorMessage);
@@ -134,5 +152,103 @@ class UserAdminController extends Controller
 
         $results = $this->_userAdminService->getSelectOption($data);
         return $results;
+    }
+
+    public function storeMonitor(Request $request, $teacherId)
+    {
+        $data = $request->only([
+            'profile_image',
+            'username',
+            'email',
+            'password',
+            'password_confirmation',
+            'permission',
+            'teacher_user_id',
+            'student_id',
+        ]);
+
+        $user = $this->_userAdminService->getById($teacherId);
+
+        if ($user === false) {
+            abort(404);
+        }
+
+        $result = $this->_userAdminService->createMonitor($data, $teacherId);
+
+        if ($result == null) {
+            $errorMessage = implode("<br>", $this->_userAdminService->_errorMessage);
+            return back()->with('error', $errorMessage)->withInput();
+        }
+
+        return Redirect::route('user.show', ['id' => $teacherId])->with('success', "Account successfully added.");
+    }
+
+    public function showMonitor($teacherId, $id)
+    {
+        $user = $this->_userAdminService->getById($id);
+        $teacher = $this->_userAdminService->getById($teacherId);
+        $monitor = $this->_userAdminService->getMonitorByStudentId($teacherId, $id);
+
+        if ($user === false || $user->teacher_user_id != $teacherId ||  $monitor == false) {
+            abort(404);
+        }
+
+        if ($user == null) {
+            $errorMessage = implode("<br>", $this->_userAdminService->_errorMessage);
+            return back()->with('error', $errorMessage)->withInput();
+        }
+
+        return view('account/monitor/show', compact('user', 'monitor', 'teacher'));
+    }
+
+
+    public function editMonitor($teacherId, $id)
+    {
+        $user = $this->_userAdminService->getById($teacherId);
+        $monitor = $this->_userAdminService->getMonitorByStudentId($teacherId, $id);
+
+        if ($user === false  || $user->id != $teacherId ||  $monitor == false) {
+            abort(404);
+        }
+
+        if ($user == null) {
+            $errorMessage = implode("<br>", $this->_userAdminService->_errorMessage);
+            return back()->with('error', $errorMessage)->withInput();
+        }
+
+        return view('account/monitor/edit', compact('user', 'monitor'));
+    }
+
+    public function updateMonitor(Request $request, $teacherId, $id)
+    {
+        $data = $request->only([
+            'profile_image',
+            'username',
+            'email',
+            'student_id',
+        ]);
+
+        $result = $this->_userAdminService->updateMonitor($data, $teacherId, $id);
+
+        if ($result == null) {
+            $errorMessage = implode("<br>", $this->_userAdminService->_errorMessage);
+            return back()->with('error', $errorMessage)->withInput();
+        }
+
+        return Redirect::route('user.show', $id)->with('success', "Account details successfully updated.");
+    }
+
+
+    public function destroyMonitor($teacherId, $id)
+    {
+
+        $result = $this->_userAdminService->deleteMonitorById($teacherId, $id);
+
+        if ($result == null) {
+            $errorMessage = implode("<br>", $this->_userAdminService->_errorMessage);
+            return back()->with('error', $errorMessage)->withInput();
+        }
+
+        return Redirect::route('user.show', $id)->with('success', "Account successfully deleted.");
     }
 }

@@ -1,3 +1,7 @@
+@php
+    use App\Enums\UserType;
+@endphp
+
 @extends('layout/layout')
 
 @section('page_title', 'Account Details')
@@ -149,6 +153,163 @@
             </form>
         </div>
     </div>
+
+
+    <div class="row align-items-center g-2 mt-4">
+        <div class="col">
+            <h4 class="header-title">Manage Account Monitor</h4>
+        </div>
+        <div class="col-12 col-md-auto mt-0 mt-md-1">
+            <div class="d-flex float-end align-items-center">
+                <button type="button" class="btn btn-success text-white rounded-4" data-bs-toggle="modal"
+                    data-bs-target="#add-account-monitor-modal">
+                    Add
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div>
+        @livewire('account-monitor-list', ['teacherId' => $user->id])
+    </div>
+
+    <div class="modal fade" id="add-account-monitor-modal" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">
+                        Add New Account
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="{{ route('user.monitor.store', ['teacherId' => $user->id]) }}" id="form"
+                        method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="row">
+                            <div class="col-12 col-md-5 col-lg-4">
+                                <div class="card border-0" style="background-color: transparent">
+                                    <h5 class="mb-0 mt-2">Profile Image</h5>
+
+                                    <div class="card-body mt-3">
+                                        <div class="d-flex justify-content-center">
+                                            <div class="circle-img-lg-wrap rounded-circle border">
+                                                <img src="{{ asset('img/default-teacher-avatar.png') }}"
+                                                    id="profile-image-display"
+                                                    onerror="this.onerror=null;this.src='{{ asset('img/default-teacher-avatar.png') }}'"
+                                                    data-initial-image="{{ asset('img/default-teacher-avatar.png') }}">
+                                            </div>
+                                        </div>
+
+                                        <input type="file" id="profile-image" name="profile_image"
+                                            accept=".png,.jpeg,.jpg" hidden>
+
+                                        <div class="text-center mt-4">
+                                            <button type="button" onclick="uploadProfileImage()"
+                                                class="btn btn-primary">
+                                                Upload
+                                            </button>
+
+                                            <button type="button" onclick="removeProfileImage()"
+                                                id="remove-profile-image-btn" class="btn btn-danger d-none">
+                                                Reset
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-7 col-lg-8 mt-3 mt-md-0">
+                                <div class="card border-0" style="background-color: transparent">
+                                    <h5 class="mb-0 mt-2">Basic Information</h5>
+
+                                    <div class="card-body">
+                                        <div class="row">
+
+                                            <div class="form-group col-12 col-md-6 mb-4">
+                                                <label class="form-label" for="username">Username<span
+                                                        class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="username"
+                                                    name="username" value="{{ old('username') }}"
+                                                    placeholder="Enter username" required>
+                                            </div>
+
+
+                                            <div class="form-group mb-4 col-12 col-md-6">
+                                                <label class="form-label" for="email">Email<span
+                                                        class="text-danger">*</span></label>
+                                                <input type="email" class="form-control" id="email" name="email"
+                                                    value="{{ old('email') }}" placeholder="Enter email" required>
+                                            </div>
+
+                                            <div class="form-group mb-4 col-12 col-md-6">
+                                                <label class="form-label" for="course_id">Course<span
+                                                        class="text-danger">*</span></label>
+                                                <select class="form-select" id="course_id" required style="width:100%;">
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group mb-4 col-12 col-md-6">
+                                                <label class="form-label" for="class_id">Class<span
+                                                        class="text-danger">*</span></label>
+                                                <select class="form-select" id="class_id" required style="width:100%;">
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group mb-4 col-12 col-md-6">
+                                                <label class="form-label" for="student_id">Student<span
+                                                        class="text-danger">*</span></label>
+                                                <select class="form-select" id="student_id" name="student_id" required
+                                                    style="width:100%;">
+                                                </select>
+                                            </div>
+
+                                            <div class="form-group mb-4 col-12 col-md-6">
+                                                <label class="form-label" for="email">Permission<span
+                                                        class="text-danger">*</span></label>
+
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="permission"
+                                                        id="permission_super_admin"
+                                                        value="{{ UserType::Monitor()->key }}" required
+                                                        @if (old('permission') == UserType::Monitor()->key) checked @endif checked>
+
+                                                    <label class="form-check-label" for="permission_super_admin">
+                                                        Monitor
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group col-12 mb-4">
+                                            <label class="form-label" for="password">Password<span
+                                                    class="text-danger">*</span></label>
+                                            <input type="password" class="form-control" id="password" name="password"
+                                                placeholder="Enter password" required>
+                                        </div>
+
+                                        <div class="form-group col-12 mb-4">
+                                            <label class="form-label" for="password_confirmation">Confirm
+                                                Password<span class="text-danger">*</span></label>
+                                            <input type="password" class="form-control" id="password_confirmation"
+                                                name="password_confirmation" placeholder="Enter confirm password"
+                                                required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-end pe-2 mt-5">
+                            <button type="submit" class="btn btn-success text-white rounded-4">Submit</button>
+                        </div>
+                    </form>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('script')
@@ -188,6 +349,145 @@
                     }
                 },
             })
+
+
+
+            $("#course_id").select2({
+                theme: 'bootstrap-5',
+                allowClear: true,
+                placeholder: 'Select course',
+                dropdownParent: $('#add-account-monitor-modal'),
+                ajax: {
+                    url: "{{ route('course.select_search') }}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        var query = {
+                            search_term: params.term,
+                            page: params.page,
+                            _token: "{{ csrf_token() }}"
+                        }
+                        return query;
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data.results, function(item) {
+                                return {
+                                    text: item.name,
+                                    id: item.id
+                                }
+                            }),
+                            pagination: {
+                                more: data.pagination.more
+                            }
+                        };
+                    },
+
+                }
+            }).on('change', function() {
+                $('#class_id').val(null).trigger('change');
+                $('#student_id').val(null).trigger('change');
+            });;
+
+            $('#class_id').select2({
+                theme: 'bootstrap-5',
+                allowClear: true,
+                placeholder: 'Select class',
+                dropdownParent: $('#add-account-monitor-modal'),
+                ajax: {
+                    url: "{{ route('class.select_search') }}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search_term: params.term,
+                            page: params.page,
+                            course_id: $('#course_id').val() ?? false
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data.results, function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.name
+                                }
+                            }),
+                            pagination: {
+                                more: data.pagination.more
+                            }
+                        };
+                    }
+                }
+            }).on('change', function() {
+                $('#student_id').val(null).trigger('change');
+            });;
+
+            $('#student_id').select2({
+                theme: 'bootstrap-5',
+                allowClear: true,
+                placeholder: 'Select student',
+                dropdownParent: $('#add-account-monitor-modal'),
+                ajax: {
+                    url: "{{ route('student.select_search') }}",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search_term: params.term,
+                            page: params.page,
+                            class_id: $('#class_id').val() ?? false
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data.results, function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.name
+                                }
+                            }),
+                            pagination: {
+                                more: data.pagination.more
+                            }
+                        };
+                    }
+                }
+            });
+
+            $("#profile-image").change(function() {
+                const file = this.files[0];
+                if (file) {
+                    let reader = new FileReader();
+                    reader.onload = function(event) {
+                        $("#profile-image-display")
+                            .attr("src", event.target.result);
+                        $("#remove-profile-image-btn").removeClass("d-none");
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    var initialImage = $("#profile-image-display").data("initial-image");
+
+                    $("#profile-image-display")
+                        .attr("src", initialImage);
+                    $("#remove-profile-image-btn").addClass("d-none");
+                }
+            });
+
         });
+
+        function uploadProfileImage() {
+            $("#profile-image").click();
+        }
+
+        function removeProfileImage() {
+            $("#profile-image").val(null);
+
+            var initialImage = $("#profile-image-display").data("initial-image");
+
+            $("#profile-image-display")
+                .attr("src", initialImage);
+            $("#remove-profile-image-btn").addClass("d-none");
+        }
     </script>
 @endsection

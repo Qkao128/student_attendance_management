@@ -168,4 +168,30 @@ class ClassAdminService extends Service
             return null;
         }
     }
+
+    public function getSelectOption($data)
+    {
+        try {
+            $data['result_count'] = 5;
+            $data['offset'] = ($data['page'] - 1) * $data['result_count'];
+
+            $class = $this->_classRepository->getAllBySearchTermAndCourse_id($data);
+
+            $totalCount = $this->_classRepository->getTotalCountBySearchTermAndCourse_id($data);
+
+            $results = array(
+                "results" => $class->toArray(),
+                "pagination" => array(
+                    "more" => $totalCount < $data['offset'] + $data['result_count'] ? false : true
+                )
+            );
+
+            return $results;
+        } catch (Exception $e) {
+
+            array_push($this->_errorMessage, "Fail to get class select option.");
+            DB::rollBack();
+            return null;
+        }
+    }
 }

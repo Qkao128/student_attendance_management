@@ -88,6 +88,19 @@ class StudentAdminController extends Controller
         return Redirect::route('class.show', $classId)->with('success', "Student successfully deleted.");
     }
 
+    public function selectOption(Request $request)
+    {
+        $data = [
+            "search_term" => $request->search_term ?? null,
+            "page" => $request->page ?? 1,
+            "class_id" => $request->class_id ?? null,
+        ];
+
+        $results = $this->_studentAdminService->getSelectOption($data);
+
+        return $results;
+    }
+
     public function datatable(Request $request)
     {
         $classId = $request->input('class_id');

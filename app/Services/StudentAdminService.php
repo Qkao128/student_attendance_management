@@ -254,4 +254,30 @@ class StudentAdminService extends Service
     {
         return Str::random(5) . Str::uuid() . Str::random(5);
     }
+
+    public function getSelectOption($data)
+    {
+        try {
+            $data['result_count'] = 5;
+            $data['offset'] = ($data['page'] - 1) * $data['result_count'];
+
+            $student = $this->_studentRepository->getAllBySearchTermAndClass_id($data);
+
+            $totalCount = $this->_studentRepository->getTotalCountBySearchTermAndClass_id($data);
+
+            $results = array(
+                "results" => $student->toArray(),
+                "pagination" => array(
+                    "more" => $totalCount < $data['offset'] + $data['result_count'] ? false : true
+                )
+            );
+
+            return $results;
+        } catch (Exception $e) {
+
+            array_push($this->_errorMessage, "Fail to get student select option.");
+            DB::rollBack();
+            return null;
+        }
+    }
 }

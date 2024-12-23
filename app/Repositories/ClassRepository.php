@@ -65,4 +65,37 @@ class ClassRepository extends Repository
             ->whereDate('created_at', '<=', $date)
             ->count();
     }
+
+
+    public function getAllBySearchTermAndCourse_id($data)
+    {
+
+        $name = $data['search_term'] ?? '';
+
+        $data = $this->_db->select('id', 'name')
+            ->where('name', 'LIKE', "%$name%")
+            ->where('course_id', '=', $data['course_id'])
+            ->where('is_disabled', false)
+            ->skip($data['offset'])->take($data['result_count'])
+            ->get();
+
+        if (empty($data)) {
+            return null;
+        }
+        return $data;
+    }
+
+    public function getTotalCountBySearchTermAndCourse_id($data)
+    {
+
+        $name = $data['search_term'] ?? '';
+
+        $totalCount = $this->_db
+            ->where('name', 'LIKE', "%$name%")
+            ->where('course_id', '=', $data['course_id'])
+            ->where('is_disabled', false)
+            ->count();
+
+        return $totalCount;
+    }
 }

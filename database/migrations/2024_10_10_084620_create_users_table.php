@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('teacher_user_id')->nullable();
             $table->foreign('teacher_user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('student_id')->nullable()->constrained('students');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

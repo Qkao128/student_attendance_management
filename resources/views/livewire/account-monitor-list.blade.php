@@ -2,41 +2,19 @@
     use Carbon\Carbon;
 @endphp
 
-<div id="account-list">
+<div id="account-monitor-list">
     <div class="row align-items-center g-0 mt-3">
         <div class="col">
             <div class="search-input-group">
                 <div class="search-input-icon">
                     <i class="fa fa-search"></i>
                 </div>
+
                 <input type="text" class="form-control search-input" placeholder="Search account"
                     wire:keydown.debounce.250ms="filterUser($event.target.value)" wire:model="filter.user">
             </div>
         </div>
     </div>
-
-    <h5 class="my-3">
-        <span
-            class="badge text-black fw-normal {{ $filter['role'] === null ? 'border' : '' }} ms-sm-2 {{ $filter['role'] === null ? 'text-white' : '' }}"
-            wire:click="filterByRole(null)" role="button"
-            style="background-color: {{ $filter['role'] === null ? '#007bff' : '#F4F6FA' }}; box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
-            All Users
-        </span>
-
-        <span
-            class="badge text-black fw-normal {{ $filter['role'] === 'SuperAdmin' ? 'border' : '' }} {{ $filter['role'] === 'SuperAdmin' ? 'text-white' : '' }}"
-            wire:click="filterByRole('SuperAdmin')" role="button"
-            style="background-color: {{ $filter['role'] === 'SuperAdmin' ? '#007bff' : '#F4F6FA' }}; box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
-            Super Admin
-        </span>
-
-        <span
-            class="badge text-black fw-normal {{ $filter['role'] === 'Admin' ? 'border' : '' }} ms-sm-2 {{ $filter['role'] === 'Admin' ? 'text-white' : '' }}"
-            wire:click="filterByRole('Admin')" role="button"
-            style="background-color: {{ $filter['role'] === 'Admin' ? '#007bff' : '#F4F6FA' }}; box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
-            Admin
-        </span>
-    </h5>
 
     <div class="row g-4 mt-2">
         @foreach ($users as $user)
@@ -51,29 +29,25 @@
                                     <div class="col-12 text-muted">
                                         Username :
                                     </div>
-                                    <div class="col-12 mt-1">
-                                        @if ($user->roles->contains('name', 'SuperAdmin'))
-                                            <i class="fa-solid fa-crown" style="color: #FFD700"></i>
-                                        @endif
 
-                                        @if ($user->roles->contains('name', 'Admin'))
-                                            <i class="fa-solid fa-crown" style="color: #C0C0C0"></i>
-                                        @endif
+                                    <div class="col-12 mt-1">
                                         {{ $user->username }}
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="col-12 col-md">
+                            <div class="col col-md">
                                 <div class="row gap-2 d-md-block">
                                     <div class="col-12 text-muted">
                                         Email :
                                     </div>
+
                                     <div class="col-12 mt-1">
                                         {{ $user->email }}
                                     </div>
                                 </div>
                             </div>
+
 
                             <div class="col-12 col-md">
                                 <div class="row gap-2 d-md-block">
@@ -95,17 +69,18 @@
 
                                     <div class="col-12 mt-1">
                                         <div class="d-inline-flex gap-3">
-                                            <a href="{{ route('user.show', ['id' => $user->id]) }}"
+                                            <a href="{{ route('user.monitor.show', ['teacherId' => $user->teacher_user_id, 'id' => $user->id]) }}"
                                                 class="btn btn-info rounded-4">
                                                 <i class="fa-solid fa-eye"></i>
                                             </a>
 
-                                            <a href="{{ route('user.edit', ['id' => $user->id]) }}"
+                                            <a href="{{ route('user.monitor.edit', ['teacherId' => $user->teacher_user_id, 'id' => $user->id]) }}"
                                                 class="btn btn-warning text-dark">
                                                 <i class="fa-solid fa-pen-nib"></i>
                                             </a>
 
-                                            <form method="POST" action="{{ route('user.destroy', $user->id) }}">
+                                            <form method="POST"
+                                                action="{{ route('user.monitor.destroy', ['teacherId' => $user->teacher_user_id, 'id' => $user->id]) }}">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="btn btn-danger"
@@ -114,6 +89,44 @@
                                                 </button>
                                             </form>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <hr class="mb-0">
+
+                            <div class="col col-sm-6 col-md">
+                                <div class="row gap-2 d-md-block">
+                                    <div class="col-12 text-muted">
+                                        Student Name:
+                                    </div>
+
+                                    <div class="col-12 mt-1">
+                                        {{ $user->student_name }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-6 col-md">
+                                <div class="row gap-2 d-md-block">
+                                    <div class="col-12 text-muted">
+                                        Class :
+                                    </div>
+
+                                    <div class="col-12 mt-1">
+                                        {{ $user->class_name }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm-6 col-md-auto">
+                                <div class="row gap-2 d-md-block">
+                                    <div class="col-12 text-muted">
+                                        Course :
+                                    </div>
+
+                                    <div class="col-12 mt-1">
+                                        {{ $user->course_name }}
                                     </div>
                                 </div>
                             </div>

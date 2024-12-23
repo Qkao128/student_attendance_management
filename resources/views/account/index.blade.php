@@ -1,6 +1,31 @@
+@php
+    use App\Enums\UserType;
+@endphp
+
 @extends('layout/layout')
 
 @section('page_title', 'Account')
+@section('style')
+    <style>
+        input[type="radio"] {
+            appearance: none;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            background-color: #f4f6fa;
+            cursor: pointer;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        input[type="radio"]:checked {
+            background-color: #007bff;
+            border: 2px solid #007bff;
+            background-clip: content-box;
+        }
+    </style>
+@endsection
 
 @section('content')
     <div id="admin-account">
@@ -87,35 +112,70 @@
                                     <h5 class="mb-0 mt-2">Basic Information</h5>
 
                                     <div class="card-body">
-                                        <div class="form-group mb-4">
-                                            <label class="form-label" for="username">Name<span
-                                                    class="text-danger">*</span></label>
-                                            <input type="text" class="form-control" id="username" name="username"
-                                                value="{{ old('username') }}" placeholder="Enter username" required>
+                                        <div class="row">
+
+                                            <div class="form-group col-12 mb-4">
+                                                <label class="form-label" for="username">Username<span
+                                                        class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="username" name="username"
+                                                    value="{{ old('username') }}" placeholder="Enter username" required>
+                                            </div>
+
+
+                                            <div class="form-group mb-4 col-12 col-md-6">
+                                                <label class="form-label" for="email">Email<span
+                                                        class="text-danger">*</span></label>
+                                                <input type="email" class="form-control" id="email" name="email"
+                                                    value="{{ old('email') }}" placeholder="Enter email" required>
+                                            </div>
+
+                                            <div class="form-group mb-4 col-12 col-md-6">
+                                                <label class="form-label" for="email">Permission<span
+                                                        class="text-danger">*</span></label>
+                                                <div class="row">
+                                                    <div class="col-auto">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio" name="permission"
+                                                                id="permission_super_admin"
+                                                                value="{{ UserType::SuperAdmin()->key }}" required
+                                                                @if (old('permission') == UserType::SuperAdmin()->key) checked @endif>
+
+                                                            <label class="form-check-label" for="permission_super_admin">
+                                                                Super Admin
+                                                            </label>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-auto ">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input" type="radio"
+                                                                name="permission" id="permission_admin"
+                                                                value="{{ UserType::Admin()->key }}" required
+                                                                @if (old('permission') == UserType::Admin()->key) checked @endif>
+
+                                                            <label class="form-check-label" for="permission_admin">
+                                                                Teacher Admin
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group col-12 mb-4">
+                                                <label class="form-label" for="password">Password<span
+                                                        class="text-danger">*</span></label>
+                                                <input type="password" class="form-control" id="password"
+                                                    name="password" placeholder="Enter password" required>
+                                            </div>
+
+                                            <div class="form-group col-12 mb-4">
+                                                <label class="form-label" for="password_confirmation">Confirm
+                                                    Password<span class="text-danger">*</span></label>
+                                                <input type="password" class="form-control" id="password_confirmation"
+                                                    name="password_confirmation" placeholder="Enter confirm password"
+                                                    required>
+                                            </div>
                                         </div>
-
-
-                                        <div class="form-group mb-4">
-                                            <label class="form-label" for="email">Email<span
-                                                    class="text-danger">*</span></label>
-                                            <input type="email" class="form-control" id="email" name="email"
-                                                value="{{ old('email') }}" placeholder="Enter email" required>
-                                        </div>
-
-                                        <div class="form-group mb-4">
-                                            <label class="form-label" for="password">Password<span
-                                                    class="text-danger">*</span></label>
-                                            <input type="password" class="form-control" id="password" name="password"
-                                                placeholder="Enter password" required>
-                                        </div>
-
-                                        <div class="form-group mb-4">
-                                            <label class="form-label" for="password_confirmation">Confirm Password<span
-                                                    class="text-danger">*</span></label>
-                                            <input type="password" class="form-control" id="password_confirmation"
-                                                name="password_confirmation" placeholder="Enter confirm password" required>
-                                        </div>
-
                                     </div>
                                 </div>
                             </div>
