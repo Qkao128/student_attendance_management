@@ -14,6 +14,8 @@ class DashboardList extends Component
     public $filter = []; // 用来存储过滤条件
     public $page = 0;
     public $limitPerPage = 50;
+    public $date_from;
+    public $date_to;
 
     public function mount($date = null)
     {
@@ -44,12 +46,26 @@ class DashboardList extends Component
     }
 
 
-    #[On('updateDate')] // 監聽來自前端的事件
-    public function updateDate($date)
+    #[On('updateDateFrom')]
+    public function updateDateFrom($date)
     {
-        $this->filterDate = $date;
-        $this->loadDashboardData();
+        $this->date_from = $date;
+
+        if ($this->date_to && $this->date_to < $date) {
+            $this->date_to = $date;
+        }
     }
+
+    #[On('updateDateTo')]
+    public function updateDateTo($date)
+    {
+        $this->date_to = $date;
+
+        if ($this->date_to < $this->date_from) {
+            $this->date_from = $this->date_to;
+        }
+    }
+
 
     private function loadDashboardData()
     {

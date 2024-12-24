@@ -73,7 +73,7 @@
                         <div class="row" id="add-holiday-modal-content">
                             <div class="col-12 col-md-6">
                                 <div class="form-group mb-3">
-                                    <label class="form-label" for="date_from">Date form<span
+                                    <label class="form-label" for="date_from">Date from<span
                                             class="text-danger">*</span></label>
                                     <input type="date" class="form-control" id="date_from" name="date_from"
                                         value="{{ Carbon::now()->toDateString() }}" required>
@@ -109,7 +109,6 @@
                                         <i class="fa-solid fa-palette me-3" style="margin-top: 9px;"></i>
                                     </div>
                                 </div>
-
 
                             </div>
 
@@ -152,12 +151,12 @@
                     <div class="row">
                         <div class="col-12 col-sm-6">
                             <label class="form-label">Started At :</label>
-                            <p class="fst-italic text-muted" id="event-start"></p>
+                            <p class="text-muted" id="event-start"></p>
                         </div>
 
                         <div class="col-12 col-sm-6">
                             <label class="form-label">Ended At :</label>
-                            <p class="fst-italic text-muted" id="event-end"></p>
+                            <p class="text-muted" id="event-end"></p>
                         </div>
 
                         <div class="col-12 mt-1">
@@ -180,7 +179,7 @@
 @section('script')
 
     <script>
-        $(function() {
+        $(document).ready(function() {
             $('#form').validate({
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
@@ -202,17 +201,14 @@
                 }
             })
 
-            $('#date_to').attr('min', $('#date_form').val());
+            $('#date_to').attr('min', $('#date_from').val());
 
-            // 當 date_form 的值改變時
-            $('#date_form').on('change', function() {
+            $('#date_from').on('change', function() {
                 let dateFormValue = $(this).val();
                 let dateToValue = $('#date_to').val();
 
-                // 更新 date_to 的最小值為 date_form 的值
                 $('#date_to').attr('min', dateFormValue);
 
-                // 如果 date_form 的日期大於 date_to 的日期，將 date_to 設為 date_form 的日期
                 if (dateToValue < dateFormValue) {
                     $('#date_to').val(dateFormValue);
                 }

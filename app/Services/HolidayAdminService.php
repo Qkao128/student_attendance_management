@@ -99,13 +99,12 @@ class HolidayAdminService extends Service
             }
 
             if (!Auth::check() || !Auth::user()->hasRole(UserType::SuperAdmin()->key)) {
-                throw new Exception('You do not have permission to perform this action.');
+                throw new Exception('You do not have permission to perform this action');
             }
 
-            if (strtotime($data['date_to']) < strtotime($data['date_from'])) {
-                throw new Exception('The date to must be greater than or equal to the date from.');
+            if ($data['date_from'] > $data['date_to']) {
+                throw new Exception();
             }
-
 
             $holiday = $this->_holidayRepository->getById($id);
 

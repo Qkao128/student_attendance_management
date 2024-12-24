@@ -30,7 +30,7 @@ class HolidayRepository extends Repository
     public function update($data, $id)
     {
         $model = $this->_db->find($id);
-        $model->date_form = $data['date_form'] ?? $model->date_form;
+        $model->date_from = $data['date_from'] ?? $model->date_from;
         $model->date_to = $data['date_to'] ?? $model->date_to;
         $model->title = $data['title'] ?? $model->title;
         $model->background_color = $data['background_color'] ?? $model->background_color;

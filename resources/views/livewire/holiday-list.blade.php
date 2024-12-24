@@ -14,7 +14,9 @@
             </thead>
             <tbody>
                 @foreach ($holidays as $holiday)
-                    <tr role="button">
+                    <tr role="button"
+                        onclick="selectHoliday({{ $holiday->id }}, '{{ $holiday->title }}', '{{ $holiday->date_from }}', '{{ $holiday->date_to }}', '{{ $holiday->background_color }}', '{{ $holiday->details }}')">
+
                         <td class="p-2 px-sm-3 d-flex align-self-center text-wrap text-break"
                             style="max-width: 300px; min-width: 210px;">
                             <div class="p-1" style="min-width: 50px; height: 27px;border: 1px solid black;">
@@ -23,7 +25,6 @@
                             </div>
                             <span class="ms-2">{{ $holiday->title }}</span>
                         </td>
-
                         <td class="p-2 px-sm-3 text-left text-sm-center" style="min-width: 210px;width: 100%;">
                             <span
                                 class="{{ $holiday->date_from && Carbon::parse($holiday->date_from)->isToday() ? 'text-success' : '' }}">
@@ -36,6 +37,80 @@
             </tbody>
         </table>
     </div>
+
+    <div class="modal fade" id="holiday-list-modal" tabindex="-1" wire:ignore.self>
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Edit Holiday</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="holiday-form" method="POST">
+                        @csrf
+                        @method('PATCH')
+
+                        <input type="hidden" id="modal-holiday-id" name="id" value="">
+
+                        <div class="row" style="margin-bottom: 100px;">
+
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="modal-date-from">Date From</label>
+                                    <input type="date" class="form-control" id="modal-date-from" name="date_from"
+                                        required>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="modal-date-to">Date To</label>
+                                    <input type="date" class="form-control" id="modal-date-to" name="date_to"
+                                        required>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="modal-title">Title</label>
+                                    <input type="text" class="form-control" id="modal-title" name="title" required>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="modal-background-color">Custom background colour<span
+                                            class="text-danger">*</span></label>
+                                    <div class="form-group justify-content-between d-flex">
+                                        <div>
+                                            <input type="color" class="form-control" id="modal-background-color"
+                                                name="background_color" style="min-width: 100px;height: 37px;" required>
+                                        </div>
+
+                                        <div>
+                                            <i class="fa-solid fa-palette me-3" style="margin-top: 9px;"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="modal-details">Details</label>
+                                    <textarea class="form-control" id="modal-details" style="resize: none;" name="details" rows="5"
+                                        placeholder="Add detail for this holidays..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 
     <div class="d-grid">
@@ -62,3 +137,90 @@
         @endif
     </div>
 </div>
+
+
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            $('#holiday-form').validate({
+                errorElement: 'span',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function(element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                },
+                invalidHandler: function(form, validator) {
+                    var errors = validator.numberOfInvalids();
+                    if (errors) {
+                        notifier.show('Warning!', 'Please check all the fields.', 'warning',
+                            '', 4000);
+                    }
+                }
+            })
+
+
+            // 初始化日期范围
+            $('#holiday-list-modal').on('shown.bs.modal', function() {
+                // 获取当前的 date_from 和 date_to 值
+                var dateFrom = $('#modal-date-from').val();
+                var dateTo = $('#modal-date-to').val();
+
+                // 如果 date_from 已经有值，设置 date_to 的最小日期
+                if (dateFrom) {
+                    $('#modal-date-to').attr('min', dateFrom);
+                }
+
+                // 如果 date_to 小于 date_from，自动更新 date_to 为 date_from
+                if (dateTo && dateFrom && dateTo < dateFrom) {
+                    $('#modal-date-to').val(dateFrom);
+                }
+
+                // 当修改 date_from 时，实时更新 date_to 的最小日期
+                $('#modal-date-from').on('change', function() {
+                    var dateFrom = $(this).val();
+                    $('#modal-date-to').attr('min', dateFrom);
+
+                    // 如果 date_to 小于 date_from，自动更新 date_to 为 date_from
+                    var dateTo = $('#modal-date-to').val();
+                    if (dateTo && dateTo < dateFrom) {
+                        $('#modal-date-to').val(dateFrom); // 将 date_to 自动设为 date_from
+                    }
+                });
+
+                // 当修改 date_to 时，如果 date_to 小于 date_from，自动调整 date_from 为 date_to
+                $('#modal-date-to').on('change', function() {
+                    var dateFrom = $('#modal-date-from').val();
+                    var dateTo = $(this).val();
+
+                    // 如果 date_to 小于 date_from，自动更新 date_from 为 date_to
+                    if (dateTo && dateFrom && dateTo < dateFrom) {
+                        $('#modal-date-from').val(dateTo); // 更新 date_from 为 date_to
+                    }
+                });
+            });
+
+        });
+
+        function selectHoliday(id, title, dateFrom, dateTo, backgroundColor, details) {
+            // 更新模态框字段
+            $('#modal-title').val(title);
+            $('#modal-date-from').val(dateFrom);
+            $('#modal-date-to').val(dateTo);
+            $('#modal-background-color').val(backgroundColor);
+            $('#modal-details').val(details);
+
+            // 动态设置表单的 action，直接在 URL 中包含 holiday ID
+            let formAction = `{{ route('holiday.update', ['id' => ':id']) }}`.replace(':id', id);
+            $('#holiday-form').attr('action', formAction);
+
+            // 打开模态框
+            $('#holiday-list-modal').modal('show');
+        }
+    </script>
+@endpush

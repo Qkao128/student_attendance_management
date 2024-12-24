@@ -11,7 +11,7 @@ class HolidayList extends Component
 {
     public $page = 0;
     public $limitPerPage = 50;
-    public $holidays;
+    public $holidays; // 初始化为空数组
     public $year;
     public $month;
 
@@ -22,19 +22,11 @@ class HolidayList extends Component
         $this->applyFilter();
     }
 
+
     public function loadMore()
     {
         $this->page++;
         $this->render();
-    }
-
-    #[On('updateDate')]
-    public function updateDate($currentYear, $currentMonth)
-    {
-        $this->year = $currentYear;
-        $this->month = $currentMonth;
-
-        $this->applyFilter();
     }
 
     public function applyFilter()
@@ -46,10 +38,10 @@ class HolidayList extends Component
     public function render()
     {
         $newData = DB::table('holidays')
-            ->select('date_from', 'date_to', 'title', 'background_color', 'details')
+            ->select('id', 'date_from', 'date_to', 'title', 'background_color', 'details')
             ->whereYear('date_from', $this->year)
             ->whereMonth('date_from', $this->month)
-            ->orderBy('date_from', 'DESC');
+            ->orderBy('date_from', 'ASC');
 
         $newData = $newData->offset($this->limitPerPage * $this->page);
         $newData = $newData->limit($this->limitPerPage);
