@@ -67,4 +67,16 @@ class HolidayAdminController extends Controller
 
         return response()->json($holidays);
     }
+
+    public function destroy($id)
+    {
+        $result = $this->_holidayAdminService->deleteById($id);
+
+        if ($result == null) {
+            $errorMessage = implode("<br>", $this->_holidayAdminService->_errorMessage);
+            return back()->with('error', $errorMessage)->withInput();
+        }
+
+        return Redirect::route('holiday.index')->with('success', "Holiday successfully deleted.");
+    }
 }

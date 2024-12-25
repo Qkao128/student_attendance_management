@@ -140,4 +140,32 @@ class HolidayAdminService extends Service
             return null;
         }
     }
+
+    public function deleteById($id)
+    {
+        DB::beginTransaction();
+
+        try {
+
+            $holiday = $this->_holidayRepository->getById($id);
+
+            if (!Auth::check() || !Auth::user()->hasRole(UserType::SuperAdmin()->key)) {
+                throw new Exception('You do not have permission to perform this action.');
+            }
+
+            if ($holiday == null) {
+                throw new Exception();
+            }
+
+            $holiday = $this->_holidayRepository->deleteById($id);
+
+            DB::commit();
+            return $holiday;
+        } catch (Exception $e) {
+            array_push($this->_errorMessage, "Fail to delete holiday details.");
+
+            DB::rollBack();
+            return null;
+        }
+    }
 }

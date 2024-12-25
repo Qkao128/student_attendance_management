@@ -99,6 +99,7 @@ Route::prefix('admin')->middleware(['auth', 'check_role:' . UserType::SuperAdmin
         Route::post('/', [HolidayAdminController::class, 'store'])->name('store');
         Route::patch('{id}', [HolidayAdminController::class, 'update'])->name('update');
         Route::post('holidays', [HolidayAdminController::class, 'getHolidays'])->name('getHolidays');
+        Route::delete('{id}', [HolidayAdminController::class, 'destroy'])->name('destroy');
     });
 });
 

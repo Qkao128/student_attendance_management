@@ -45,7 +45,7 @@ class HolidayRepository extends Repository
         return $this->_db->select([
             'title as title',
             DB::raw('DATE(date_from) as start'),
-            DB::raw('DATE(date_to) as end'),
+            DB::raw('DATE(DATE_ADD(date_to, INTERVAL 1 DAY)) as end'),
             'background_color as backgroundColor',
             'background_color as borderColor',
             'details',

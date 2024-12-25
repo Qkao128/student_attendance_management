@@ -102,7 +102,14 @@
                         </div>
 
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <form id="delete-form" method="POST" action="">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" class="btn btn-danger" onclick="deleteFormConfirmation(event)">
+                                    <i class="fa-solid fa-trash-can"></i> Delete
+                                </button>
+                            </form>
+
                             <button type="submit" class="btn btn-primary">Save Changes</button>
                         </div>
                     </form>
@@ -218,6 +225,9 @@
             // 动态设置表单的 action，直接在 URL 中包含 holiday ID
             let formAction = `{{ route('holiday.update', ['id' => ':id']) }}`.replace(':id', id);
             $('#holiday-form').attr('action', formAction);
+
+            let deleteFormAction = `{{ route('holiday.destroy', ['id' => ':id']) }}`.replace(':id', id);
+            $('#delete-form').attr('action', deleteFormAction);
 
             // 打开模态框
             $('#holiday-list-modal').modal('show');
