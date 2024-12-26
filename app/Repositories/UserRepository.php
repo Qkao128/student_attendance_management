@@ -23,8 +23,8 @@ class UserRepository extends Repository
         $model->username = $data['username'];
         $model->email = $data['email'];
         $model->password = Hash::make($data['password']);
-        $model->teacher_user_id = $data['teacher_user_id'];
-        $model->student_id = $data['student_id'];
+        $model->teacher_user_id = $data['teacher_user_id'] ?? null;
+        $model->student_id = $data['student_id'] ?? null;
 
         $model->save();
         return $model->fresh();
