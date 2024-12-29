@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use Carbon\Carbon;
 use App\Models\Holidays;
 use Illuminate\Support\Facades\DB;
 
@@ -50,5 +51,36 @@ class HolidayRepository extends Repository
             'background_color as borderColor',
             'details',
         ])->get();
+    }
+
+    public function isDateHoliday($date)
+    {
+        $date = Carbon::parse($date)->format('Y-m-d');
+
+        $holiday = DB::table('holidays')
+            ->where(function ($query) use ($date) {
+                $query->where(function ($q) use ($date) {
+                    $q->where('date_from', '<=', $date)
+                        ->where('date_to', '>=', $date);
+                });
+            })
+            ->exists();
+
+        return $holiday;
+    }
+
+    public function getHolidaysInRange(Carbon $startOfMonth, Carbon $endOfMonth)
+    {
+        return DB::table('holidays')
+            ->where(function ($query) use ($startOfMonth, $endOfMonth) {
+                $query->whereBetween('date_from', [$startOfMonth, $endOfMonth])
+                    ->orWhereBetween('date_to', [$startOfMonth, $endOfMonth])
+                    ->orWhere(function ($q) use ($startOfMonth, $endOfMonth) {
+                        $q->where('date_from', '<=', $startOfMonth)
+                            ->where('date_to', '>=', $endOfMonth);
+                    });
+            })
+            ->get(['date_from', 'date_to'])
+            ->toArray();
     }
 }

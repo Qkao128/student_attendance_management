@@ -146,4 +146,96 @@ class AttendanceRepository extends Repository
             'total_status_counts' => $totalStatusCounts, // 每个状态对应的数量
         ];
     }
+
+    public function getMonthlyAttendanceData(Carbon $startOfMonth, Carbon $endOfMonth, ?int $courseId, array $holidayDates)
+    {
+        $query = DB::table('attendances')
+            ->join('students', 'attendances.student_id', '=', 'students.id')
+            ->join('classes', 'students.class_id', '=', 'classes.id')
+            ->select('attendances.status', DB::raw('COUNT(attendances.id) as count'))
+            ->whereBetween('attendances.created_at', [$startOfMonth, $endOfMonth]);
+
+        if ($courseId) {
+            $query->where('classes.id', $courseId);
+        }
+
+        if (!empty($holidayDates)) {
+            $query->whereNotIn(DB::raw('DATE(attendances.created_at)'), $holidayDates);
+        }
+
+        $query->groupBy('attendances.status');
+
+        return $query->pluck('count', 'status')->toArray();
+    }
+
+
+    public function getMonthlyUnavailableStudentCount(Carbon $startOfMonth, Carbon $endOfMonth, ?int $courseId, array $holidayDates)
+    {
+        $query = DB::table('attendances')
+            ->join('students', 'attendances.student_id', '=', 'students.id')
+            ->join('classes', 'students.class_id', '=', 'classes.id')
+            ->whereBetween('attendances.created_at', [$startOfMonth, $endOfMonth])
+            ->whereIn('attendances.status', ['Medical', 'Absence']);
+
+        if ($courseId) {
+            $query->where('classes.id', $courseId);
+        }
+
+        if (!empty($holidayDates)) {
+            $query->whereNotIn(DB::raw('DATE(attendances.created_at)'), $holidayDates);
+        }
+
+        return $query->count();
+    }
+
+
+    public function getClassCountByCourse(?int $courseId)
+    {
+        $query = DB::table('classes')
+            ->where('is_disabled', false); // 只篩選 is_disabled = false 的班級
+
+        if ($courseId) {
+            $query->where('course_id', $courseId); // 篩選特定課程的班級
+        }
+
+        return $query->count(); // 返回符合條件的班級數量
+    }
+
+    public function getPresentRelatedCount(Carbon $startOfMonth, Carbon $endOfMonth, ?int $courseId, array $holidayDates)
+    {
+        $query = DB::table('attendances')
+            ->join('students', 'attendances.student_id', '=', 'students.id')
+            ->join('classes', 'students.class_id', '=', 'classes.id')
+            ->whereBetween('attendances.created_at', [$startOfMonth, $endOfMonth])
+            ->whereIn('attendances.status', ['Present', 'Late', 'LeaveApproval']);
+
+        if ($courseId) {
+            $query->where('classes.id', $courseId);
+        }
+
+        if (!empty($holidayDates)) {
+            $query->whereNotIn(DB::raw('DATE(attendances.created_at)'), $holidayDates);
+        }
+
+        return $query->count();
+    }
+
+
+    public function getAttendanceRecords($classId, Carbon $startOfMonth, Carbon $endOfMonth)
+    {
+        $records = DB::table('attendances')
+            ->where('class_id', $classId)
+            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $attendanceRecords = [];
+        foreach ($records as $record) {
+            $date = Carbon::parse($record->created_at)->toDateString();
+            $attendanceRecords[$record->student_id][$date] = $record->status;
+            $attendanceRecords[$record->student_id]['details'][$date] = $record->details;
+        }
+
+        return $attendanceRecords;
+    }
 }

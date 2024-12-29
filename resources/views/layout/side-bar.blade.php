@@ -63,8 +63,8 @@
                 </a>
             </li>
 
-            <li class="sidebar-item">
-                <a class="sidebar-link" href="">
+            <li class="sidebar-item {{ Request::routeIs('attendance_statistics.*') ? 'active' : '' }}">
+                <a class="sidebar-link" href="{{ route('attendance_statistics.index') }}">
                     <span class="pc-micon" style="margin-left: -2px !important;">
                         <i class="fa-solid fa-chart-column"></i>
                     </span>
