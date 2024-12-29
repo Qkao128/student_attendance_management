@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use Carbon\Carbon;
 use App\Models\Classes;
 use Illuminate\Support\Facades\DB;
 

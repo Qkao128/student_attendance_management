@@ -10,6 +10,7 @@ use App\Http\Controllers\HolidayAdminController;
 use App\Http\Controllers\StudentAdminController;
 use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\AttendanceAdminController;
+use App\Http\Controllers\AttendanceStatisticsAdminController;
 
 
 Route::get('/', function () {
@@ -92,6 +93,14 @@ Route::prefix('admin')->middleware(['auth', 'check_role:' . UserType::SuperAdmin
         Route::get('{id}/{date?}', [AttendanceAdminController::class, 'show'])->name('show');
         Route::delete('{id}', [AttendanceAdminController::class, 'destroy'])->name('destroy');
     });
+
+    // 出席數據
+    Route::name('attendance_statistics.')->prefix('attendance-statistics')->group(function () {
+        Route::get('/', [AttendanceStatisticsAdminController::class, 'index'])->name('index');
+        Route::get('{id}/{date?}', [AttendanceStatisticsAdminController::class, 'show'])->name('show');
+        Route::post('/attendance-statistics/pieChartData', [AttendanceStatisticsAdminController::class, 'pieMonthlyChartData'])->name('pieMonthlyChartData');
+    });
+
 
     // 假期管理
     Route::name('holiday.')->prefix('holiday')->group(function () {
