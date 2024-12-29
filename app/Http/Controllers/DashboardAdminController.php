@@ -26,6 +26,7 @@ class DashboardAdminController extends Controller
         return view('dashboard.index', [
             'dashboards' => $dashboard,
             'filterDate' => $date,
+            'isHoliday' => $dashboard['is_holiday'] ?? false,
         ]);
     }
 

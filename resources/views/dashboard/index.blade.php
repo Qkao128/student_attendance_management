@@ -60,8 +60,13 @@
                 <i class="fa-solid fa-chevron-right"></i>
             </span>
         </div>
-
     </div>
+
+    @if ($isHoliday)
+        <div class="alert alert-info mt-4">
+            Today is a holiday!
+        </div>
+    @endif
 
     <div class="row g-3 mt-3">
         <div class="col-12 col-md-4">

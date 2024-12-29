@@ -6,6 +6,7 @@ use Exception;
 use Carbon\Carbon;
 use App\Services\Service;
 use App\Repositories\ClassRepository;
+use App\Repositories\HolidayRepository;
 use App\Repositories\StudentRepository;
 use App\Repositories\AttendanceRepository;
 
@@ -14,21 +15,25 @@ class DashboardAdminService extends Service
     private $_classRepository;
     private $_studentRepository;
     private $_attendanceRepository;
+    protected $_holidayRepository;
 
     public function __construct(
         ClassRepository $classRepository,
         StudentRepository $studentRepository,
-        AttendanceRepository $attendanceRepository
+        AttendanceRepository $attendanceRepository,
+        HolidayRepository $holidayRepository,
     ) {
         $this->_classRepository = $classRepository;
         $this->_studentRepository = $studentRepository;
         $this->_attendanceRepository = $attendanceRepository;
+        $this->_holidayRepository = $holidayRepository;
     }
 
     public function getDashboardData($date)
     {
         try {
             $formattedDate = Carbon::parse($date)->format('Y-m-d'); // 格式化日期
+            $isHoliday = $this->_holidayRepository->isDateHoliday($formattedDate);
 
             // 从 Repository 层获取数据
             $classCount = $this->_classRepository->getClassCount($formattedDate);
@@ -41,6 +46,7 @@ class DashboardAdminService extends Service
             // 返回整理后的数据
             return [
                 'date' => $formattedDate,  // 确保返回格式化的日期
+                'is_holiday' => $isHoliday,
                 'class_summary' => [
                     'attended' => $attendedClasses,
                     'total' => $classCount,
