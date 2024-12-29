@@ -47,7 +47,7 @@ class ClassAdminService extends Service
                 throw new Exception('You do not have permission to perform this action.');
             }
 
-            $data['is_disabled'] = false;
+            $data['is_disabled'] = true;
             $class = $this->_classRepository->save($data);
 
             $data['class_id'] = $class->id;

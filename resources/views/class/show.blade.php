@@ -31,6 +31,10 @@
             min-width: 250px;
         }
 
+        .student-enrollment-date {
+            min-width: 210px;
+        }
+
         .removeButton {
             position: absolute;
             top: 6px;
@@ -214,6 +218,7 @@
                         <th>id</th>
                         <th>Name</th>
                         <th>Gender</th>
+                        <th>Enrollment Date</th>
                         <th>Created At</th>
                         <th class="text-center">Action</th>
                     </tr>
@@ -265,14 +270,20 @@
                                 <div class="form-group px-2">
                                     <label class="form-label me-2">Gender:</label>
                                     <div class="d-flex mt-2">
-                                        <input type="radio" name="student[1][gender]" value="male" id="male-1"
-                                            {{ old('student[1][gender]') == 'male' ? 'checked' : '' }} required>
-                                        <label class="ms-2" for="male-1"> Male</label>
-                                        <input type="radio" class="ms-3" name="student[1][gender]" id="female-1"
-                                            value="female" {{ old('student[1][gender]') == 'female' ? 'checked' : '' }}
+                                        <input type="radio" name="student[1][gender]" value="Male" id="Male-1"
+                                            {{ old('student[1][gender]') == 'Male' ? 'checked' : '' }} required>
+                                        <label class="ms-2" for="Male-1"> Male</label>
+                                        <input type="radio" class="ms-3" name="student[1][gender]" id="Female-1"
+                                            value="Female" {{ old('student[1][gender]') == 'Female' ? 'checked' : '' }}
                                             required>
-                                        <label class="ms-2" for="female-1">Female</label>
+                                        <label class="ms-2" for="Female-1">Female</label>
                                     </div>
+                                </div>
+                                <div class="form-group px-3">
+                                    <label class="form-label">Enrollment Date :</label>
+                                    <input type="date" class="form-control student-enrollment-date"
+                                        max="{{ Carbon::now()->toDateString() }}" name="student[1][enrollment_date]"
+                                        value="{{ Carbon::now()->toDateString() }}" required>
                                 </div>
                             </div>
                         </div>
@@ -371,6 +382,18 @@
                         data: 'gender'
                     },
                     {
+                        data: 'enrollment_date',
+                        name: "enrollment_date",
+                        width: "200px",
+                        className: 'text-sm-center',
+                        render: function(data, type, row) {
+                            var enrollmentDate =
+                                moment(data).local().format("DD-MM-YYYY")
+
+                            return enrollmentDate;
+                        }
+                    },
+                    {
                         data: "created_at",
                         name: "created_at",
                         width: "220px",
@@ -461,6 +484,8 @@
             $(`#remove-profile-image-btn-${rowId}`).addClass('d-none');
         }
 
+        let todayDate = "{{ Carbon::now()->toDateString() }}";
+
         function addNewStudentColumn() {
             if (studentCount > 49) {
                 $('#add-student-column').addClass('d-none');
@@ -499,11 +524,15 @@
                     <div class="form-group px-2">
                         <label class="form-label me-2">Gender:</label>
                         <div class="d-flex mt-2">
-                            <input type="radio" name="student[${studentCount}][gender]" value="male" id="male-${studentCount}" required>
-                            <label class="ms-2" for="male-${studentCount}"> Male</label>
-                            <input type="radio" class="ms-3" name="student[${studentCount}][gender]" id="female-${studentCount}" value="female" required>
-                            <label class="ms-2" for="female-${studentCount}">Female</label>
+                            <input type="radio" name="student[${studentCount}][gender]" value="Male" id="Male-${studentCount}" required>
+                            <label class="ms-2" for="Male-${studentCount}"> Male</label>
+                            <input type="radio" class="ms-3" name="student[${studentCount}][gender]" id="Female-${studentCount}" value="Female" required>
+                            <label class="ms-2" for="Female-${studentCount}">Female</label>
                         </div>
+                    </div>
+                    <div class="form-group px-3">
+                        <label class="form-label">Enrollment Date :</label>
+                         <input type="date" class="form-control student-enrollment-date" name="student[${studentCount}][enrollment_date]" value="${todayDate}" max="${todayDate}" required>
                     </div>
                 </div>
             `;

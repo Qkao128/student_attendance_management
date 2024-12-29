@@ -24,6 +24,7 @@ class StudentRepository extends Repository
                 "profile_image" => $data['profile_image'] ?? null,
                 "name" => $data['name'],
                 "gender" => $data['gender'],
+                "enrollment_date" => $data['enrollment_date'],
                 'created_at' => Carbon::now()->toDateTimeString(),
                 'updated_at' => Carbon::now()->toDateTimeString()
             ];
@@ -40,6 +41,7 @@ class StudentRepository extends Repository
         $model->name = $data['name'] ?? $model->name;
         $model->gender = $data['gender'] ?? $model->gender;
         $model->profile_image = (array_key_exists('profile_image', $data)) ? $data['profile_image'] : $model->profile_image;
+        $model->enrollment_date = $data['enrollment_date'] ?? $model->enrollment_date;
 
         $model->update();
         return $model;

@@ -26,6 +26,7 @@ class StudentAdminController extends Controller
             'student.profile_image',
             'student.name',
             'student.gender',
+            'student.enrollment_date'
         ]);
 
         $result = $this->_studentAdminService->createStudent($data, $classId);
@@ -63,6 +64,7 @@ class StudentAdminController extends Controller
             'profile_image',
             'name',
             'gender',
+            'enrollment_date',
         ]);
 
 

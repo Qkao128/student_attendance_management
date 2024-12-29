@@ -102,8 +102,8 @@
                                                     <div class="col-auto">
                                                         <div class="form-check">
                                                             <input class="form-check-input" type="radio" name="gender"
-                                                                id="gender_male" value="male" required
-                                                                @if (old('gender', $student['gender']) == 'male') checked @endif>
+                                                                id="gender_male" value="Male" required
+                                                                @if (old('gender', $student['gender']) == 'Male') checked @endif>
                                                             <label class="form-check-label" for="gender_male">
                                                                 Male
                                                             </label>
@@ -113,14 +113,21 @@
                                                     <div class="col-auto">
                                                         <div class="form-check">
                                                             <input class="form-check-input" type="radio" name="gender"
-                                                                id="gender_female" value="female" required
-                                                                @if (old('gender', $student['gender']) == 'female') checked @endif>
+                                                                id="gender_female" value="Female" required
+                                                                @if (old('gender', $student['gender']) == 'Female') checked @endif>
                                                             <label class="form-check-label" for="gender_female">
                                                                 Female
                                                             </label>
                                                         </div>
                                                     </div>
                                                 </div>
+                                            </div>
+
+                                            <div class="form-group mb-4">
+                                                <label class="form-label">Enrollment Date :</label>
+                                                <input type="date" class="form-control" name="enrollment_date"
+                                                    max="{{ date('Y-m-d') }}" value="{{ $student['enrollment_date'] }}"
+                                                    required>
                                             </div>
 
                                             <div class="text-end pe-3 mt-3 mt-sm-5">

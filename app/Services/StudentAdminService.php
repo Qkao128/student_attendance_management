@@ -37,12 +37,19 @@ class StudentAdminService extends Service
                 'student' => 'required|array',
                 'student.*.profile_image' => 'nullable|file|mimes:jpeg,png,jpg|max:512000',
                 'student.*.name' => 'required|string|max:255',
-                'student.*.gender' => 'required|string|in:male,female',
+                'student.*.gender' => 'required|string|in:Male,Female',
+                'student.*.enrollment_date' => 'required|date',
             ]);
 
             if ($validator->fails()) {
                 $this->_errorMessage = $validator->errors()->all();
                 return null;
+            }
+
+            foreach ($data['student'] as $student) {
+                if (strtotime($student['enrollment_date']) > strtotime(date('Y-m-d'))) {
+                    throw new Exception('Enrollment date must not be a future date.');
+                }
             }
 
             if (!Auth::check() || !Auth::user()->hasAnyRole([UserType::SuperAdmin()->key, UserType::Admin()->key])) {
@@ -147,7 +154,8 @@ class StudentAdminService extends Service
             $validator = Validator::make($data, [
                 'profile_image' => 'nullable|file|mimes:jpeg,png,jpg|max:512000',
                 'name' => 'required|string|max:255',
-                'gender' => 'required|string|in:male,female',
+                'gender' => 'required|string|in:Male,Female',
+                'enrollment_date' => 'required|date',
             ]);
 
             if ($validator->fails()) {
@@ -155,6 +163,10 @@ class StudentAdminService extends Service
                     array_push($this->_errorMessage, $error);
                 }
                 return null;
+            }
+
+            if (strtotime($data['enrollment_date']) > strtotime(date('Y-m-d'))) {
+                throw new Exception('Enrollment date must not be a future date.');
             }
 
             if (!Auth::check() || !Auth::user()->hasAnyRole([UserType::SuperAdmin()->key, UserType::Admin()->key])) {

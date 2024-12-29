@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('profile_image')->nullable();
             $table->string('name');
             $table->string('gender');
+            $table->date('enrollment_date');
             $table->timestamps();
         });
     }
