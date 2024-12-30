@@ -36,7 +36,7 @@ class AttendanceStatisticsAdminService extends Service
 
             $isHoliday = $this->_holidayRepository->isDateHoliday($formattedDate);
 
-            $classCount = $this->_classRepository->getClassCount($formattedDate);
+            $classCount = $this->_classRepository->getClassCount();
             $attendedClasses = $this->_attendanceRepository->getAttendedClassCount($formattedDate);
 
             $totalStudents = $this->_studentRepository->getStudentCount($formattedDate);

@@ -46,26 +46,17 @@ class DashboardList extends Component
     }
 
 
-    #[On('updateDateFrom')]
-    public function updateDateFrom($date)
+    #[On('updateDate')]
+    public function handleUpdateDate($date)
     {
-        $this->date_from = $date;
-
-        if ($this->date_to && $this->date_to < $date) {
-            $this->date_to = $date;
-        }
+        $this->updateDate($date);
     }
 
-    #[On('updateDateTo')]
-    public function updateDateTo($date)
+    public function updateDate($date)
     {
-        $this->date_to = $date;
-
-        if ($this->date_to < $this->date_from) {
-            $this->date_from = $this->date_to;
-        }
+        $this->filterDate = $date;
+        $this->applyFilter();
     }
-
 
     private function loadDashboardData()
     {

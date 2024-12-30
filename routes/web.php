@@ -33,6 +33,8 @@ Route::prefix('admin')->middleware(['auth', 'check_role:' . UserType::SuperAdmin
     Route::get('/dashboard', [DashboardAdminController::class, 'index'])->name('dashboard');
     Route::post('/dashboard/data', [DashboardAdminController::class, 'data'])->name('dashboard.data');
     Route::post('/dashboard/pieChartData', [DashboardAdminController::class, 'pieChartData'])->name('dashboard.pieChartData');
+    Route::post('/dashboard/isHoliday', [DashboardAdminController::class, 'getHolidayStatus'])->name('dashboard.isHoliday');
+
 
 
     // 使用者管理

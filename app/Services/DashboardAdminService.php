@@ -36,7 +36,7 @@ class DashboardAdminService extends Service
             $isHoliday = $this->_holidayRepository->isDateHoliday($formattedDate);
 
             // 从 Repository 层获取数据
-            $classCount = $this->_classRepository->getClassCount($formattedDate);
+            $classCount = $this->_classRepository->getClassCount();
             $attendedClasses = $this->_attendanceRepository->getAttendedClassCount($formattedDate);
 
             $totalStudents = $this->_studentRepository->getStudentCount($formattedDate);
@@ -59,6 +59,22 @@ class DashboardAdminService extends Service
             ];
         } catch (Exception $e) {
             array_push($this->_errorMessage, "Fail to get dashboard details.");
+
+            return null;
+        }
+    }
+
+    public function getIsDateHoliday($date)
+    {
+        try {
+            $formattedDate = Carbon::parse($date)->format('Y-m-d'); // 格式化日期
+            $isHoliday = $this->_holidayRepository->isDateHoliday($formattedDate);
+
+            return [
+                'is_holiday' => $isHoliday,
+            ];
+        } catch (Exception $e) {
+            array_push($this->_errorMessage, "Fail to get holiay details.");
 
             return null;
         }

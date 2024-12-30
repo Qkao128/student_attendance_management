@@ -55,18 +55,17 @@
                 <i class="fa-solid fa-chevron-left"></i>
             </span>
             <input class="form-control text-center" type="date" id="filterDate" value="{{ now()->format('Y-m-d') }}"
-                style="background-color: #F4F6FA;" />
+                style="background-color: #F4F6FA;" onclick="this.showPicker()" />
             <span class="input-group-text" role="button" id="nextDate" style="background-color: #F4F6FA;">
                 <i class="fa-solid fa-chevron-right"></i>
             </span>
         </div>
     </div>
 
-    @if ($isHoliday)
-        <div class="alert alert-info mt-4">
-            Today is a holiday !
-        </div>
-    @endif
+
+    <div class="alert alert-info mt-4" id="holidayStatus" style="display: none">
+    </div>
+
 
     <div class="row g-3 mt-3">
         <div class="col-12 col-md-4">
@@ -305,10 +304,36 @@
                 });
             }
 
+            function fetchHolidayStatus(date) {
+                $.ajax({
+                    url: '{{ route('dashboard.isHoliday') }}', // 後端路由
+                    method: "POST",
+                    data: {
+                        date: date,
+                        _token: "{{ csrf_token() }}" // Laravel 的 CSRF 保護
+                    },
+                    success: function(response) {
+                        if (response.isHoliday) {
+                            $('#holidayStatus')
+                                .text('Today is a holiday !')
+                                .show();
+                        } else {
+                            $('#holidayStatus')
+                                .hide();
+                        }
+                    }
+                });
+            }
+
             $("#filterDate").on("change", function() {
                 const date = $(this).val();
                 updateDashboard(date);
                 updatePieChart(date);
+                fetchHolidayStatus(date);
+
+                Livewire.dispatch('updateDate', {
+                    date,
+                });
             });
 
             $("#prevDate").on("click", function() {
@@ -316,8 +341,14 @@
                 currentDate.setDate(currentDate.getDate() - 1);
                 const formattedDate = currentDate.toISOString().split('T')[0];
                 $("#filterDate").val(formattedDate);
+
                 updateDashboard(formattedDate);
                 updatePieChart(formattedDate);
+                fetchHolidayStatus(formattedDate);
+
+                Livewire.dispatch('updateDate', {
+                    date: formattedDate,
+                });
             });
 
             $("#nextDate").on("click", function() {
@@ -325,15 +356,26 @@
                 currentDate.setDate(currentDate.getDate() + 1);
                 const formattedDate = currentDate.toISOString().split('T')[0];
                 $("#filterDate").val(formattedDate);
+
                 updateDashboard(formattedDate);
                 updatePieChart(formattedDate);
+                fetchHolidayStatus(formattedDate);
+
+                Livewire.dispatch('updateDate', {
+                    date: formattedDate,
+                });
             });
 
             const today = new Date().toISOString().split('T')[0];
             $("#filterDate").val(today);
+
             updateDashboard(today);
             updatePieChart(today);
+            fetchHolidayStatus(today);
 
+            Livewire.dispatch('updateDate', {
+                date: today,
+            });
         });
     </script>
 

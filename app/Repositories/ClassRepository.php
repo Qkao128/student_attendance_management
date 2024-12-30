@@ -59,11 +59,10 @@ class ClassRepository extends Repository
             ->first();
     }
 
-    public function getClassCount($date)
+    public function getClassCount()
     {
         return DB::table('classes')
             ->where('is_disabled', false)
-            ->whereDate('created_at', '<=', $date)
             ->count();
     }
 

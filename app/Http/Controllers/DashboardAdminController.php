@@ -26,7 +26,6 @@ class DashboardAdminController extends Controller
         return view('dashboard.index', [
             'dashboards' => $dashboard,
             'filterDate' => $date,
-            'isHoliday' => $dashboard['is_holiday'] ?? false,
         ]);
     }
 
@@ -65,6 +64,21 @@ class DashboardAdminController extends Controller
             'status_statistics' => $attendanceCounts,
             'student_summary' => $dashboard['student_summary'],
             'selectedDate' => $date,
+        ]);
+    }
+
+    public function getHolidayStatus(Request $request)
+    {
+        $date = $request->input('date');
+
+        if (!$date) {
+            return response()->json(['error' => 'Invalid date provided'], 400);
+        }
+
+        $dashboard = $this->_dashboardAdminService->getIsDateHoliday($date);
+
+        return response()->json([
+            'isHoliday' => $dashboard['is_holiday'] ?? false,
         ]);
     }
 }
