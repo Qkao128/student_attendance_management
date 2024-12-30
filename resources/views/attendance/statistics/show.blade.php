@@ -245,7 +245,7 @@
         </div>
     </div>
 
-    <div class="mt-4">
+    <div class="mt-4 mt-md-5">
         <h5 class="mb-4">Attendance Exceptions :</h5>
         <div class="table-responsive">
             <table class="table table-striped">
@@ -255,16 +255,17 @@
                         <th class="bg-primary text-white">Student Name</th>
                         <th class="bg-primary text-white">Status</th>
                         <th class="bg-primary text-white">Reason</th>
+                        <th class="bg-primary text-white">Attachament</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($nonPresentDetails as $detail)
                         <tr>
-                            <td style="min-width: 190px;max-width: 210px;">
+                            <td style="min-width: 180px;max-width: 200px;">
                                 {{ $detail['date'] }}</td>
                             <td class="text-wrap text-break h-100" style="min-width: 210px;">
                                 {{ $detail['student_name'] }}</td>
-                            <td style="width: 120px;">
+                            <td style="width: 100px;">
                                 <span
                                     class="
                                         @if ($detail['status'] === 'H') border-holiday
@@ -273,14 +274,39 @@
                                         @elseif ($detail['status'] === 'L') border-late
                                         @elseif ($detail['status'] === 'MC') border-medical
                                         @elseif ($detail['status'] === 'AP') border-leave-approval @endif
-                                        status-attendance-icon rounded-circle">
+                                        status-attendance-icon rounded-circle ms-1">
                                     {{ $detail['status'] }}
                                 </span>
                             </td>
-                            <td class="d-flex align-self-center text-wrap text-break" style="min-width: 300px;width: 100%;">
-                                {{ $detail['reason'] }}</td>
+                            <td class="text-wrap text-break " style="min-width: 270px;width: 100%;">
+                                @if ($detail['reason'])
+                                    {{ $detail['reason'] }}
+                                @else
+                                    <span class="fst-italic text-muted ms-1">N/A</span>
+                                @endif
+                            </td>
+                            <td class="text-center" style="min-width: 160px;width: 100%;">
+                                @if ($detail['file'])
+                                    <a href="{{ asset('storage/attendance_files/' . $detail['file']) }}" target="_blank"
+                                        class="btn btn-primary text-truncate text-white" style="width: 80px">View</a>
+                                @else
+                                    <span class="fst-italic text-muted ms-1">No Attachament</span>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
+
+                    @if (empty($nonPresentDetails))
+                        <td colspan="5">
+                            <div class="text-center">
+                                <img class="no-data-found mt-2" src="{{ asset('img/no-data-found.png') }}">
+                                <div class="mt-4 h5 text-muted">
+                                    No data found
+                                </div>
+                            </div>
+                        </td>
+                    @endif
+
                 </tbody>
             </table>
         </div>

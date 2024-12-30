@@ -250,6 +250,7 @@ class AttendanceRepository extends Repository
             $date = Carbon::parse($record->created_at)->toDateString();
             $attendanceRecords[$record->student_id][$date] = $record->status;
             $attendanceRecords[$record->student_id]['details'][$date] = $record->details;
+            $attendanceRecords[$record->student_id]['files'][$date] = $record->file; // 添加文件信息
         }
 
         return $attendanceRecords;

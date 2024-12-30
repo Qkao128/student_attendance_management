@@ -156,14 +156,15 @@ class AttendanceStatisticsAdminService extends Service
                     $status = $attendanceRecords[$student->id][$date] ?? '-';
                     $row['attendance'][$date] = $this->getStatusAbbreviation($status);
 
-                    // 如果狀態不是 Present，收集詳細數據
                     if ($status !== 'Present' && $status !== '-') {
-                        $details = $attendanceRecords[$student->id]['details'][$date] ?? 'N/A';
+                        $details = $attendanceRecords[$student->id]['details'][$date] ?? null;
+                        $file = $attendanceRecords[$student->id]['files'][$date] ?? null; // 獲取文件記錄
                         $nonPresentDetails[] = [
                             'date' => $date,
                             'student_name' => $student->name,
                             'status' => $this->getStatusAbbreviation($status),
                             'reason' => $details,
+                            'file' => $file, // 添加文件記錄
                         ];
                     }
                 }

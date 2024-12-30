@@ -38,14 +38,14 @@
                                 style="display: none;">
                                 <hr class="my-3">
 
-                                <label class="form-label">Upload File :</label>
+                                <label class="form-label">Upload Attachament :</label>
                                 <div class="px-3">
                                     @if (!empty($student->attendance_file))
                                         <!-- 有文件的情況 -->
                                         <div id="file-container-{{ $key }}"
                                             class="d-flex justify-content-around">
                                             <span id="view-file-{{ $key }}" class="d-flex"
-                                                style="width: 210px">
+                                                style="width: 180px">
                                                 <a href="{{ asset('storage/attendance_files/' . $student->attendance_file) }}"
                                                     target="_blank" class="btn btn-primary text-truncate text-white">
                                                     {{ $student->attendance_file }}
