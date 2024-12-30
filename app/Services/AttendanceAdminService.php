@@ -98,29 +98,36 @@ class AttendanceAdminService extends Service
             $toCreate = [];
 
             foreach ($data['students'] as $studentData) {
-                if ($studentData['status'] === 'Present' && !empty($studentData['file'])) {
-                    throw new Exception('A student marked as Present cannot have a file uploaded.');
-                }
+                $fileStatus = $studentData['file_status'] ?? null;
 
-                if (!empty($studentData['file']) && $studentData['file'] instanceof \Illuminate\Http\UploadedFile) {
+                // 如果文件状态为 'edited' 且没有新文件，删除已有文件
+                if ($fileStatus === 'edited' && empty($studentData['file'])) {
+                    $existingRecord = $existingAttendance->get($studentData['student_id']);
+                    if ($existingRecord && $existingRecord->file) {
+                        Storage::delete('public/attendance_files/' . $existingRecord->file);
+                        $studentData['file'] = null; // 设置数据库字段为 null
+                    }
+                } elseif (!empty($studentData['file']) && $studentData['file'] instanceof \Illuminate\Http\UploadedFile) {
+                    // 上传新的文件
                     $fileName = $this->generateFileName();
                     $fileExtension = $studentData['file']->extension();
                     $finalFileName = $fileName . '.' . $fileExtension;
 
                     $studentData['file']->storeAs('public/attendance_files', $finalFileName);
 
+                    // 删除旧文件
                     $existingRecord = $existingAttendance->get($studentData['student_id']);
                     if ($existingRecord && $existingRecord->file) {
                         Storage::delete('public/attendance_files/' . $existingRecord->file);
                     }
 
                     $studentData['file'] = $finalFileName;
-                } elseif ($studentData['status'] !== 'Present') {
-                    // Status is not 'Present', do not update the file column
-                    unset($studentData['file']);
                 } elseif ($studentData['status'] === 'Present') {
                     // Status is 'Present', set file to null
                     $studentData['file'] = null;
+                } else {
+                    // 如果没有触发编辑，不修改文件字段
+                    unset($studentData['file']);
                 }
 
                 if ($existingAttendance->has($studentData['student_id'])) {
@@ -129,7 +136,6 @@ class AttendanceAdminService extends Service
                     $toCreate[] = array_merge($studentData, ['class_id' => $classId]);
                 }
             }
-
 
             if (!empty($toUpdate)) {
                 $this->_attendanceRepository->bulkUpdate($toUpdate, $attendanceDate);

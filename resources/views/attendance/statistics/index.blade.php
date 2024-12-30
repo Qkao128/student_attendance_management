@@ -261,7 +261,7 @@
         </div>
 
         <div>
-            @livewire('attendance-statistics-class-list')
+            @livewire('attendance-statistics-class-list', ['userId' => Auth()->id()])
         </div>
 
 

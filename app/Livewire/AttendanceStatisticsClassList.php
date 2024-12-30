@@ -11,9 +11,22 @@ class AttendanceStatisticsClassList extends Component
 {
     public $attendances_statistics = []; // 保留考勤數據
     public $filterMonth;
-    public $filter = []; // 用来存储过滤条件
+    public $filter = [
+        'courseId' => null,
+        'is_user' => false,
+        'user_id' => null,
+    ]; // 用来存储过滤条件
+    public $userId;
     public $page = 0;
     public $limitPerPage = 50;
+
+
+    public function mount($userId)
+    {
+        $this->userId = $userId;
+        $this->filter['is_user'] = false;
+        $this->loadStatisticslistData();
+    }
 
     public function loadMore()
     {
@@ -45,8 +58,24 @@ class AttendanceStatisticsClassList extends Component
         $this->applyFilter();
     }
 
+    public function filterByCurrentUser()
+    {
+        $this->filter['is_user'] = !$this->filter['is_user'];
+
+        if ($this->filter['is_user']) {
+            $this->filter['user_id'] = $this->userId;
+        } else {
+            $this->filter['user_id'] = null;
+        }
+
+        $this->page = 0;
+        $this->attendances_statistics = [];
+        $this->loadStatisticslistData();
+    }
+
     public function applyFilter()
     {
+        $this->filter['is_user'] = $this->filter['user_id'] == $this->userId;
         $this->page = 0;
         $this->attendances_statistics = [];
         $this->loadStatisticslistData();
@@ -81,10 +110,16 @@ class AttendanceStatisticsClassList extends Component
                 'courses.name as course_name'
             )
             ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
+            ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+            ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
             ->where('classes.is_disabled', false);
 
         if (!empty($this->filter['course_id'])) {
             $classesQuery->where('classes.course_id', $this->filter['course_id']);
+        }
+
+        if (!empty($this->filter['user_id'])) {
+            $classesQuery->where('users.id', '=', $this->filter['user_id']);
         }
 
         // 確保結果為非空陣列

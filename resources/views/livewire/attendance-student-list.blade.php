@@ -45,7 +45,7 @@
                                         <div id="file-container-{{ $key }}"
                                             class="d-flex justify-content-around">
                                             <span id="view-file-{{ $key }}" class="d-flex"
-                                                style="width: 180px">
+                                                style="width: 150px">
                                                 <a href="{{ asset('storage/attendance_files/' . $student->attendance_file) }}"
                                                     target="_blank" class="btn btn-primary text-truncate text-white">
                                                     {{ $student->attendance_file }}
@@ -59,6 +59,8 @@
                                                 id="file-input-{{ $key }}">
                                                 <input type="file" name="students[{{ $key }}][file]"
                                                     class="form-control">
+                                                <input type="hidden" name="students[{{ $key }}][file_status]"
+                                                    value="">
                                                 <i class="fa-solid fa-xmark cancel-file-icon ms-2"
                                                     data-student-id="{{ $key }}"></i>
                                             </span>
@@ -416,17 +418,16 @@
 
             $(document).on('click', '.edit-file-icon', function() {
                 let studentId = $(this).data('student-id');
-                $(`#view-file-${studentId}`).removeClass('d-flex').addClass('d-none');
                 $(`#file-input-${studentId}`).removeClass('d-none').addClass('d-flex');
+                $(`#view-file-${studentId}`).removeClass('d-flex').addClass('d-none');
+                $(`input[name="students[${studentId}][file_status]"]`).val('edited');
             });
 
-            // 點擊 X 圖標，恢復 "View File"，隱藏文件輸入框
             $(document).on('click', '.cancel-file-icon', function() {
                 let studentId = $(this).data('student-id');
-                // 隱藏文件輸入框
                 $(`#file-input-${studentId}`).removeClass('d-flex').addClass('d-none');
-                // 恢復文件檢視區域
                 $(`#view-file-${studentId}`).removeClass('d-none').addClass('d-flex');
+                $(`input[name="students[${studentId}][file_status]"]`).val('');
             });
 
         });

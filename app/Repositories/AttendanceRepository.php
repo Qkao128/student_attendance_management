@@ -42,7 +42,7 @@ class AttendanceRepository extends Repository
             $updateData = [
                 'status' => $record['status'],
                 'details' => $record['details'] ?? null,
-                'updated_at' => Carbon::parse($date)->toDateTimeString(),
+                'updated_at' => Carbon::now()->toDateTimeString(),
             ];
 
             if (array_key_exists('file', $record)) {
