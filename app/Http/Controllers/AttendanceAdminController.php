@@ -36,8 +36,9 @@ class AttendanceAdminController extends Controller
         $data = $request->only([
             'students',
             'students.student_id',
+            'students.file',
             'students.details',
-            'students.status'
+            'students.status',
         ]);
 
         $result = $this->_attendanceAdminService->createOrUpdateAttendance($classId, $date, $data);
@@ -53,6 +54,8 @@ class AttendanceAdminController extends Controller
     public function show($id, $date)
     {
         $class = $this->_classAdminService->getById($id);
+        $isHoliday = $this->_attendanceAdminService->getIsDateHoliday($date);
+
         $students = $this->_studentAdminService->getByClassId($class->id);
 
         if ($class === false || $students === false) {
@@ -80,7 +83,7 @@ class AttendanceAdminController extends Controller
 
         $course = $this->_courseAdminService->getByCourseId($class->course_id);
 
-        $studentCount = $this->_studentAdminService->getStudentCountByClassId($class->id);
+        $studentCount = $this->_studentAdminService->getStudentCountByClassId($class->id, $date);
 
         $arrivedCount = $this->_attendanceAdminService->getArrivedCountByClassId($class->id, $date);
 
@@ -95,11 +98,12 @@ class AttendanceAdminController extends Controller
             'class',
             'students',
             'course',
+            'isHoliday',
             'attendanceCounts',
             'studentsByStatus',
             'attendanceSummary',
             'date',
-            'latestAttendanceUpdatedAt'
+            'latestAttendanceUpdatedAt',
         ));
     }
 }

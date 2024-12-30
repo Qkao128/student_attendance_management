@@ -70,7 +70,7 @@
 
     @if ($isHoliday)
         <div class="alert alert-info mt-4">
-            Today is a holiday!
+            Today is a holiday !
         </div>
     @endif
 

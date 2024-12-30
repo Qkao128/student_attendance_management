@@ -77,7 +77,16 @@
         </div>
     </div>
 
-    <div class="text-muted fs-5 mb-3 fst-italic text-decoration-underline">{{ $date }}</div>
+    @php
+        $formattedDate = Carbon::parse($date)->format('d F Y');
+    @endphp
+    <div class="text-muted fs-5 mb-3 fst-italic text-decoration-underline">{{ $formattedDate }}</div>
+
+    @if ($isHoliday['is_holiday'])
+        <div class="alert alert-info mt-4">
+            Today is a holiday !
+        </div>
+    @endif
 
     <div class="card border-0 card-shadow px-1">
         <div class="card-body px-md-4">
@@ -242,7 +251,7 @@
         <h4 class="mb-0">Attendance Update :</h4>
     </div>
 
-    @livewire('attendance-student-list', ['classId' => $class->id, 'date' => $date])
+    @livewire('attendance-student-list', ['classId' => $class->id, 'date' => $date, 'isHoliday' => $isHoliday['is_holiday']])
 
 
     @foreach (Status::asArray() as $statusKey => $statusValue)

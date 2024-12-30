@@ -5,6 +5,12 @@
 
 <div id="attendance-list">
 
+    @if ($isHoliday)
+        <div class="alert alert-info mt-3 mb-1">
+            Today is a holiday !
+        </div>
+    @endif
+
     <div class="row align-items-center g-3 mt-1">
         <div class="col-12 col-sm-5">
             <div class="d-flex justify-content-between align-items-center"
@@ -24,7 +30,6 @@
                 </div>
             </div>
         </div>
-
 
         <div class="col-10 col-sm">
             <div class="search-input-group">
@@ -67,7 +72,8 @@
                         <div class="col-12 col-md-6">
                             <div class="form-group mb-3" wire:ignore>
                                 <label class="form-label" for="filter_user_id">Teacher</label>
-                                <select class="form-select" id="filter_user_id" style="width:100%;">
+                                <select class="form-select" id="filter_user_id" wire:ignore style="width:100%;">
+                                </select>
                                 </select>
                             </div>
                         </div>
@@ -83,7 +89,7 @@
                         <div class="col-12 col-md-6">
                             <div class="form-group mb-3">
                                 <label class="form-label" for="filter-class">Date</label>
-                                <input class="form-control text-center" type="date" wire:model="filter.date"
+                                <input class="form-control" type="date" wire:model="filter.date"
                                     style="background-color: #F4F6FA;" onclick="this.showPicker()">
                             </div>
                         </div>
@@ -126,9 +132,16 @@
             style="background-color: {{ $filter['is_submitted'] === false ? '#007bff' : '#F4F6FA' }};box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
             Not Submitted
         </span>
+
+        <span
+            class="badge text-black fw-normal {{ $filter['is_user'] === true ? 'border' : '' }} mt-1 mt-sm-0 ms-sm-2  {{ $filter['is_user'] === true ? 'text-white' : '' }}"
+            wire:click="filterByCurrentUser" role="button"
+            style="background-color: {{ $filter['is_user'] === true ? '#007bff' : '#F4F6FA' }};box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
+            My Classes
+        </span>
     </h5>
 
-    <div class="row g-4 mt-1">
+    <div class="row g-4">
         @foreach ($attendances as $attendance)
             <div class="col-12">
                 <div class="card border-0 card-shadow px-1">
@@ -417,7 +430,12 @@
             }
         }).on('change', function(e) {
             var selectedUserId = $(this).val();
-            @this.set('filter.user_id', selectedUserId, false);
+            @this.set('filter.user_id', selectedUserId, false); // 僅更新 Livewire 的 user_id
         });
+
+        function updateFilterUserId(userId) {
+            const filterUserIdElement = $('#filter_user_id');
+            filterUserIdElement.val(userId).trigger('change');
+        }
     </script>
 @endpush

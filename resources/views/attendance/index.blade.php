@@ -25,7 +25,7 @@
         </div>
 
         <div>
-            @livewire('attendance-list')
+            @livewire('attendance-list', ['userId' => Auth()->id()])
         </div>
     </div>
 

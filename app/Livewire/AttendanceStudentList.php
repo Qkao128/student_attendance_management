@@ -10,6 +10,7 @@ class AttendanceStudentList extends Component
     public $students;
     public $classId;
     public $date;
+    public $isHoliday;
 
     public function mount($classId, $date = null)
     {
@@ -27,6 +28,7 @@ class AttendanceStudentList extends Component
                 'students.name',
                 'attendances.status as attendance_status',
                 'attendances.details as attendance_details',
+                'attendances.file as attendance_file',
             ])
             ->leftJoin('attendances', function ($join) {
                 $join->on('students.id', '=', 'attendances.student_id')
@@ -34,8 +36,8 @@ class AttendanceStudentList extends Component
                     ->whereRaw('DATE(attendances.created_at) = ?', [$this->date]);
             })
             ->where('students.class_id', $this->classId)
-            ->whereDate('students.created_at', '<=', $this->date) // 添加过滤条件
-            ->orderBy('students.created_at', 'DESC')
+            ->whereDate('students.enrollment_date', '<=', $this->date) // 添加过滤条件
+            ->orderBy('students.name', 'asc')
             ->get();
 
         $this->students = $newData;

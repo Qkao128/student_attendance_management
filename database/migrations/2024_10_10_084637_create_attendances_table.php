@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('student_id')->constrained('students');
             $table->string('status');
             $table->string('details')->nullable();
+            $table->string('file')->nullable();
             $table->timestamps();
         });
     }

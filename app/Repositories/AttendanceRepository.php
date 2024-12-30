@@ -16,7 +16,7 @@ class AttendanceRepository extends Repository
         $this->_db = $attendance;
     }
 
-    public function bulkSave($dataList)
+    public function bulkSave($dataList, $date)
     {
         $attendances = [];
         foreach ($dataList as $data) {
@@ -25,7 +25,8 @@ class AttendanceRepository extends Repository
                 "student_id" => $data['student_id'],
                 "details" => $data['details'],
                 "status" => $data['status'],
-                'created_at' => Carbon::now()->toDateTimeString(),
+                "file" => $data['file'] ?? null,
+                'created_at' => Carbon::parse($date)->toDateTimeString(),
                 'updated_at' => Carbon::now()->toDateTimeString()
             ];
         }
@@ -35,22 +36,37 @@ class AttendanceRepository extends Repository
         return $data;
     }
 
-    public function bulkUpdate($dataList, $date)
+    public function bulkUpdate(array $records, string $date)
     {
-        foreach ($dataList as $data) {
-            $this->_db->where('class_id', $data['class_id'])
-                ->where('student_id', $data['student_id'])
-                ->whereRaw('DATE(created_at) = ?', [$date])
-                ->update([
-                    "details" => $data['details'],
-                    "status" => $data['status'],
-                ]);
+        foreach ($records as $record) {
+            $updateData = [
+                'status' => $record['status'],
+                'details' => $record['details'] ?? null,
+                'updated_at' => Carbon::parse($date)->toDateTimeString(),
+            ];
+
+            if (array_key_exists('file', $record)) {
+                $updateData['file'] = $record['file'];
+            }
+
+            Attendance::where('student_id', $record['student_id'])
+                ->where('class_id', $record['class_id'])
+                ->whereDate('created_at', $date)
+                ->update($updateData);
         }
     }
 
     public function getByClassId($classId, $date)
     {
         return $this->_db->where('class_id', $classId)->whereRaw('DATE(created_at) = ?', [$date])->get();
+    }
+
+    public function getAttendanceByClassId($classId, $date)
+    {
+        return $this->_db->where('class_id', $classId)
+            ->whereRaw('DATE(created_at) = ?', [$date])
+            ->get()
+            ->keyBy('student_id'); // 確保返回的是鍵值對集合
     }
 
     public function getStatusCountsByClassId($classId, $date)
@@ -237,5 +253,13 @@ class AttendanceRepository extends Repository
         }
 
         return $attendanceRecords;
+    }
+
+    public function getByStudentAndClassAndDate($studentId, $classId, $date)
+    {
+        return Attendance::where('student_id', $studentId)
+            ->where('class_id', $classId)
+            ->whereDate('created_at', $date)
+            ->first();
     }
 }

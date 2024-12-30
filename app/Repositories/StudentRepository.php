@@ -58,9 +58,9 @@ class StudentRepository extends Repository
         return $this->_db->where('class_id', $id)->get();
     }
 
-    public function getStudentCountByClassId($classId)
+    public function getStudentCountByClassId($classId, $date)
     {
-        return $this->_db->where('class_id', $classId)->count();
+        return $this->_db->where('class_id', $classId)->whereDate('students.enrollment_date', '<=', $date)->count();
     }
 
     public function getStudentCount($date)
@@ -68,7 +68,7 @@ class StudentRepository extends Repository
         return DB::table('students')
             ->join('classes', 'students.class_id', '=', 'classes.id')
             ->where('classes.is_disabled', false)
-            ->whereDate('students.created_at', '<=', $date)
+            ->whereDate('students.enrollment_date', '<=', $date)
             ->count();
     }
 

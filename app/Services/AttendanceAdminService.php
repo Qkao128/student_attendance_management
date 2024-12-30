@@ -7,10 +7,13 @@ use Carbon\Carbon;
 use App\Enums\Status;
 use App\Enums\UserType;
 use App\Services\Service;
+use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Repositories\ClassRepository;
+use App\Repositories\HolidayRepository;
 use App\Repositories\StudentRepository;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Repositories\AttendanceRepository;
 
@@ -19,15 +22,18 @@ class AttendanceAdminService extends Service
     protected $_attendanceRepository;
     protected $_classRepository;
     protected $_studentRepository;
+    protected $_holidayRepository;
 
     public function __construct(
         AttendanceRepository $attendanceRepository,
         ClassRepository $classRepository,
         StudentRepository $studentRepository,
+        HolidayRepository $holidayRepository,
     ) {
         $this->_attendanceRepository = $attendanceRepository;
         $this->_classRepository = $classRepository;
         $this->_studentRepository = $studentRepository;
+        $this->_holidayRepository = $holidayRepository;
     }
 
     public function createOrUpdateAttendance($classId, $date, $data)
@@ -36,14 +42,21 @@ class AttendanceAdminService extends Service
         try {
             $today = Carbon::now();
             $attendanceDate = Carbon::parse($date);
+            $holidayDate =  $this->getIsDateHoliday($date);
 
             if ($attendanceDate->format('Y-m') !== $today->format('Y-m')) {
                 throw new Exception('You can only modify attendance records for the current month. Records from previous months are expired.');
             }
 
+            if ($holidayDate === true) {
+                throw new Exception('Attendance cannot be modified on a holiday.');
+            }
+
+
             $validator = Validator::make($data, [
                 'students' => 'nullable|array',
                 'students.*.student_id' => 'required|exists:students,id',
+                'students.*.file' => 'nullable|file',
                 'students.*.details' => 'nullable|string|max:255',
                 'students.*.status' => 'required|in:' . implode(",", Status::getKeys()),
             ]);
@@ -68,23 +81,48 @@ class AttendanceAdminService extends Service
                 // SuperAdmin 无需额外验证
             } elseif (Auth::user()->hasRole(UserType::Admin()->key)) {
                 if ($class->user_id !== Auth::user()->id) {
-                    throw new Exception('You are not authorized to manage attendance for this class.');
+                    throw new Exception('You are not authorized to manage attendance for this class');
                 }
             } elseif (Auth::user()->hasRole(UserType::Monitor()->key)) {
                 $student = $this->_studentRepository->getById(Auth::user()->student_id);
                 if (!$student || $student->class_id !== $classId) {
-                    throw new Exception('You are not authorized to manage attendance for this class.');
+                    throw new Exception('You are not authorized to manage attendance for this class');
                 }
             } else {
-                throw new Exception('You do not have permission to perform this action.');
+                throw new Exception('You do not have permission to perform this action');
             }
 
-            $existingAttendance = $this->_attendanceRepository->getByClassId($classId, $date)->keyBy('student_id');
+            $existingAttendance = $this->_attendanceRepository->getAttendanceByClassId($classId, $date)->keyBy('student_id') ?? collect();
 
             $toUpdate = [];
             $toCreate = [];
 
             foreach ($data['students'] as $studentData) {
+                if ($studentData['status'] === 'Present' && !empty($studentData['file'])) {
+                    throw new Exception('A student marked as Present cannot have a file uploaded.');
+                }
+
+                if (!empty($studentData['file']) && $studentData['file'] instanceof \Illuminate\Http\UploadedFile) {
+                    $fileName = $this->generateFileName();
+                    $fileExtension = $studentData['file']->extension();
+                    $finalFileName = $fileName . '.' . $fileExtension;
+
+                    $studentData['file']->storeAs('public/attendance_files', $finalFileName);
+
+                    $existingRecord = $existingAttendance->get($studentData['student_id']);
+                    if ($existingRecord && $existingRecord->file) {
+                        Storage::delete('public/attendance_files/' . $existingRecord->file);
+                    }
+
+                    $studentData['file'] = $finalFileName;
+                } elseif ($studentData['status'] !== 'Present') {
+                    // Status is not 'Present', do not update the file column
+                    unset($studentData['file']);
+                } elseif ($studentData['status'] === 'Present') {
+                    // Status is 'Present', set file to null
+                    $studentData['file'] = null;
+                }
+
                 if ($existingAttendance->has($studentData['student_id'])) {
                     $toUpdate[] = array_merge($studentData, ['class_id' => $classId]);
                 } else {
@@ -92,12 +130,13 @@ class AttendanceAdminService extends Service
                 }
             }
 
+
             if (!empty($toUpdate)) {
-                $this->_attendanceRepository->bulkUpdate($toUpdate, $date);
+                $this->_attendanceRepository->bulkUpdate($toUpdate, $attendanceDate);
             }
 
             if (!empty($toCreate)) {
-                $this->_attendanceRepository->bulkSave($toCreate);
+                $this->_attendanceRepository->bulkSave($toCreate, $attendanceDate);
             }
 
             DB::commit();
@@ -159,5 +198,36 @@ class AttendanceAdminService extends Service
             array_push($this->_errorMessage, "Fail to get status status.");
             return 0;
         }
+    }
+
+    public function getByStudentAndClassAndDate($studentId, $classId, $date)
+    {
+        try {
+            return $this->_attendanceRepository->getByStudentAndClassAndDate($studentId, $classId, $date);
+        } catch (Exception $e) {
+            array_push($this->_errorMessage, "Fail to get attendance data.");
+            return null;
+        }
+    }
+    public function getIsDateHoliday($date)
+    {
+        try {
+            $formattedDate = Carbon::parse($date)->format('Y-m-d'); // 格式化日期
+            $isHoliday = $this->_holidayRepository->isDateHoliday($formattedDate);
+
+            return [
+                'is_holiday' => $isHoliday,
+            ];
+        } catch (Exception $e) {
+            array_push($this->_errorMessage, "Fail to get holiay details.");
+
+            return null;
+        }
+    }
+
+
+    private function generateFileName()
+    {
+        return Str::random(5) . Str::uuid() . Str::random(5);
     }
 }

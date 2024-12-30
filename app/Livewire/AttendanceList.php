@@ -8,24 +8,31 @@ use App\Models\Student;
 use Livewire\Component;
 use App\Models\Attendance;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class AttendanceList extends Component
 {
+
     public $filter = [
         'date' => null,
         'class_id' => null,
         'course_id' => null,
-        'is_submitted' => null, // 添加這個屬性
+        'is_submitted' => null,
+        'is_user' => false, // 新增篩選用戶的字段
+        'user_id' => null,  // 用於篩選的用戶 ID
     ];
-
+    public $userId;
+    public $isHoliday = false; // 新增屬性標記是否為假期
     public $attendances = [];
     public $page = 0;
     public $limitPerPage = 50;
 
-    // 初始化時設置默認的日期為今天，並加載數據
-    public function mount()
+    public function mount($userId)
     {
-        $this->filter['date'] = now()->format('Y-m-d'); // 設置默認日期為今天
+        $this->userId = $userId;
+        $this->filter['date'] = now()->format('Y-m-d');
+        $this->filter['is_user'] = false; // 初始化為非高亮狀態
+        $this->checkIfHoliday(); // 初始化時檢查是否是假期
         $this->loadData();
     }
 
@@ -44,9 +51,24 @@ class AttendanceList extends Component
         } else {
             $this->filter['date'] = $currentDate->subDay()->format('Y-m-d'); // 減少一天
         }
-
+        $this->checkIfHoliday(); // 更新日期後重新檢查是否是假期
         $this->attendances = [];
         $this->page = 0;
+        $this->loadData();
+    }
+
+    public function filterByCurrentUser()
+    {
+        $this->filter['is_user'] = !$this->filter['is_user'];
+
+        if ($this->filter['is_user']) {
+            $this->filter['user_id'] = $this->userId;
+        } else {
+            $this->filter['user_id'] = null;
+        }
+
+        $this->page = 0;
+        $this->attendances = [];
         $this->loadData();
     }
 
@@ -77,14 +99,27 @@ class AttendanceList extends Component
         $this->loadData();
     }
 
-    // 當點選日期或類別時，應用過濾器
     public function applyFilter()
     {
+        // 如果選擇的用戶是當前用戶，設置 is_user 為 true
+        $this->filter['is_user'] = $this->filter['user_id'] == $this->userId;
+        $this->checkIfHoliday();
         $this->page = 0;
         $this->attendances = [];
         $this->loadData();
     }
 
+    public function checkIfHoliday()
+    {
+        $date = Carbon::parse($this->filter['date'])->format('Y-m-d');
+
+        $this->isHoliday = DB::table('holidays')
+            ->where(function ($query) use ($date) {
+                $query->where('date_from', '<=', $date)
+                    ->where('date_to', '>=', $date);
+            })
+            ->exists();
+    }
 
     // 加載數據的邏輯方法
     private function loadData()
@@ -155,7 +190,7 @@ class AttendanceList extends Component
     protected function getAttendanceSummary($classId, $date)
     {
         $studentCount = Student::where('class_id', $classId)
-            ->whereDate('created_at', '<=', $date)
+            ->whereDate('enrollment_date', '<=', $date)
             ->count();
 
         $statusCounts = Attendance::selectRaw('status, COUNT(*) as count')
@@ -195,6 +230,8 @@ class AttendanceList extends Component
 
     public function render()
     {
-        return view('livewire.attendance-list');
+        return view('livewire.attendance-list', [
+            'isHoliday' => $this->isHoliday, // 傳遞假期狀態到前端
+        ]);
     }
 }

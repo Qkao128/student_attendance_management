@@ -12,13 +12,14 @@
 @endsection
 
 <div id="attendance-student-list">
+
     <form action="{{ route('attendance.store', ['classId' => $classId, 'date' => $date]) }}" id="form" method="POST"
-        style="background-color: #edf0f2">
+        enctype="multipart/form-data" style="background-color: #edf0f2">
         @csrf
         <div class="row g-3 mt-2 px-3">
             @foreach ($students as $key => $student)
                 <div class="col-12 col-sm-6 col-md-4 col-lg-6 col-xxl-3">
-                    <div class="card border-0 card-shadow px-1">
+                    <div class="card border-0 card-shadow px-1 h-100">
                         <div class="card-body px-md-4">
                             <input type="hidden" name="students[{{ $key }}][student_id]"
                                 value="{{ $student->id }}">
@@ -33,7 +34,45 @@
                                 <div class="fw-bold mt-3">{{ $student->name }}</div>
                             </div>
 
+                            <div id="file-upload-container-{{ $key }}" class="file-upload-container"
+                                style="display: none;">
+                                <hr class="my-3">
+
+                                <label class="form-label">Upload File :</label>
+                                <div class="px-3">
+                                    @if (!empty($student->attendance_file))
+                                        <!-- 有文件的情況 -->
+                                        <div id="file-container-{{ $key }}"
+                                            class="d-flex justify-content-around">
+                                            <span id="view-file-{{ $key }}" class="d-flex"
+                                                style="width: 210px">
+                                                <a href="{{ asset('storage/attendance_files/' . $student->attendance_file) }}"
+                                                    target="_blank" class="btn btn-primary text-truncate text-white">
+                                                    {{ $student->attendance_file }}
+                                                </a>
+
+                                                <i class="fa-solid fa-pen edit-file-icon ms-4"
+                                                    data-student-id="{{ $key }}"></i>
+                                            </span>
+
+                                            <span class="d-none align-items-center"
+                                                id="file-input-{{ $key }}">
+                                                <input type="file" name="students[{{ $key }}][file]"
+                                                    class="form-control">
+                                                <i class="fa-solid fa-xmark cancel-file-icon ms-2"
+                                                    data-student-id="{{ $key }}"></i>
+                                            </span>
+                                        </div>
+                                    @else
+                                        <!-- 沒有文件的情況 -->
+                                        <input type="file" name="students[{{ $key }}][file]"
+                                            class="form-control">
+                                    @endif
+                                </div>
+                            </div>
+
                             <hr class="my-3">
+
                             <div>
                                 <label class="form-label">Details :</label>
                                 <div class="d-flex justify-content-around">
@@ -130,18 +169,26 @@
         </div>
 
         @if ($students->isNotEmpty())
-            <div class="text-end p-3 mt-5">
-                @if (Carbon::parse($date)->format('Y-m') === Carbon::now()->format('Y-m'))
-                    <!-- 當前月份才顯示提交按鈕 -->
+            @if (Carbon::parse($date)->format('Y-m') === Carbon::now()->format('Y-m') && !$isHoliday)
+                <div class="text-end p-3 mt-5">
+                    <!-- 當前月份且不是節假日才顯示提交按鈕 -->
                     <button type="submit" class="btn btn-success text-white rounded-4">Submit</button>
-                @endif
-            </div>
+                </div>
+            @endif
+
             @if (Carbon::parse($date)->format('Y-m') !== Carbon::now()->format('Y-m'))
                 <!-- 顯示過期消息 -->
-                <div class="text-danger text-center p-3">
+                <div class="text-danger text-center mt-3 p-3">
                     Attendance records for previous months cannot be modified.
                 </div>
             @endif
+
+            @if ($isHoliday)
+                <div class="text-danger text-center mt-3 pt-2 ps-3 pe-3 pb-4">
+                    This day is designated as a holiday.
+                </div>
+            @endif
+
         @endif
 
     </form>
@@ -332,7 +379,56 @@
 
                 // 更新隱藏的狀態輸入
                 $(`input[name="students[${studentId}][status]"]`).val(statusValue);
+
+                // 顯示或隱藏文件上傳框
+                const fileUploadContainer = $(`#file-upload-container-${studentId}`);
+                if (statusValue !== '{{ Status::Present()->key }}') {
+                    fileUploadContainer.show(); // 顯示文件上傳框
+                } else {
+                    fileUploadContainer.hide(); // 隱藏文件上傳框
+                }
             });
+
+            // 頁面加載時初始化文件上傳框的狀態
+            $('.status-input').each(function() {
+                const studentId = $(this).attr('name').match(/\d+/)[0];
+                const statusValue = $(this).val();
+
+                // 設置選中的狀態樣式
+                if (statusValue) {
+                    const selectedOption = $(
+                        `.status-option[data-student-id="${studentId}"][data-status="${statusValue}"]`
+                    );
+                    selectedOption.css({
+                        'background-color': selectedOption.css('border-color'),
+                        'color': '#fff'
+                    });
+                }
+
+                // 根據狀態值顯示/隱藏文件上傳框
+                const fileUploadContainer = $(`#file-upload-container-${studentId}`);
+                if (statusValue && statusValue !== '{{ Status::Present()->key }}') {
+                    fileUploadContainer.show();
+                } else {
+                    fileUploadContainer.hide();
+                }
+            });
+
+            $(document).on('click', '.edit-file-icon', function() {
+                let studentId = $(this).data('student-id');
+                $(`#view-file-${studentId}`).removeClass('d-flex').addClass('d-none');
+                $(`#file-input-${studentId}`).removeClass('d-none').addClass('d-flex');
+            });
+
+            // 點擊 X 圖標，恢復 "View File"，隱藏文件輸入框
+            $(document).on('click', '.cancel-file-icon', function() {
+                let studentId = $(this).data('student-id');
+                // 隱藏文件輸入框
+                $(`#file-input-${studentId}`).removeClass('d-flex').addClass('d-none');
+                // 恢復文件檢視區域
+                $(`#view-file-${studentId}`).removeClass('d-none').addClass('d-flex');
+            });
+
         });
     </script>
 @endpush

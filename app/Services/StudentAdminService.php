@@ -129,10 +129,10 @@ class StudentAdminService extends Service
         }
     }
 
-    public function getStudentCountByClassId($classId)
+    public function getStudentCountByClassId($classId, $date)
     {
         try {
-            $student = $this->_studentRepository->getStudentCountByClassId($classId);
+            $student = $this->_studentRepository->getStudentCountByClassId($classId, $date);
 
             if ($student == null) {
                 return false;
