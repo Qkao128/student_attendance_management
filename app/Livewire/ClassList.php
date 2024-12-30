@@ -10,7 +10,8 @@ class ClassList extends Component
 {
     public $page = 0;
     public $limitPerPage = 50;
-    public $classes;
+    public $classes = [];
+    public $userId;
     public $filter = [
         'class' => null,
         'course_id' => null,
@@ -18,36 +19,47 @@ class ClassList extends Component
         'is_disabled' => null,
     ];
 
+    public function mount($userId)
+    {
+        $this->userId = $userId;
+        $this->loadData();
+    }
+
     public function loadMore()
     {
         $this->page++;
+        $this->loadData();
     }
 
-    public function filterClass($value)
+    public function updateDisabledStatus($isDisabled)
     {
-        $this->filter['class'] = $value;
-        $this->applyFilter();
+        $this->filter['is_disabled'] = $isDisabled;
+        $this->resetPagination();
+        $this->loadData();
     }
 
-    public function applyFilter()
+    public function filterByCurrentUser()
     {
-        $this->page = 0;
-        $this->render();
+        $this->filter['user_id'] = $this->filter['user_id'] === $this->userId ? null : $this->userId;
+        $this->resetPagination();
+        $this->loadData();
     }
 
     public function resetFilter()
     {
-        foreach ($this->filter as $key => $value) {
-            $this->filter[$key] = null;
-        }
-
-        $this->applyFilter();
+        $this->filter = [
+            'class' => null,
+            'course_id' => null,
+            'user_id' => null,
+            'is_disabled' => null,
+        ];
+        $this->resetPagination();
+        $this->loadData();
     }
 
-
-    public function render()
+    private function loadData()
     {
-        $newData = DB::table('classes')
+        $query = DB::table('classes')
             ->select([
                 'classes.id',
                 'classes.name',
@@ -65,32 +77,44 @@ class ClassList extends Component
             ->groupBy('classes.id', 'class_teachers.user_id', 'courses.name', 'users.username', 'classes.created_at')
             ->orderBy('classes.created_at', 'DESC');
 
-        if (isset($this->filter['class'])) {
-            $newData = $newData->where('classes.name', 'like', '%' . $this->filter['class'] . '%');
+        if (!is_null($this->filter['class'])) {
+            $query->where('classes.name', 'like', '%' . $this->filter['class'] . '%');
         }
 
-        if (isset($this->filter['course_id'])) {
-            $newData = $newData->where('course_id', $this->filter['course_id']);
+        if (!is_null($this->filter['course_id'])) {
+            $query->where('courses.id', '=', $this->filter['course_id']);
         }
 
-        if (isset($this->filter['user_id'])) {
-            $newData = $newData->where('class_teachers.user_id', '=', $this->filter['user_id']);
+        if (!is_null($this->filter['user_id'])) {
+            $query->where('class_teachers.user_id', '=', $this->filter['user_id']);
         }
 
-        if (isset($this->filter['is_disabled'])) {
-            $newData = $newData->where('classes.is_disabled', '=', $this->filter['is_disabled']);
+        if (!is_null($this->filter['is_disabled'])) {
+            $query->where('classes.is_disabled', '=', $this->filter['is_disabled']);
         }
 
-        $newData = $newData->offset($this->limitPerPage * $this->page);
-        $newData = $newData->limit($this->limitPerPage);
-        $newData = $newData->get();
+        $newData = $query->offset($this->limitPerPage * $this->page)
+            ->limit($this->limitPerPage)
+            ->get();
 
-        if ($this->page == 0) {
-            $this->classes = $newData;
+        // 確保 `array_merge` 使用數組
+        if ($this->page === 0) {
+            $this->classes = $newData->toArray();
         } else {
-            $this->classes = [...$this->classes, ...$newData];
+            $this->classes = array_merge($this->classes, $newData->toArray());
         }
+    }
 
-        return view('livewire.class-list');
+    private function resetPagination()
+    {
+        $this->page = 0;
+        $this->classes = [];
+    }
+
+    public function render()
+    {
+        return view('livewire.class-list', [
+            'classes' => $this->classes,
+        ]);
     }
 }

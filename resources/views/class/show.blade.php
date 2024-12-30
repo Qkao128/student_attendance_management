@@ -100,7 +100,8 @@
     </div>
 
 
-    <div class="card border-0 card-shadow px-1">
+    <div class="card border-0 card-shadow px-1"
+        style="background-color: {{ $class->is_disabled ? '#e8e8e8' : '#F4F6FA' }};">
         <div class="card-body px-md-4">
             <div class="row g-2 g-md-3 align-items-center">
                 <div class="col-12 col-sm">

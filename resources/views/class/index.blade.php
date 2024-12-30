@@ -34,7 +34,7 @@
         </div>
 
         <div>
-            @livewire('class-list')
+            @livewire('class-list', ['userId' => Auth()->id()])
         </div>
     </div>
 

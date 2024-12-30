@@ -92,6 +92,27 @@
         </div>
     </div>
 
+    <h5 class="d-flex mt-3">
+        <span class="badge text-black fw-normal {{ $filter['is_disabled'] === false ? 'border text-white' : '' }}"
+            wire:click="updateDisabledStatus(false)" role="button"
+            style="background-color: {{ $filter['is_disabled'] === false ? '#007bff' : '#F4F6FA' }}; box-shadow: 0px 4px 2px rgba(0, 0, 0, 0.25); border-radius: 10px;">
+            Active
+        </span>
+
+        <span class="badge text-black fw-normal ms-2 {{ $filter['is_disabled'] === true ? 'border text-white' : '' }}"
+            wire:click="updateDisabledStatus(true)" role="button"
+            style="background-color: {{ $filter['is_disabled'] === true ? '#007bff' : '#F4F6FA' }}; box-shadow: 0px 4px 2px rgba(0, 0, 0, 0.25); border-radius: 10px;">
+            Disabled
+        </span>
+
+        <span class="badge text-black fw-normal ms-2 {{ $filter['user_id'] === $userId ? 'border text-white' : '' }}"
+            wire:click="filterByCurrentUser" role="button"
+            style="background-color: {{ $filter['user_id'] === $userId ? '#007bff' : '#F4F6FA' }}; box-shadow: 0px 4px 2px rgba(0, 0, 0, 0.25); border-radius: 10px;">
+            My Classes
+        </span>
+    </h5>
+
+
 
 
     <div class="row g-4 mt-2">

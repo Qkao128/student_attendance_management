@@ -30,8 +30,21 @@ class UserSeeder extends Seeder
             'email' => 'teacher@teacher.com',
             'password' => bcrypt('12345678'),
             'profile_image' => null,
+            'teacher_user_id' => null,
+            'student_id' => null,
         ]);
 
         $user->assignRole(UserType::Admin()->key);
+
+        $user = User::create([
+            'username' => 'teacher',
+            'email' => 'teacher@teacher.com',
+            'password' => bcrypt('12345678'),
+            'profile_image' => null,
+            'teacher_user_id' => 2,
+            'student_id' => 1,
+        ]);
+
+        $user->assignRole(UserType::Monitor()->key);
     }
 }
