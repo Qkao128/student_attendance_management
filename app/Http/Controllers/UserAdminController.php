@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserType;
 use Illuminate\Http\Request;
 use App\Services\UserAdminService;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 
 class UserAdminController extends Controller
@@ -18,6 +20,26 @@ class UserAdminController extends Controller
 
     public function index()
     {
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            $id = Auth::user()->id;
+            $teacherId = Auth::user()->teacher_user_id;
+
+            $user = $this->_userAdminService->getById($id);
+            $teacher = $this->_userAdminService->getById($teacherId);
+            $monitor = $this->_userAdminService->getMonitorByStudentId($teacherId, $id);
+
+            if ($user === false || $user->teacher_user_id != $teacherId ||  $monitor == false) {
+                abort(404);
+            }
+
+            if ($user == null) {
+                $errorMessage = implode("<br>", $this->_userAdminService->_errorMessage);
+                return back()->with('error', $errorMessage)->withInput();
+            }
+
+            return view('account/monitor/show', compact('user', 'monitor', 'teacher'));
+        }
+
         return view('account/index');
     }
 
@@ -44,7 +66,28 @@ class UserAdminController extends Controller
 
     public function show($id)
     {
-        $user = $this->_userAdminService->getById($id);
+
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            $id = Auth::user()->id;
+            $teacherId = Auth::user()->teacher_user_id;
+
+            $user = $this->_userAdminService->getById($id);
+            $teacher = $this->_userAdminService->getById($teacherId);
+            $monitor = $this->_userAdminService->getMonitorByStudentId($teacherId, $id);
+
+            if ($user === false || $user->teacher_user_id != $teacherId ||  $monitor == false) {
+                abort(404);
+            }
+
+            if ($user == null) {
+                $errorMessage = implode("<br>", $this->_userAdminService->_errorMessage);
+                return back()->with('error', $errorMessage)->withInput();
+            }
+
+            return view('account/monitor/show', compact('user', 'monitor', 'teacher'));
+        }
+
+        $user = $this->_userAdminService->getByTeacherId($id);
 
         if ($user === false) {
             abort(404);
@@ -62,6 +105,24 @@ class UserAdminController extends Controller
     public function edit($id)
     {
         $user = $this->_userAdminService->getById($id);
+
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            $teacherId = Auth::user()->teacher_user_id;
+            $user = $this->_userAdminService->getById($teacherId);
+            $monitor = $this->_userAdminService->getMonitorByStudentId($teacherId, $id);
+
+            if ($user === false  || $user->id != $teacherId ||  $monitor == false) {
+                abort(404);
+            }
+
+            if ($user == null) {
+                $errorMessage = implode("<br>", $this->_userAdminService->_errorMessage);
+                return back()->with('error', $errorMessage)->withInput();
+            }
+
+            return view('account/monitor/edit', compact('user', 'monitor'));
+        }
+
 
         if ($user === false) {
             abort(404);
@@ -131,6 +192,26 @@ class UserAdminController extends Controller
 
     public function destroy($id)
     {
+
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            $id = Auth::user()->id;
+            $teacherId = Auth::user()->teacher_user_id;
+
+            $user = $this->_userAdminService->getById($id);
+            $teacher = $this->_userAdminService->getById($teacherId);
+            $monitor = $this->_userAdminService->getMonitorByStudentId($teacherId, $id);
+
+            if ($user === false || $user->teacher_user_id != $teacherId ||  $monitor == false) {
+                abort(404);
+            }
+
+            if ($user == null) {
+                $errorMessage = implode("<br>", $this->_userAdminService->_errorMessage);
+                return back()->with('error', $errorMessage)->withInput();
+            }
+
+            return view('account/monitor/show', compact('user', 'monitor', 'teacher'));
+        }
 
         $result = $this->_userAdminService->deleteById($id);
 
@@ -241,6 +322,26 @@ class UserAdminController extends Controller
 
     public function destroyMonitor($teacherId, $id)
     {
+
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            $id = Auth::user()->id;
+            $teacherId = Auth::user()->teacher_user_id;
+
+            $user = $this->_userAdminService->getById($id);
+            $teacher = $this->_userAdminService->getById($teacherId);
+            $monitor = $this->_userAdminService->getMonitorByStudentId($teacherId, $id);
+
+            if ($user === false || $user->teacher_user_id != $teacherId ||  $monitor == false) {
+                abort(404);
+            }
+
+            if ($user == null) {
+                $errorMessage = implode("<br>", $this->_userAdminService->_errorMessage);
+                return back()->with('error', $errorMessage)->withInput();
+            }
+
+            return view('account/monitor/show', compact('user', 'monitor', 'teacher'));
+        }
 
         $result = $this->_userAdminService->deleteMonitorById($teacherId, $id);
 

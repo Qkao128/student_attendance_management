@@ -54,8 +54,9 @@ class HolidayAdminService extends Service
             DB::commit();
             return $holiday;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to add holiday.");
 
+            $errorMessage = $e->getMessage() ?: "Fail to add holiday.";
+            array_push($this->_errorMessage, $errorMessage);
             DB::rollBack();
             return null;
         }
@@ -117,7 +118,9 @@ class HolidayAdminService extends Service
             DB::commit();
             return $holiday;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to update holiday details.");
+
+            $errorMessage = $e->getMessage() ?: "Fail to update holiday details.";
+            array_push($this->_errorMessage, $errorMessage);
             DB::rollBack();
             return null;
         }
@@ -162,7 +165,9 @@ class HolidayAdminService extends Service
             DB::commit();
             return $holiday;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to delete holiday details.");
+
+            $errorMessage = $e->getMessage() ?: "Fail to delete holiday details.";
+            array_push($this->_errorMessage, $errorMessage);
 
             DB::rollBack();
             return null;

@@ -88,8 +88,10 @@ class StudentAdminService extends Service
             DB::commit();
             return $student;
         } catch (Exception $e) {
+            $errorMessage = $e->getMessage() ?: "Fail to add student.";
+            array_push($this->_errorMessage, $errorMessage);
+
             DB::rollBack();
-            $this->_errorMessage[] = "Failed to add student: " . $e->getMessage();
             return null;
         }
     }
@@ -213,7 +215,9 @@ class StudentAdminService extends Service
             DB::commit();
             return $student;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to update class details.");
+
+            $errorMessage = $e->getMessage() ?: "Fail to update student details.";
+            array_push($this->_errorMessage, $errorMessage);
             DB::rollBack();
             return null;
         }
@@ -255,7 +259,8 @@ class StudentAdminService extends Service
             DB::commit();
             return $class;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to delete student details.");
+            $errorMessage = $e->getMessage() ?: "Fail to delete student details.";
+            array_push($this->_errorMessage, $errorMessage);
 
             DB::rollBack();
             return null;

@@ -28,32 +28,36 @@
     </div>
 
     <div class="row align-items-center mb-3">
-        <div class="col">
+        <div class="col {{ Auth::user()->hasRole(UserType::Monitor()->key) ? 'my-2' : '' }}">
             <h4 class="header-title">Account Monitor Details</h4>
         </div>
 
         <div class="col-12 col-md-auto mt-0 mt-md-1">
             <div class="d-flex float-end align-items-center gap-2">
-                <a href="{{ route('user.show', ['id' => $user->teacher_user_id]) }}"
-                    class="btn btn-dark rounded-4 text-white">
-                    <i class="fa-solid fa-angle-left text-white"></i>
-                    Back
-                </a>
+                @hasrole('Monitor')
+                    <!-- 如果是 Monitor，這段代碼會被隱藏 -->
+                @else
+                    <a href="{{ route('user.show', ['id' => $user->teacher_user_id]) }}"
+                        class="btn btn-dark rounded-4 text-white">
+                        <i class="fa-solid fa-angle-left text-white"></i>
+                        Back
+                    </a>
 
-                <form method="post"
-                    action={{ route('user.monitor.destroy', ['teacherId' => $user->teacher_user_id, 'id' => $user->id]) }}>
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger rounded-4" onclick="deleteFormConfirmation(event)">
-                        <i class="fa-solid fa-trash"></i> Delete
-                    </button>
-                </form>
+                    <form method="post"
+                        action={{ route('user.monitor.destroy', ['teacherId' => $user->teacher_user_id, 'id' => $user->id]) }}>
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger rounded-4" onclick="deleteFormConfirmation(event)">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </button>
+                    </form>
 
-                <a href="{{ route('user.monitor.edit', ['teacherId' => $user->teacher_user_id, 'id' => $user->id]) }}"
-                    class="btn btn-warning text-dark rounded-4">
-                    <i class="fa-solid fa-pen-nib"></i>
-                    Edit
-                </a>
+                    <a href="{{ route('user.monitor.edit', ['teacherId' => $user->teacher_user_id, 'id' => $user->id]) }}"
+                        class="btn btn-warning text-dark rounded-4">
+                        <i class="fa-solid fa-pen-nib"></i>
+                        Edit
+                    </a>
+                @endhasrole
             </div>
         </div>
     </div>
@@ -102,7 +106,7 @@
                         </div>
                         <div class="card-body card-shadow py-4">
                             <div>
-                                <div class="text-muted">Name</div>
+                                <div class="text-muted">Username</div>
                                 <div class="fw-bold mt-1">{{ $user->username }}</div>
                             </div>
 

@@ -22,33 +22,35 @@
 
             <hr class="m-0">
 
-            <li class="text-muted sidebar-header my-3">
-                Course and Class
-            </li>
+            @hasrole('Monitor')
+                <!-- 如果是 Monitor，這段代碼會被隱藏 -->
+            @else
+                <li class="text-muted sidebar-header my-3">
+                    Course and Class
+                </li>
 
-            <li class="sidebar-item {{ Request::routeIs('course.*') ? 'active' : '' }}">
-                <a class="sidebar-link" href="{{ route('course.index') }}">
-                    <span class="pc-micon">
-                        <i class="fa-solid fa-book-bookmark"></i>
-                    </span>
-                    Manage Course
+                <li class="sidebar-item {{ Request::routeIs('course.*') ? 'active' : '' }}">
+                    <a class="sidebar-link" href="{{ route('course.index') }}">
+                        <span class="pc-micon">
+                            <i class="fa-solid fa-book-bookmark"></i>
+                        </span>
+                        Manage Course
 
-                </a>
-            </li>
+                    </a>
+                </li>
+                <li
+                    class="sidebar-item {{ Request::routeIs('class.*') ? 'active' : '' }} {{ Request::routeIs('student.*') ? 'active' : '' }}">
+                    <a class="sidebar-link" href="{{ route('class.index') }}">
+                        <span class="pc-micon">
+                            <i class="fa-solid fa-users-rectangle"></i>
+                        </span>
+                        Manage Class
 
-            <li
-                class="sidebar-item {{ Request::routeIs('class.*') ? 'active' : '' }} {{ Request::routeIs('student.*') ? 'active' : '' }}">
-                <a class="sidebar-link" href="{{ route('class.index') }}">
-                    <span class="pc-micon">
-                        <i class="fa-solid fa-users-rectangle"></i>
-                    </span>
-                    Manage Class
+                    </a>
+                </li>
 
-                </a>
-            </li>
-
-            <hr class="m-0">
-
+                <hr class="m-0">
+            @endhasrole
             <li class="text-muted sidebar-header my-3">
                 Attendance
             </li>
@@ -101,12 +103,11 @@
 
 
             <li class="sidebar-item">
-                <button type="button" class="dropdown-item" style="margin-left: 6px"
-                    onclick="$('#logout-form').submit();">
+                <a class="sidebar-link" style="margin-left: 1px" onclick="$('#logout-form').submit();">
                     <div class="d-flex align-items-center gap-2">
                         <i class="fa-solid fa-right-from-bracket"></i> Logout
                     </div>
-                </button>
+                </a>
 
 
                 <form id="logout-form" action="{{ route('logout') }}" method="POST">

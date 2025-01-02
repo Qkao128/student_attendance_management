@@ -25,10 +25,14 @@ class RedirectIfAuthenticated
             if (Auth::guard($guard)->check()) {
                 if (Auth::user()->hasRole(UserType::SuperAdmin()->key)) {
                     return Redirect::route('dashboard');
-                } else if (Auth::user()->hasRole(UserType::Admin()->key)) {
+                }
+
+                if (Auth::user()->hasRole(UserType::Admin()->key)) {
                     return Redirect::route('dashboard');
-                } else if (Auth::user()->hasRole(UserType::Monitor()->key)) {
-                    return Redirect::route('monitor.dashboard');
+                }
+
+                if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+                    return Redirect::route('dashboard');
                 }
 
                 return redirect(RouteServiceProvider::HOME);

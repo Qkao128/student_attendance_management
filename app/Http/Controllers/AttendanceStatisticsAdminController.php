@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use App\Enums\Status;
+use App\Enums\UserType;
 use Illuminate\Http\Request;
 use App\Services\ClassAdminService;
+use Illuminate\Support\Facades\Auth;
+use App\Services\StudentAdminService;
 use App\Services\AttendanceAdminService;
 use Illuminate\Support\Facades\Redirect;
 use App\Services\AttendanceStatisticsAdminService;
@@ -16,18 +19,38 @@ class AttendanceStatisticsAdminController extends Controller
     private $_attendanceStatisticsAdminService;
     private $_attendanceAdminService;
     private $_classAdminService;
+    private $_studentAdminService;
 
-    public function __construct(AttendanceStatisticsAdminService $attendanceStatisticsAdminService, AttendanceAdminService $attendanceAdminService, ClassAdminService $classAdminService)
+    public function __construct(AttendanceStatisticsAdminService $attendanceStatisticsAdminService, AttendanceAdminService $attendanceAdminService, ClassAdminService $classAdminService, StudentAdminService $studentAdminService)
     {
         $this->_attendanceStatisticsAdminService = $attendanceStatisticsAdminService;
         $this->_attendanceAdminService = $attendanceAdminService;
         $this->_classAdminService = $classAdminService;
+        $this->_studentAdminService = $studentAdminService;
     }
 
     public function index(Request $request)
     {
         $date = now()->format('Y-m-d');
         $dashboard = $this->_attendanceStatisticsAdminService->getDashboardData($date);
+
+
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            $month = now()->format('Y-m');
+            $startOfMonth = Carbon::parse($month)->startOfMonth();
+            $endOfMonth = Carbon::parse($month)->endOfMonth();
+            $student = $this->_studentAdminService->getById(Auth::user()->student_id);
+            $class = $this->_classAdminService->getByIdWithDetails($student->class_id);
+
+            $attendanceData = $this->_attendanceStatisticsAdminService->getAttendanceTable($class->id, $startOfMonth, $endOfMonth);
+
+            return view('attendance/statistics/show', [
+                'attendanceTable' => $attendanceData['table'],
+                'nonPresentDetails' => $attendanceData['nonPresentDetails'],
+                'month' => $month,
+                'class' => $class
+            ]);
+        }
 
         return view('attendance/statistics/index', [
             'dashboards' => $dashboard,

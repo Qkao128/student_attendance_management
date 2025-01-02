@@ -7,6 +7,7 @@ use App\Http\Controllers\UserAdminController;
 use App\Http\Controllers\ClassAdminController;
 use App\Http\Controllers\CourseAdminController;
 use App\Http\Controllers\HolidayAdminController;
+use App\Http\Controllers\MonitorAdminController;
 use App\Http\Controllers\StudentAdminController;
 use App\Http\Controllers\DashboardAdminController;
 use App\Http\Controllers\AttendanceAdminController;
@@ -28,7 +29,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
 
-Route::prefix('admin')->middleware(['auth', 'check_role:' . UserType::SuperAdmin()->key . '|' . UserType::Admin()->key])->group(function () {
+
+Route::prefix('admin')->middleware(['auth', 'check_role:' . UserType::SuperAdmin()->key . '|' . UserType::Admin()->key . '|' . UserType::Monitor()->key])->group(function () {
     // 管理員路由
     Route::get('/dashboard', [DashboardAdminController::class, 'index'])->name('dashboard');
     Route::post('/dashboard/data', [DashboardAdminController::class, 'data'])->name('dashboard.data');
@@ -112,13 +114,4 @@ Route::prefix('admin')->middleware(['auth', 'check_role:' . UserType::SuperAdmin
         Route::post('holidays', [HolidayAdminController::class, 'getHolidays'])->name('getHolidays');
         Route::delete('{id}', [HolidayAdminController::class, 'destroy'])->name('destroy');
     });
-});
-
-
-
-
-Route::name('monitor.')->prefix('monitor')->middleware(['auth', 'check_role:' . UserType::Monitor()])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('monitor.dashboard.index');
-    })->name('dashboard');
 });

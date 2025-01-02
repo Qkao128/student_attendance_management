@@ -37,8 +37,8 @@ class UserSeeder extends Seeder
         $user->assignRole(UserType::Admin()->key);
 
         $user = User::create([
-            'username' => 'teacher',
-            'email' => 'teacher@teacher.com',
+            'username' => 'Monitor',
+            'email' => 'monitor@monitor.com',
             'password' => bcrypt('12345678'),
             'profile_image' => null,
             'teacher_user_id' => 2,

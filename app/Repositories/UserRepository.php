@@ -75,6 +75,11 @@ class UserRepository extends Repository
         return $totalCount;
     }
 
+    public function getByTeacherId($id)
+    {
+        return $this->_db->where('id', $id)->whereNull('teacher_user_id')->whereNull('student_id')->first();
+    }
+
     public function getMonitorByStudentId($teacherId, $id)
     {
         $data = DB::table('users')

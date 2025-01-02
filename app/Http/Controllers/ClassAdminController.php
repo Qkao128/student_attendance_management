@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserType;
 use Illuminate\Http\Request;
 use App\Services\ClassAdminService;
 use App\Services\CourseAdminService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 
 
@@ -21,6 +23,10 @@ class ClassAdminController extends Controller
 
     public function index()
     {
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            return redirect()->route('dashboard');
+        }
+
         return view('class/index');
     }
 
@@ -45,6 +51,10 @@ class ClassAdminController extends Controller
 
     public function show($id)
     {
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            return redirect()->route('dashboard');
+        }
+
         $class = $this->_classAdminService->getByIdWithDetails($id);
 
         if ($class === false) {

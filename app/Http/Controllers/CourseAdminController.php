@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\UserType;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Redirect;
 use App\Services\CourseAdminService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 
 class CourseAdminController extends Controller
@@ -18,6 +20,11 @@ class CourseAdminController extends Controller
 
     public function index()
     {
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            return redirect()->route('dashboard');
+        }
+
+
         return view('course/index');
     }
 

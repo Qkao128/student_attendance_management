@@ -96,7 +96,7 @@
                         </div>
                         <div class="card-body card-shadow py-4">
                             <div>
-                                <div class="text-muted">Name</div>
+                                <div class="text-muted">Userame</div>
                                 <div class="fw-bold mt-1">{{ $user->username }}</div>
                             </div>
 

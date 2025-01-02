@@ -10,17 +10,21 @@ use Illuminate\Support\Facades\DB;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
+use App\Repositories\StudentRepository;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class UserAdminService extends Service
 {
     protected $_userRepository;
+    protected $_studentRepository;
 
     public function __construct(
         UserRepository $userRepository,
+        StudentRepository $studentRepository,
     ) {
         $this->_userRepository = $userRepository;
+        $this->_studentRepository = $studentRepository;
     }
 
     public function createUser($data)
@@ -43,7 +47,7 @@ class UserAdminService extends Service
                 return null;
             }
 
-            if (!Auth::user()->hasAnyRole(UserType::SuperAdmin()->key)) {
+            if (!Auth::check() || !Auth::user()->hasAnyRole(UserType::SuperAdmin()->key)) {
                 throw new Exception("You do not have the required permissions.");
             }
 
@@ -92,6 +96,24 @@ class UserAdminService extends Service
         }
     }
 
+    public function getByTeacherId($id)
+    {
+        try {
+            $user = $this->_userRepository->getByTeacherId($id);
+
+            if ($user == null) {
+                return false;
+            }
+
+            return $user;
+        } catch (Exception $e) {
+            array_push($this->_errorMessage, "Fail to get user details.");
+
+            return null;
+        }
+    }
+
+
     public function getMonitorByStudentId($teacherId, $id)
     {
         try {
@@ -135,10 +157,15 @@ class UserAdminService extends Service
                 throw new Exception();
             }
 
-            if ($user->hasAnyRole(UserType::Admin()->key) != true || $user->hasAnyRole(UserType::SuperAdmin()->key) != true) {
+            if (!Auth::check() || !Auth::user()->hasAnyRole([UserType::SuperAdmin()->key, UserType::Admin()->key])) {
                 throw new Exception('You do not have permission to perform this action.');
             }
 
+            if (Auth::user()->hasRole(UserType::Admin()->key)) {
+                if ($user->id !== Auth::user()->id) {
+                    throw new Exception('You are not authorized to manage this user.');
+                }
+            }
 
             if (!empty($data['profile_image'])) {
                 if ($user['profile_image'] != null && Storage::exists('public/profile_image/' . $user['profile_image'])) {
@@ -158,7 +185,9 @@ class UserAdminService extends Service
             DB::commit();
             return $user;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to update staff details.");
+
+            $errorMessage = $e->getMessage() ?: "Fail to update user details.";
+            array_push($this->_errorMessage, $errorMessage);
 
             DB::rollBack();
             return null;
@@ -192,13 +221,19 @@ class UserAdminService extends Service
                 throw new Exception();
             }
 
+            if (Auth::user()->hasRole(UserType::Admin()->key)) {
+                if ($user->id !== Auth::user()->id) {
+                    throw new Exception('You are not authorized to manage this user.');
+                }
+            }
 
             $user = $this->_userRepository->update($data, $id);
 
             DB::commit();
             return $user;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to update password.");
+            $errorMessage = $e->getMessage() ?: "Fail to update password.";
+            array_push($this->_errorMessage, $errorMessage);
 
             DB::rollBack();
             return null;
@@ -220,7 +255,7 @@ class UserAdminService extends Service
 
             $user = $this->_userRepository->getById($id);
 
-            if ($user->hasAnyRole(UserType::SuperAdmin()->key) != true) {
+            if (!Auth::check() || !Auth::user()->hasAnyRole(UserType::SuperAdmin()->key)) {
                 throw new Exception('You do not have permission to perform this action.');
             }
 
@@ -233,7 +268,8 @@ class UserAdminService extends Service
             DB::commit();
             return $user;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to delete account.");
+            $errorMessage = $e->getMessage() ?: "Fail to delete user.";
+            array_push($this->_errorMessage, $errorMessage);
 
             DB::rollBack();
             return null;
@@ -304,8 +340,8 @@ class UserAdminService extends Service
             }
 
             if (Auth::user()->hasRole(UserType::Admin()->key)) {
-                if ($teacher->user_id !== Auth::user()->id) {
-                    throw new Exception('You are not authorized to manage this teacher.');
+                if ($teacher->id !== Auth::user()->id || $teacherId !== Auth::user()->id) {
+                    throw new Exception('You are not authorized to manage this user.');
                 }
             }
 
@@ -332,7 +368,8 @@ class UserAdminService extends Service
             DB::commit();
             return $user;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to add user.");
+            $errorMessage = $e->getMessage() ?: "Fail to add user.";
+            array_push($this->_errorMessage, $errorMessage);
 
             DB::rollBack();
             return null;
@@ -369,7 +406,7 @@ class UserAdminService extends Service
             }
 
             if (Auth::user()->hasRole(UserType::Admin()->key)) {
-                if ($user->teacher_user_id !== Auth::user()->id) {
+                if ($user->teacher_user_id !== Auth::user()->id || $teacherId !== Auth::user()->id || $user->teacher_user_id != $teacherId) {
                     throw new Exception('You are not authorized to manage this user.');
                 }
             }
@@ -392,7 +429,8 @@ class UserAdminService extends Service
             DB::commit();
             return $user;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to update monitor details.");
+            $errorMessage = $e->getMessage() ?: "Fail to update user details.";
+            array_push($this->_errorMessage, $errorMessage);
 
             DB::rollBack();
             return null;
@@ -416,22 +454,28 @@ class UserAdminService extends Service
                 return null;
             }
 
-            if (!Auth::check() || !Auth::user()->hasAnyRole([UserType::SuperAdmin()->key, UserType::Admin()->key])) {
+            if (!Auth::check() || !Auth::user()->hasAnyRole([UserType::SuperAdmin()->key, UserType::Admin()->key, UserType::Monitor()->key])) {
                 throw new Exception('You do not have permission to perform this action.');
             }
 
             $user = $this->_userRepository->getById($id);
 
-            if (Auth::user()->hasRole(UserType::Admin()->key)) {
-                if ($user->teacher_user_id !== Auth::user()->id) {
-                    throw new Exception('You are not authorized to manage this user.');
-                }
-            }
-
             if ($user == null || $user->teacher_user_id != $teacherId) {
                 throw new Exception();
             }
 
+            if (Auth::user()->hasRole(UserType::Admin()->key)) {
+                if ($user->teacher_user_id !== Auth::user()->id || $teacherId !== Auth::user()->id || $user->teacher_user_id != $teacherId) {
+                    throw new Exception('You are not authorized to manage this user.');
+                }
+            }
+
+            if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+                $student = $this->_studentRepository->getById(Auth::user()->student_id);
+                if (!$student || $user->student_id !== $student->id || Auth::user()->teacher_user_id !== $teacherId) {
+                    throw new Exception('You are not authorized to manage attendance for this user');
+                }
+            }
 
 
             $user = $this->_userRepository->update($data, $id);
@@ -439,7 +483,8 @@ class UserAdminService extends Service
             DB::commit();
             return $user;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to update password.");
+            $errorMessage = $e->getMessage() ?: "Fail to update password.";
+            array_push($this->_errorMessage, $errorMessage);
 
             DB::rollBack();
             return null;
@@ -470,7 +515,7 @@ class UserAdminService extends Service
             }
 
             if (Auth::user()->hasRole(UserType::Admin()->key)) {
-                if ($user->teacher_user_id  !== Auth::user()->id) {
+                if ($user->teacher_user_id !== Auth::user()->id || $teacherId !== Auth::user()->id || $user->teacher_user_id != $teacherId) {
                     throw new Exception('You are not authorized to manage this user.');
                 }
             }
@@ -480,7 +525,8 @@ class UserAdminService extends Service
             DB::commit();
             return $user;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to delete account.");
+            $errorMessage = $e->getMessage() ?: "Fail to delete user.";
+            array_push($this->_errorMessage, $errorMessage);
 
             DB::rollBack();
             return null;

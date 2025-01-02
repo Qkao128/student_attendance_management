@@ -57,7 +57,8 @@ class ClassAdminService extends Service
             DB::commit();
             return $class;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to add class.");
+            $errorMessage = $e->getMessage() ?: "Fail to add class.";
+            array_push($this->_errorMessage, $errorMessage);
 
             DB::rollBack();
             return null;
@@ -136,7 +137,8 @@ class ClassAdminService extends Service
             DB::commit();
             return $class;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to update class details.");
+            $errorMessage = $e->getMessage() ?: "Fail to update class details.";
+            array_push($this->_errorMessage, $errorMessage);
             DB::rollBack();
             return null;
         }
@@ -162,7 +164,8 @@ class ClassAdminService extends Service
             DB::commit();
             return $class;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to delete class details.");
+            $errorMessage = $e->getMessage() ?: "Fail to delete class details.";
+            array_push($this->_errorMessage, $errorMessage);
 
             DB::rollBack();
             return null;

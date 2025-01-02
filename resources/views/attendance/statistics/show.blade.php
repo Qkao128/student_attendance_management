@@ -1,6 +1,7 @@
 @php
     use Carbon\Carbon;
     use App\Enums\Status;
+    use App\Enums\UserType;
 @endphp
 
 @extends('layout/layout')
@@ -26,18 +27,22 @@
     </div>
 
     <div class="row align-items-center mb-2">
-        <div class="col">
+        <div class="col {{ Auth::user()->hasRole(UserType::Monitor()->key) ? 'my-2' : '' }}">
             <h4 class="header-title">Attendance Statistics Details</h4>
         </div>
 
-        <div class="col-12 col-md-auto mt-0 mt-md-1">
-            <div class="d-flex float-end align-items-center gap-2">
-                <a href="{{ route('attendance_statistics.index') }}" class="btn btn-dark rounded-4 text-white">
-                    <i class="fa-solid fa-angle-left text-white"></i>
-                    Back
-                </a>
+        @hasrole('Monitor')
+            <!-- 如果是 Monitor，這段代碼會被隱藏 -->
+        @else
+            <div class="col-12 col-md-auto mt-0 mt-md-1">
+                <div class="d-flex float-end align-items-center gap-2">
+                    <a href="{{ route('attendance_statistics.index') }}" class="btn btn-dark rounded-4 text-white">
+                        <i class="fa-solid fa-angle-left text-white"></i>
+                        Back
+                    </a>
+                </div>
             </div>
-        </div>
+        @endhasrole
     </div>
 
     <div class="card border-0 card-shadow px-1 mt-3">

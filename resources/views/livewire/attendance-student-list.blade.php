@@ -160,8 +160,8 @@
                                         </div>
                                     </div>
                                 </div>
-                                <span class="text-danger error-message" id="status-error-{{ $key }}"
-                                    style="display: none;">Please select a status.</span>
+                                <div class="text-danger error-message mt-2" id="status-error-{{ $key }}"
+                                    style="display: none;">Please select a status.</div>
                             </div>
                         </div>
 
@@ -170,19 +170,59 @@
             @endforeach
         </div>
 
-        @if ($students->isNotEmpty())
-            @if (Carbon::parse($date)->format('Y-m') === Carbon::now()->format('Y-m') && !$isHoliday)
-                <div class="text-end p-3 mt-5">
-                    <!-- 當前月份且不是節假日才顯示提交按鈕 -->
-                    <button type="submit" class="btn btn-success text-white rounded-4">Submit</button>
-                </div>
-            @endif
+        @php
+            $attendanceDate = Carbon::parse($date); // 解析傳入日期
+            $currentMonth = Carbon::now()->format('Y-m') === $attendanceDate->format('Y-m'); // 是否為當月
+            $isWithinOneWeek = $attendanceDate->isPast() ? $attendanceDate->diffInDays(Carbon::now()) <= 7 : false; // 是否在過去 7 天內
+        @endphp
 
-            @if (Carbon::parse($date)->format('Y-m') !== Carbon::now()->format('Y-m'))
-                <!-- 顯示過期消息 -->
+        @if ($students->isNotEmpty())
+
+            @if ($attendanceDate->isFuture())
                 <div class="text-danger text-center mt-3 p-3">
-                    Attendance records for previous months cannot be modified.
+                    Attendance records cannot be submitted for future dates.
                 </div>
+            @else
+                @hasrole('SuperAdmin')
+                    <!-- SuperAdmin 沒有任何限制，直接顯示提交按鈕 -->
+                    <div class="text-end p-3 mt-5">
+                        <button type="submit" class="btn btn-success text-white rounded-4">Submit</button>
+                    </div>
+                    @elsehasrole('Admin')
+                    @if ($currentMonth)
+                        <!-- Admin 只檢查是否為當月 -->
+                        <div class="text-end p-3 mt-5">
+                            <button type="submit" class="btn btn-success text-white rounded-4">Submit</button>
+                        </div>
+                    @else
+                        <!-- 顯示過期消息 -->
+                        <div class="text-danger text-center mt-3 p-3">
+                            Attendance records for previous months cannot be modified.
+                        </div>
+                    @endif
+                    @elsehasrole('Monitor')
+                    @if ($currentMonth && !$isHoliday)
+                        @if ($isWithinOneWeek)
+                            <!-- 當前月份且不是節假日，且提交日期在一週內才顯示提交按鈕 -->
+                            <div class="text-end p-3 mt-5">
+                                <button type="submit" class="btn btn-success text-white rounded-4">Submit</button>
+                            </div>
+                        @else
+                            <!-- 超過一週時顯示錯誤信息 -->
+                            <div class="text-danger text-center mt-3 p-3">
+                                You cannot submit the attendance after one week of the attendance date.
+                            </div>
+                        @endif
+                    @else
+                        <div class="text-danger text-center mt-3 p-3">
+                            Attendance records for previous months cannot be modified.
+                        </div>
+                    @endif
+                @else
+                    <div class="text-danger text-center mt-3 p-3">
+                        You do not have permission to submit attendance.
+                    </div>
+                @endhasrole
             @endif
 
             @if ($isHoliday)

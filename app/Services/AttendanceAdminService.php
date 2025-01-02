@@ -44,14 +44,38 @@ class AttendanceAdminService extends Service
             $attendanceDate = Carbon::parse($date);
             $holidayDate =  $this->getIsDateHoliday($date);
 
-            if ($attendanceDate->format('Y-m') !== $today->format('Y-m')) {
-                throw new Exception('You can only modify attendance records for the current month. Records from previous months are expired.');
-            }
-
             if ($holidayDate === true) {
                 throw new Exception('Attendance cannot be modified on a holiday.');
             }
 
+            if ($attendanceDate->isFuture()) {
+                throw new Exception('Attendance cannot be modified for future dates.');
+            }
+
+            if (!Auth::check()) {
+                throw new Exception('Unauthorized action.');
+            }
+
+            if (Auth::user()->hasRole(UserType::Admin()->key)) {
+                if ($attendanceDate->format('Y-m') !== $today->format('Y-m')) {
+                    throw new Exception('You can only modify attendance records for the current month. Records from previous months are expired.');
+                }
+            }
+
+            if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+                // 檢查是否在過去 7 天內
+                $daysDifference = $attendanceDate->isPast()
+                    ? $attendanceDate->diffInDays($today) // 過去幾天的差距
+                    : 0; // 如果是未來日期，則視為 0 天差距（已在前面阻擋未來日期）
+
+                if ($daysDifference > 7) {
+                    throw new Exception('Monitors can only modify attendance records within the last 7 days.');
+                }
+
+                if ($attendanceDate->format('Y-m') !== $today->format('Y-m')) {
+                    throw new Exception('You can only modify attendance records for the current month. Records from previous months are expired.');
+                }
+            }
 
             $validator = Validator::make($data, [
                 'students' => 'nullable|array',
@@ -66,10 +90,6 @@ class AttendanceAdminService extends Service
                     array_push($this->_errorMessage, $error);
                 }
                 return null;
-            }
-
-            if (!Auth::check()) {
-                throw new Exception('Unauthorized action.');
             }
 
             $class = $this->_classRepository->getById($classId);
@@ -148,7 +168,8 @@ class AttendanceAdminService extends Service
             DB::commit();
             return true;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to update students attendance.");
+            $errorMessage = $e->getMessage() ?: "Fail to update students attendance.";
+            array_push($this->_errorMessage, $errorMessage);
             DB::rollBack();
             return null;
         }

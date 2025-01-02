@@ -46,7 +46,8 @@ class CourseAdminService extends Service
             DB::commit();
             return $course;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to add course.");
+            $errorMessage = $e->getMessage() ?: "Fail to add course.";
+            array_push($this->_errorMessage, $errorMessage);
 
             DB::rollBack();
             return null;
@@ -115,7 +116,8 @@ class CourseAdminService extends Service
             DB::commit();
             return $course;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to update course details.");
+            $errorMessage = $e->getMessage() ?: "Fail to update course details.";
+            array_push($this->_errorMessage, $errorMessage);
             DB::rollBack();
             return null;
         }
@@ -142,7 +144,8 @@ class CourseAdminService extends Service
             DB::commit();
             return $course;
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to delete course details.");
+            $errorMessage = $e->getMessage() ?: "Fail to delete course details.";
+            array_push($this->_errorMessage, $errorMessage);
 
             DB::rollBack();
             return null;

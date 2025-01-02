@@ -38,8 +38,14 @@ class AuthController extends Controller
 
         if (Auth::user()->hasRole(UserType::SuperAdmin()->key)) {
             return Redirect::route('dashboard')->with('success', "Login successfully.");
-        } elseif (Auth::user()->hasRole(UserType::Monitor()->key)) {
-            return Redirect::route('dashboard.monitor')->with('success', "Login successfully.");
+        }
+
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+            return Redirect::route('dashboard')->with('success', "Login successfully.");
+        }
+
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            return Redirect::route('dashboard')->with('success', "Login successfully.");
         }
 
         return back()->with('error', 'Unauthorized access.');
