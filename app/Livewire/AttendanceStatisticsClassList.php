@@ -112,6 +112,9 @@ class AttendanceStatisticsClassList extends Component
             ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
             ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
             ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+            ->where('classes.deleted_at', '=', null)
+            ->where('courses.deleted_at', '=', null)
+            ->where('users.deleted_at', '=', null)
             ->where('classes.is_disabled', false);
 
         if (!empty($this->filter['course_id'])) {

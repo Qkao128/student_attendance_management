@@ -62,6 +62,6 @@ class CourseRepository extends Repository
 
     public function getByCourseId($courseId)
     {
-        return $this->_db->where('id', $courseId)->first();
+        return $this->_db->where('id', $courseId)->where('deleted_at', '=', null)->first();
     }
 }

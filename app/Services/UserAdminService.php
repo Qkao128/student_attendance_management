@@ -268,8 +268,7 @@ class UserAdminService extends Service
             DB::commit();
             return $user;
         } catch (Exception $e) {
-            $errorMessage = $e->getMessage() ?: "Fail to delete user.";
-            array_push($this->_errorMessage, $errorMessage);
+            array_push($this->_errorMessage, "Fail to delete user.");
 
             DB::rollBack();
             return null;

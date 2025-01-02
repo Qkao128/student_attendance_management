@@ -166,8 +166,7 @@ class HolidayAdminService extends Service
             return $holiday;
         } catch (Exception $e) {
 
-            $errorMessage = $e->getMessage() ?: "Fail to delete holiday details.";
-            array_push($this->_errorMessage, $errorMessage);
+            array_push($this->_errorMessage, "Fail to delete holiday details.");
 
             DB::rollBack();
             return null;

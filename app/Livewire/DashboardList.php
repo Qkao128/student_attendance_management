@@ -74,6 +74,9 @@ class DashboardList extends Component
             ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
             ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
             ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
+            ->where('classes.deleted_at', '=', null)
+            ->where('courses.deleted_at', '=', null)
+            ->where('users.deleted_at', '=', null)
             ->where('classes.is_disabled', false)
             ->orderBy('latest_updated_at', 'desc');
 
@@ -107,6 +110,7 @@ class DashboardList extends Component
         $studentCount = DB::table('students')
             ->leftJoin('classes', 'students.class_id', '=', 'classes.id')
             ->where('classes.id', $classId)
+            ->where('classes.deleted_at', '=', null)
             ->where('classes.is_disabled', false)
             ->whereDate('students.created_at', '<=', $date) // 确保学生创建时间小于等于指定日期
             ->count();

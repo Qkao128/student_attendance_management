@@ -18,10 +18,10 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->unsignedBigInteger('teacher_user_id')->nullable();
-            $table->foreign('teacher_user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreignId('student_id')->nullable()->constrained('students');
-            $table->softDeletes();
+            $table->foreign('teacher_user_id')->references('id')->on('users');
+            $table->foreignId('student_id')->nullable()->constrained('students')->onDelete('cascade');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

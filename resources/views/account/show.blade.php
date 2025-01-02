@@ -6,6 +6,14 @@
 
 @section('page_title', 'Account Details')
 
+@section('style')
+    <style>
+        .select2-container .select2-selection--single {
+            background-color: #F4F6FA !important;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div class="row mt-2">
         <div class="col text-muted">
@@ -132,14 +140,15 @@
                                     <label class="form-label" for="password">New Password:<span
                                             class="text-danger">*</span></label>
                                     <input type="password" class="form-control" id="password" name="password"
-                                        placeholder="Enter new password" required>
+                                        placeholder="Enter new password" required style="background: #FAFAFA">
                                 </div>
 
                                 <div class="form-group mb-4">
                                     <label class="form-label" for="password_confirmation">Confirm New Password:<span
                                             class="text-danger">*</span></label>
                                     <input type="password" class="form-control" id="password_confirmation"
-                                        name="password_confirmation" placeholder="Confirm new password" required>
+                                        name="password_confirmation" placeholder="Confirm new password" required
+                                        style="background: #FAFAFA">
                                 </div>
                             </div>
                         </div>

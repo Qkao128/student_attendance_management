@@ -75,6 +75,9 @@ class ClassList extends Component
             ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
             ->leftJoin('students', 'classes.id', '=', 'students.class_id')
             ->groupBy('classes.id', 'class_teachers.user_id', 'courses.name', 'users.username', 'classes.created_at')
+            ->where('courses.deleted_at', '=', null)
+            ->where('classes.deleted_at', '=', null)
+            ->where('users.deleted_at', '=', null)
             ->orderBy('classes.created_at', 'DESC');
 
         if (!is_null($this->filter['class'])) {

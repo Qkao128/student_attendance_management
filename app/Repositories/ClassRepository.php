@@ -56,13 +56,23 @@ class ClassRepository extends Repository
             ->leftJoin('students', 'classes.id', '=', 'students.class_id')
             ->groupBy('classes.id', 'class_teachers.user_id', 'courses.name', 'users.username', 'classes.created_at')
             ->where('classes.id', $id)
+            ->where('courses.deleted_at', '=', null)
+            ->where('classes.deleted_at', '=', null)
+            ->where('users.deleted_at', '=', null)
+            ->where('classes.is_disabled', false)
             ->first();
     }
 
     public function getClassCount()
     {
         return DB::table('classes')
-            ->where('is_disabled', false)
+            ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+            ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+            ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
+            ->where('classes.deleted_at', '=', null)
+            ->where('courses.deleted_at', '=', null)
+            ->where('users.deleted_at', '=', null)
+            ->where('classes.is_disabled', false)
             ->count();
     }
 
@@ -75,6 +85,7 @@ class ClassRepository extends Repository
         $data = $this->_db->select('id', 'name')
             ->where('name', 'LIKE', "%$name%")
             ->where('course_id', '=', $data['course_id'])
+            ->where('deleted_at', '=', null)
             ->where('is_disabled', false)
             ->skip($data['offset'])->take($data['result_count'])
             ->get();
@@ -93,6 +104,7 @@ class ClassRepository extends Repository
         $totalCount = $this->_db
             ->where('name', 'LIKE', "%$name%")
             ->where('course_id', '=', $data['course_id'])
+            ->where('deleted_at', '=', null)
             ->where('is_disabled', false)
             ->count();
 

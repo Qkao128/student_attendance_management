@@ -164,8 +164,7 @@ class ClassAdminService extends Service
             DB::commit();
             return $class;
         } catch (Exception $e) {
-            $errorMessage = $e->getMessage() ?: "Fail to delete class details.";
-            array_push($this->_errorMessage, $errorMessage);
+            array_push($this->_errorMessage, "Fail to delete class password.");
 
             DB::rollBack();
             return null;

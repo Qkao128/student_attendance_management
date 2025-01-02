@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('course_id')->constrained('courses');
             $table->boolean('is_disabled');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

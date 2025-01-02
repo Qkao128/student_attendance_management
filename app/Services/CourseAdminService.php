@@ -144,8 +144,7 @@ class CourseAdminService extends Service
             DB::commit();
             return $course;
         } catch (Exception $e) {
-            $errorMessage = $e->getMessage() ?: "Fail to delete course details.";
-            array_push($this->_errorMessage, $errorMessage);
+            array_push($this->_errorMessage, "Fail to delete course details.");
 
             DB::rollBack();
             return null;

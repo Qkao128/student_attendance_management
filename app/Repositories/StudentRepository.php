@@ -60,14 +60,28 @@ class StudentRepository extends Repository
 
     public function getStudentCountByClassId($classId, $date)
     {
-        return $this->_db->where('class_id', $classId)->whereDate('students.enrollment_date', '<=', $date)->count();
+
+        return DB::table('students')
+            ->leftjoin('classes', 'students.class_id', '=', 'classes.id')
+            ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+            ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+            ->where('class_id', $classId)
+            ->where('classes.deleted_at', '=', null)
+            ->where('classes.is_disabled', false)
+            ->where('users.deleted_at', '=', null)
+            ->whereDate('students.enrollment_date', '<=', $date)
+            ->count();
     }
 
     public function getStudentCount($date)
     {
         return DB::table('students')
-            ->join('classes', 'students.class_id', '=', 'classes.id')
+            ->leftjoin('classes', 'students.class_id', '=', 'classes.id')
+            ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+            ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+            ->where('classes.deleted_at', '=', null)
             ->where('classes.is_disabled', false)
+            ->where('users.deleted_at', '=', null)
             ->whereDate('students.enrollment_date', '<=', $date)
             ->count();
     }

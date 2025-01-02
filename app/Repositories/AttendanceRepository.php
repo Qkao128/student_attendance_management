@@ -169,6 +169,8 @@ class AttendanceRepository extends Repository
             ->join('students', 'attendances.student_id', '=', 'students.id')
             ->join('classes', 'students.class_id', '=', 'classes.id')
             ->select('attendances.status', DB::raw('COUNT(attendances.id) as count'))
+            ->where('classes.deleted_at', '=', null)
+            ->where('classes.is_disabled', false)
             ->whereBetween('attendances.created_at', [$startOfMonth, $endOfMonth]);
 
         if ($courseId) {
@@ -190,6 +192,8 @@ class AttendanceRepository extends Repository
         $query = DB::table('attendances')
             ->join('students', 'attendances.student_id', '=', 'students.id')
             ->join('classes', 'students.class_id', '=', 'classes.id')
+            ->where('classes.deleted_at', '=', null)
+            ->where('classes.is_disabled', false)
             ->whereBetween('attendances.created_at', [$startOfMonth, $endOfMonth])
             ->whereIn('attendances.status', ['Medical', 'Absence']);
 
@@ -208,7 +212,13 @@ class AttendanceRepository extends Repository
     public function getClassCountByCourse(?int $courseId)
     {
         $query = DB::table('classes')
-            ->where('is_disabled', false); // 只篩選 is_disabled = false 的班級
+            ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+            ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+            ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
+            ->where('classes.deleted_at', '=', null)
+            ->where('courses.deleted_at', '=', null)
+            ->where('users.deleted_at', '=', null)
+            ->where('classes.is_disabled', false); // 只篩選 is_disabled = false 的班級
 
         if ($courseId) {
             $query->where('course_id', $courseId); // 篩選特定課程的班級
@@ -222,6 +232,8 @@ class AttendanceRepository extends Repository
         $query = DB::table('attendances')
             ->join('students', 'attendances.student_id', '=', 'students.id')
             ->join('classes', 'students.class_id', '=', 'classes.id')
+            ->where('classes.deleted_at', '=', null)
+            ->where('classes.is_disabled', false)
             ->whereBetween('attendances.created_at', [$startOfMonth, $endOfMonth])
             ->whereIn('attendances.status', ['Present', 'Late', 'LeaveApproval']);
 

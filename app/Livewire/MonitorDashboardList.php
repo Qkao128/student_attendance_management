@@ -74,6 +74,9 @@ class DashboardList extends Component
             ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
             ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
             ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
+            ->where('courses.deleted_at', '=', null)
+            ->where('classes.deleted_at', '=', null)
+            ->where('users.deleted_at', '=', null)
             ->where('classes.is_disabled', false)
             ->orderBy('latest_updated_at', 'desc');
 

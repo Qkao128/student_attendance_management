@@ -51,7 +51,7 @@ class UserRepository extends Repository
         $data = $this->_db->select('id', 'username')
             ->where('username', 'LIKE', "%$user%")
             ->whereNull('teacher_user_id')
-            ->where('users.deleted_at', '=', null)
+            ->where('deleted_at', '=', null)
             ->skip($data['offset'])->take($data['result_count'])
             ->get();
 
@@ -69,7 +69,7 @@ class UserRepository extends Repository
         $totalCount = $this->_db
             ->where('username', 'LIKE', "%$user%")
             ->whereNull('teacher_user_id')
-            ->where('users.deleted_at', '=', null)
+            ->where('deleted_at', '=', null)
             ->count();
 
         return $totalCount;
@@ -77,7 +77,7 @@ class UserRepository extends Repository
 
     public function getByTeacherId($id)
     {
-        return $this->_db->where('id', $id)->whereNull('teacher_user_id')->whereNull('student_id')->first();
+        return $this->_db->where('id', $id)->whereNull('teacher_user_id')->whereNull('student_id')->where('deleted_at', '=', null)->first();
     }
 
     public function getMonitorByStudentId($teacherId, $id)
@@ -105,6 +105,9 @@ class UserRepository extends Repository
             ->where('users.teacher_user_id', $teacherId)
             ->where('users.id', $id)
             ->where('users.deleted_at', '=', null)
+            ->where('classes.deleted_at', '=', null)
+            ->where('classes.is_disabled', false)
+            ->where('courses.deleted_at', '=', null)
             ->first();
 
         return $data;

@@ -45,7 +45,7 @@ class CourseList extends Component
             'courses.id',
             'courses.name',
             'courses.created_at',
-        ])->orderBy('courses.created_at', 'DESC');
+        ])->where('courses.deleted_at', '=', null)->orderBy('courses.created_at', 'DESC');
 
         if (isset($this->filter['course'])) {
             $newData = $newData->where('courses.name', 'like', '%' . $this->filter['course'] . '%');

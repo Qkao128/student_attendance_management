@@ -139,6 +139,9 @@ class AttendanceList extends Component
                 'latest_attendance.class_id',
                 'classes.id'
             )
+            ->where('classes.deleted_at', '=', null)
+            ->where('courses.deleted_at', '=', null)
+            ->where('users.deleted_at', '=', null)
             ->where('classes.is_disabled', false)
             ->orderBy('latest_attendance.latest_updated_at', 'desc');
 
