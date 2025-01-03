@@ -73,6 +73,13 @@ class AttendanceStatisticsClassList extends Component
         $this->loadStatisticslistData();
     }
 
+    public function filterClass($className)
+    {
+        $this->filter['class'] = $className;
+        $this->applyFilter(); // 重新加載數據
+    }
+
+
     public function applyFilter()
     {
         $this->filter['is_user'] = $this->filter['user_id'] == $this->userId;
@@ -124,6 +131,11 @@ class AttendanceStatisticsClassList extends Component
         if (!empty($this->filter['user_id'])) {
             $classesQuery->where('users.id', '=', $this->filter['user_id']);
         }
+
+        if (!empty($this->filter['class'])) {
+            $classesQuery->where('classes.name', 'like', '%' . $this->filter['class'] . '%');
+        }
+
 
         // 確保結果為非空陣列
         $newClasses = $classesQuery
