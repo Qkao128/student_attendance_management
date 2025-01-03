@@ -38,37 +38,40 @@ class AccountMonitorList extends Component
     public function render()
     {
         $query = DB::table('users')
-        ->leftJoin('students', 'users.student_id', '=', 'students.id')
-        ->leftJoin('classes', 'students.class_id', '=', 'classes.id')
-        ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
-        ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
-        ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
-        ->select([
-            'users.id',
-            'users.username',
-            'users.email',
-            'users.student_id',
-            'users.teacher_user_id',
-            'users.created_at',
-            'students.name as student_name',
-            'classes.name as class_name',
-            'courses.name as course_name',
-            DB::raw('GROUP_CONCAT(roles.name) as roles'),
-        ])
-        ->where('users.teacher_user_id', $this->teacherId)
-        ->whereNull('users.deleted_at')
-        ->groupBy(
-            'users.id',
-            'users.username',
-            'users.email',
-            'users.student_id',
-            'users.teacher_user_id',
-            'users.created_at',
-            'students.name',
-            'classes.name',
-            'courses.name'
-        ) // Ensure all selected columns are included
-        ->orderBy('users.created_at', 'DESC');
+            ->leftJoin('students', 'users.student_id', '=', 'students.id')
+            ->leftJoin('classes', 'students.class_id', '=', 'classes.id')
+            ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
+            ->leftJoin('model_has_roles', 'users.id', '=', 'model_has_roles.model_id')
+            ->leftJoin('roles', 'model_has_roles.role_id', '=', 'roles.id')
+            ->select([
+                'users.id',
+                'users.username',
+                'users.email',
+                'users.student_id',
+                'users.teacher_user_id',
+                'users.created_at',
+                'students.name as student_name',
+                'classes.name as class_name',
+                'courses.name as course_name',
+                DB::raw('GROUP_CONCAT(roles.name) as roles'),
+            ])
+            ->where('users.teacher_user_id', $this->teacherId)
+            ->where('classes.deleted_at', '=', null)
+            ->where('courses.deleted_at', '=', null)
+            ->where('users.deleted_at', '=', null)
+            ->where('classes.is_disabled', false)
+            ->groupBy(
+                'users.id',
+                'users.username',
+                'users.email',
+                'users.student_id',
+                'users.teacher_user_id',
+                'users.created_at',
+                'students.name',
+                'classes.name',
+                'courses.name'
+            ) // Ensure all selected columns are included
+            ->orderBy('users.created_at', 'DESC');
 
         // 篩選條件
         if (!empty($this->filter['user'])) {
