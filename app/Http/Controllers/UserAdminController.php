@@ -350,6 +350,6 @@ class UserAdminController extends Controller
             return back()->with('error', $errorMessage)->withInput();
         }
 
-        return Redirect::route('user.show', $id)->with('success', "Account successfully deleted.");
+        return Redirect::route('user.show', $teacherId)->with('success', "Account successfully deleted.");
     }
 }

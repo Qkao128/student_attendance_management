@@ -338,7 +338,7 @@ class UserAdminService extends Service
             }
 
             if (Auth::user()->hasRole(UserType::Admin()->key)) {
-                if ($teacher->id !== Auth::user()->id || $teacherId !== Auth::user()->id) {
+                if ($teacher->id != Auth::user()->id || $teacherId != Auth::user()->id) {
                     throw new Exception('You are not authorized to manage this user.');
                 }
             }
@@ -404,7 +404,7 @@ class UserAdminService extends Service
             }
 
             if (Auth::user()->hasRole(UserType::Admin()->key)) {
-                if ($user->teacher_user_id !== Auth::user()->id || $teacherId !== Auth::user()->id || $user->teacher_user_id != $teacherId) {
+                if ($user->teacher_user_id != Auth::user()->id || $teacherId != Auth::user()->id || $user->teacher_user_id != $teacherId) {
                     throw new Exception('You are not authorized to manage this user.');
                 }
             }
@@ -463,7 +463,7 @@ class UserAdminService extends Service
             }
 
             if (Auth::user()->hasRole(UserType::Admin()->key)) {
-                if ($user->teacher_user_id !== Auth::user()->id || $teacherId !== Auth::user()->id || $user->teacher_user_id != $teacherId) {
+                if ($user->teacher_user_id != Auth::user()->id || $teacherId != Auth::user()->id || $user->teacher_user_id != $teacherId) {
                     throw new Exception('You are not authorized to manage this user.');
                 }
             }
@@ -513,7 +513,7 @@ class UserAdminService extends Service
             }
 
             if (Auth::user()->hasRole(UserType::Admin()->key)) {
-                if ($user->teacher_user_id !== Auth::user()->id || $teacherId !== Auth::user()->id || $user->teacher_user_id != $teacherId) {
+                if ($user->teacher_user_id != Auth::user()->id || $teacherId != Auth::user()->id || $user->teacher_user_id != $teacherId) {
                     throw new Exception('You are not authorized to manage this user.');
                 }
             }
