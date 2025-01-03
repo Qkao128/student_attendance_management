@@ -1,7 +1,7 @@
 @php
     use Carbon\Carbon;
     use App\Enums\UserType;
-    
+
 @endphp
 
 <div>
@@ -16,13 +16,13 @@
             </thead>
             <tbody>
                 @foreach ($holidays as $holiday)
-                @hasrole('Monitor')
-                <tr>
-                @else
-                <tr role="button"
-                onclick="selectHoliday({{ $holiday->id }}, '{{ $holiday->title }}', '{{ $holiday->date_from }}', '{{ $holiday->date_to }}', '{{ $holiday->background_color }}', '{{ $holiday->details }}')">
-                @endhasrole
-                    
+                    @hasrole('Monitor')
+                        <tr>
+                        @else
+                        <tr role="button"
+                            onclick="selectHoliday({{ $holiday->id }}, '{{ $holiday->title }}', '{{ $holiday->date_from }}', '{{ $holiday->date_to }}', '{{ $holiday->background_color }}', '{{ $holiday->details }}')">
+                        @endhasrole
+
                         <td class="p-2 px-sm-3 d-flex align-self-center text-wrap text-break"
                             style="max-width: 300px; min-width: 210px;">
                             <div class="p-1" style="min-width: 50px; height: 27px;border: 1px solid black;">
@@ -108,47 +108,49 @@
                         </div>
 
                         <div class="modal-footer">
-                            <form id="delete-form" method="POST" action="{{ route('holiday.destroy', ['id' => ':id']) }}">
-                                @csrf
-                                @method('DELETE')
-                                <button type="button" class="btn btn-danger" onclick="deleteFormConfirmation(event)">
-                                    <i class="fa-solid fa-trash-can"></i> Delete
-                                </button>
-                            </form>
-
                             <button type="submit" class="btn btn-primary">Save Changes</button>
-                        </div>
+
                     </form>
+                    <form id="delete-form" method="POST" action="{{ route('holiday.destroy', ['id' => ':id']) }}">
+                        @csrf
+                        @method('DELETE')
+                        <button type="button" class="btn btn-danger" onclick="deleteFormConfirmation(event)">
+                            <i class="fa-solid fa-trash-can"></i> Delete
+                        </button>
+                    </form>
+
+
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 
 
-    <div class="d-grid">
-        <div x-intersect.full="$wire.loadMore()">
-        </div>
-
-        <div wire:loading>
-            <div class="d-flex justify-content-center">
-                <div class="more-loader-pulse-container">
-                    <div class="more-loader-pulse-bubble more-loader-pulse-bubble-1"></div>
-                    <div class="more-loader-pulse-bubble more-loader-pulse-bubble-2"></div>
-                    <div class="more-loader-pulse-bubble more-loader-pulse-bubble-3"></div>
-                </div>
-            </div>
-        </div>
-
-        @if (count($holidays) === 0)
-            <div class="alert text-center" wire:loading.remove>
-                <img class="no-data-found mt-2" src="{{ asset('img/no-data-found.png') }}">
-                <div class="mt-4 h5 text-muted">
-                    No data found
-                </div>
-            </div>
-        @endif
+<div class="d-grid">
+    <div x-intersect.full="$wire.loadMore()">
     </div>
+
+    <div wire:loading>
+        <div class="d-flex justify-content-center">
+            <div class="more-loader-pulse-container">
+                <div class="more-loader-pulse-bubble more-loader-pulse-bubble-1"></div>
+                <div class="more-loader-pulse-bubble more-loader-pulse-bubble-2"></div>
+                <div class="more-loader-pulse-bubble more-loader-pulse-bubble-3"></div>
+            </div>
+        </div>
+    </div>
+
+    @if (count($holidays) === 0)
+        <div class="alert text-center" wire:loading.remove>
+            <img class="no-data-found mt-2" src="{{ asset('img/no-data-found.png') }}">
+            <div class="mt-4 h5 text-muted">
+                No data found
+            </div>
+        </div>
+    @endif
+</div>
 </div>
 
 
@@ -219,6 +221,7 @@
             });
 
         });
+
         function selectHoliday(id, title, dateFrom, dateTo, backgroundColor, details) {
             // 更新模态框字段
             $('#modal-holiday-id').val(id); // 设置隐藏字段 id 的值
