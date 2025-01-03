@@ -105,7 +105,7 @@ class AttendanceAdminService extends Service
                 }
             } elseif (Auth::user()->hasRole(UserType::Monitor()->key)) {
                 $student = $this->_studentRepository->getById(Auth::user()->student_id);
-                if (!$student || $student->class_id !== $classId) {
+                if (!$student || $student->class_id != $classId) {
                     throw new Exception('You are not authorized to manage attendance for this class');
                 }
             } else {
