@@ -1,5 +1,6 @@
 @php
     use Carbon\Carbon;
+    use App\Enums\UserType;
 @endphp
 
 @extends('layout/layout')
@@ -23,16 +24,20 @@
         </div>
 
         <div class="row align-items-center my-1">
-            <div class="col">
+            <div class="col {{ Auth::user()->hasRole(UserType::Monitor()->key) ? 'my-2' : '' }}">
                 <h4 class="header-title">Manage Holidays</h4>
             </div>
 
             <div class="col-12 col-md-auto mt-0 mt-md-1">
                 <div class="d-flex float-end align-items-center">
-                    <button type="button" class="btn btn-success text-white rounded-4" data-bs-toggle="modal"
-                        data-bs-target="#add-holiday-modal">
-                        Add
-                    </button>
+                    @hasrole('Monitor')
+                    <!-- 如果是 Monitor，這段代碼會被隱藏 -->
+                    @else
+                        <button type="button" class="btn btn-success text-white rounded-4" data-bs-toggle="modal"
+                            data-bs-target="#add-holiday-modal">
+                            Add
+                        </button>
+                    @endhasrole
                 </div>
             </div>
         </div>

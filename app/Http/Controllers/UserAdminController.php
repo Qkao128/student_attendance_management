@@ -316,7 +316,7 @@ class UserAdminController extends Controller
             return back()->with('error', $errorMessage)->withInput();
         }
 
-        return Redirect::route('user.show', $id)->with('success', "Account details successfully updated.");
+        return Redirect::route('user.show', $teacherId)->with('success', "Account details successfully updated.");
     }
 
 

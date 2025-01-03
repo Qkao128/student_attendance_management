@@ -39,7 +39,7 @@ class ClassRepository extends Repository
 
     public function getByIdWithDetails($id)
     {
-        return  DB::table('classes')
+        return DB::table('classes')
             ->select([
                 'classes.id',
                 'classes.name',
@@ -54,12 +54,53 @@ class ClassRepository extends Repository
             ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
             ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
             ->leftJoin('students', 'classes.id', '=', 'students.class_id')
-            ->groupBy('classes.id', 'class_teachers.user_id', 'courses.name', 'users.username', 'classes.created_at')
+            ->groupBy(
+                'classes.id',
+                'classes.name',
+                'classes.is_disabled',
+                'classes.created_at',
+                'class_teachers.user_id',
+                'courses.name',
+                'users.username'
+            )
             ->where('classes.id', $id)
-            ->where('courses.deleted_at', '=', null)
-            ->where('classes.deleted_at', '=', null)
-            ->where('users.deleted_at', '=', null)
+            ->whereNull('courses.deleted_at')
+            ->whereNull('classes.deleted_at')
+            ->whereNull('users.deleted_at')
             ->where('classes.is_disabled', false)
+            ->first();
+    }
+
+    public function getByIdWithClassDetails($id)
+    {
+        return DB::table('classes')
+            ->select([
+                'classes.id',
+                'classes.name',
+                'classes.is_disabled',
+                'classes.created_at',
+                'class_teachers.user_id',
+                'courses.name as course_name',
+                'users.username as user_name',
+                DB::raw('COUNT(students.id) as member_count'),
+            ])
+            ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
+            ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+            ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+            ->leftJoin('students', 'classes.id', '=', 'students.class_id')
+            ->groupBy(
+                'classes.id',
+                'classes.name',
+                'classes.is_disabled',
+                'classes.created_at',
+                'class_teachers.user_id',
+                'courses.name',
+                'users.username'
+            )
+            ->where('classes.id', $id)
+            ->whereNull('courses.deleted_at')
+            ->whereNull('classes.deleted_at')
+            ->whereNull('users.deleted_at')
             ->first();
     }
 

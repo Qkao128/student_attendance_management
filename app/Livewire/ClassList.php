@@ -60,25 +60,33 @@ class ClassList extends Component
     private function loadData()
     {
         $query = DB::table('classes')
-            ->select([
-                'classes.id',
-                'classes.name',
-                'classes.is_disabled',
-                'classes.created_at',
-                'class_teachers.user_id',
-                'courses.name as course_name',
-                'users.username as user_name',
-                DB::raw('COUNT(students.id) as member_count'),
-            ])
-            ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
-            ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
-            ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
-            ->leftJoin('students', 'classes.id', '=', 'students.class_id')
-            ->groupBy('classes.id', 'class_teachers.user_id', 'courses.name', 'users.username', 'classes.created_at')
-            ->where('courses.deleted_at', '=', null)
-            ->where('classes.deleted_at', '=', null)
-            ->where('users.deleted_at', '=', null)
-            ->orderBy('classes.created_at', 'DESC');
+        ->select([
+            'classes.id',
+            'classes.name',
+            'classes.is_disabled',
+            'classes.created_at',
+            'class_teachers.user_id',
+            'courses.name as course_name',
+            'users.username as user_name',
+            DB::raw('COUNT(students.id) as member_count'),
+        ])
+        ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
+        ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+        ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+        ->leftJoin('students', 'classes.id', '=', 'students.class_id')
+        ->groupBy(
+            'classes.id',
+            'classes.name',
+            'classes.is_disabled',
+            'classes.created_at',
+            'class_teachers.user_id',
+            'courses.name',
+            'users.username'
+        )
+        ->whereNull('courses.deleted_at')
+        ->whereNull('classes.deleted_at')
+        ->whereNull('users.deleted_at')
+        ->orderBy('classes.created_at', 'DESC');
 
         if (!is_null($this->filter['class'])) {
             $query->where('classes.name', 'like', '%' . $this->filter['class'] . '%');

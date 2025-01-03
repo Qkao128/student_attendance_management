@@ -56,7 +56,7 @@ class StudentAdminService extends Service
                 throw new Exception('You do not have permission to perform this action.');
             }
 
-            $class = $this->_classRepository->getById($classId);
+            $class = $this->_classRepository->getByIdWithClassDetails($classId);
 
             if ($class == null) {
                 throw new Exception();
@@ -175,7 +175,7 @@ class StudentAdminService extends Service
                 throw new Exception('You do not have permission to perform this action.');
             }
 
-            $class = $this->_classRepository->getById($classId);
+            $class = $this->_classRepository->getByIdWithClassDetails($classId);
 
             if ($class == null) {
                 throw new Exception();

@@ -178,7 +178,13 @@
 
         @if ($students->isNotEmpty())
 
-            @if ($attendanceDate->isFuture())
+        
+            @if ($isHoliday)
+                <div class="text-danger text-center mt-3 pt-2 ps-3 pe-3 pb-4">
+                    This day is designated as a holiday.
+                </div>
+                @else
+                @if ($attendanceDate->isFuture())
                 <div class="text-danger text-center mt-3 p-3">
                     Attendance records cannot be submitted for future dates.
                 </div>
@@ -224,11 +230,6 @@
                     </div>
                 @endhasrole
             @endif
-
-            @if ($isHoliday)
-                <div class="text-danger text-center mt-3 pt-2 ps-3 pe-3 pb-4">
-                    This day is designated as a holiday.
-                </div>
             @endif
 
         @endif

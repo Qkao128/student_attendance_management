@@ -141,7 +141,6 @@ class UserAdminService extends Service
                 'profile_image' => 'nullable|file|mimes:jpeg,png,jpg|max:512000',
                 'username' => 'required|string|max:255|unique:users,username,' . $id,
                 'email' => 'required|email|unique:users,email,' . $id,
-                'password' => 'required|confirmed|min:8',
             ]);
 
             if ($validator->fails()) {

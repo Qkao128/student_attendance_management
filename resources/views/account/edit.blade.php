@@ -100,7 +100,7 @@
                                                 <label class="form-label" for="email">Email<span
                                                         class="text-danger">*</span></label>
                                                 <input type="email" class="form-control" id="email" name="email"
-                                                    value="{{ $user->course_id }}" placeholder="Enter email" required>
+                                                    value="{{ $user->email }}" placeholder="Enter email" required>
                                             </div>
 
                                         </div>

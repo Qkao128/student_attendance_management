@@ -92,7 +92,7 @@ class AttendanceAdminService extends Service
                 return null;
             }
 
-            $class = $this->_classRepository->getById($classId);
+            $class = $this->_classRepository->getByIdWithClassDetails($classId);
             if ($class == null) {
                 throw new Exception('Class not found.');
             }

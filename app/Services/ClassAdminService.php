@@ -85,7 +85,7 @@ class ClassAdminService extends Service
     public function getByIdWithDetails($id)
     {
         try {
-            $class = $this->_classRepository->getByIdWithDetails($id);
+            $class = $this->_classRepository->getByIdWithClassDetails($id);
 
             if ($class == null) {
                 return false;

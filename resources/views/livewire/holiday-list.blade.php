@@ -1,5 +1,7 @@
 @php
     use Carbon\Carbon;
+    use App\Enums\UserType;
+    
 @endphp
 
 <div>
@@ -14,9 +16,13 @@
             </thead>
             <tbody>
                 @foreach ($holidays as $holiday)
-                    <tr role="button"
-                        onclick="selectHoliday({{ $holiday->id }}, '{{ $holiday->title }}', '{{ $holiday->date_from }}', '{{ $holiday->date_to }}', '{{ $holiday->background_color }}', '{{ $holiday->details }}')">
-
+                @hasrole('Monitor')
+                <tr>
+                @else
+                <tr role="button"
+                onclick="selectHoliday({{ $holiday->id }}, '{{ $holiday->title }}', '{{ $holiday->date_from }}', '{{ $holiday->date_to }}', '{{ $holiday->background_color }}', '{{ $holiday->details }}')">
+                @endhasrole
+                    
                         <td class="p-2 px-sm-3 d-flex align-self-center text-wrap text-break"
                             style="max-width: 300px; min-width: 210px;">
                             <div class="p-1" style="min-width: 50px; height: 27px;border: 1px solid black;">
@@ -46,7 +52,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="holiday-form" method="POST">
+                    <form id="holiday-form" method="POST" action="{{ route('holiday.update', ['id' => ':id']) }}">
                         @csrf
                         @method('PATCH')
 
@@ -102,7 +108,7 @@
                         </div>
 
                         <div class="modal-footer">
-                            <form id="delete-form" method="POST" action="">
+                            <form id="delete-form" method="POST" action="{{ route('holiday.destroy', ['id' => ':id']) }}">
                                 @csrf
                                 @method('DELETE')
                                 <button type="button" class="btn btn-danger" onclick="deleteFormConfirmation(event)">
@@ -213,9 +219,9 @@
             });
 
         });
-
         function selectHoliday(id, title, dateFrom, dateTo, backgroundColor, details) {
             // 更新模态框字段
+            $('#modal-holiday-id').val(id); // 设置隐藏字段 id 的值
             $('#modal-title').val(title);
             $('#modal-date-from').val(dateFrom);
             $('#modal-date-to').val(dateTo);
@@ -226,6 +232,7 @@
             let formAction = `{{ route('holiday.update', ['id' => ':id']) }}`.replace(':id', id);
             $('#holiday-form').attr('action', formAction);
 
+            // 设置删除表单的 action，包含 holiday ID
             let deleteFormAction = `{{ route('holiday.destroy', ['id' => ':id']) }}`.replace(':id', id);
             $('#delete-form').attr('action', deleteFormAction);
 

@@ -2,6 +2,14 @@
 
 @section('page_title', 'Class')
 
+@section('style')
+    <style>
+        .select2-container .select2-selection--single {
+            background-color: #F4F6FA !important;
+        }
+    </style>
+@endsection
+
 @section('content')
     <div id="admin-course">
         <div class="row mt-2">
