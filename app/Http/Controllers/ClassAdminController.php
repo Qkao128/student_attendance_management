@@ -125,6 +125,7 @@ class ClassAdminController extends Controller
             "search_term" => $request->search_term ?? null,
             "page" => $request->page ?? 1,
             "course_id" => $request->course_id ?? null,
+            "teacher_id" => $request->teacher_id ?? null, // 接收 teacher_id
         ];
 
         $results = $this->_classAdminService->getSelectOption($data);

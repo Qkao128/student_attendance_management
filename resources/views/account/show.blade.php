@@ -160,6 +160,8 @@
 
                 </div>
             </form>
+
+            <input type="hidden" id="user_id" value="{{ $user->id }}">
         </div>
     </div>
 
@@ -235,7 +237,7 @@
                                     <div class="card-body">
                                         <div class="row">
 
-                                            <div class="form-group col-12 col-md-6 mb-4">
+                                            <div class="form-group col-12 col-sm-6 mb-4">
                                                 <label class="form-label" for="username">Username<span
                                                         class="text-danger">*</span></label>
                                                 <input type="text" class="form-control" id="username"
@@ -244,28 +246,28 @@
                                             </div>
 
 
-                                            <div class="form-group mb-4 col-12 col-md-6">
+                                            <div class="form-group mb-4 col-12 col-sm-6">
                                                 <label class="form-label" for="email">Email<span
                                                         class="text-danger">*</span></label>
                                                 <input type="email" class="form-control" id="email" name="email"
                                                     value="{{ old('email') }}" placeholder="Enter email" required>
                                             </div>
 
-                                            <div class="form-group mb-4 col-12 col-md-6">
+                                            <div class="form-group mb-4 col-12 col-sm-6">
                                                 <label class="form-label" for="course_id">Course<span
                                                         class="text-danger">*</span></label>
                                                 <select class="form-select" id="course_id" required style="width:100%;">
                                                 </select>
                                             </div>
 
-                                            <div class="form-group mb-4 col-12 col-md-6">
+                                            <div class="form-group mb-4 col-12 col-sm-6">
                                                 <label class="form-label" for="class_id">Class<span
                                                         class="text-danger">*</span></label>
                                                 <select class="form-select" id="class_id" required style="width:100%;">
                                                 </select>
                                             </div>
 
-                                            <div class="form-group mb-4 col-12 col-md-6">
+                                            <div class="form-group mb-4 col-12 col-sm-6">
                                                 <label class="form-label" for="student_id">Student<span
                                                         class="text-danger">*</span></label>
                                                 <select class="form-select" id="student_id" name="student_id" required
@@ -273,7 +275,7 @@
                                                 </select>
                                             </div>
 
-                                            <div class="form-group mb-4 col-12 col-md-6">
+                                            <div class="form-group mb-4 col-12 col-sm-6">
                                                 <label class="form-label" for="email">Permission<span
                                                         class="text-danger">*</span></label>
 
@@ -309,7 +311,7 @@
                             </div>
                         </div>
 
-                        <div class="text-end pe-2 mt-5">
+                        <div class="text-end pe-2 mt-2 mt-md-5">
                             <button type="submit" class="btn btn-success text-white rounded-4">Submit</button>
                         </div>
                     </form>
@@ -396,7 +398,7 @@
             }).on('change', function() {
                 $('#class_id').val(null).trigger('change');
                 $('#student_id').val(null).trigger('change');
-            });;
+            });
 
             $('#class_id').select2({
                 theme: 'bootstrap-5',
@@ -411,7 +413,8 @@
                         return {
                             search_term: params.term,
                             page: params.page,
-                            course_id: $('#course_id').val() ?? false
+                            course_id: $('#course_id').val() ?? false,
+                            teacher_id: $('#user_id').val() // 傳遞 teacher_id
                         };
                     },
                     processResults: function(data) {
@@ -430,7 +433,7 @@
                 }
             }).on('change', function() {
                 $('#student_id').val(null).trigger('change');
-            });;
+            });
 
             $('#student_id').select2({
                 theme: 'bootstrap-5',

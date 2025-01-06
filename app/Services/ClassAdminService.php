@@ -190,7 +190,6 @@ class ClassAdminService extends Service
 
             return $results;
         } catch (Exception $e) {
-
             array_push($this->_errorMessage, "Fail to get class select option.");
             DB::rollBack();
             return null;

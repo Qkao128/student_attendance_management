@@ -3,8 +3,11 @@
 namespace App\Repositories;
 
 use Carbon\Carbon;
+use App\Models\User;
+use App\Enums\UserType;
 use App\Models\Classes;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ClassRepository extends Repository
 {
@@ -117,38 +120,50 @@ class ClassRepository extends Repository
             ->count();
     }
 
-
     public function getAllBySearchTermAndCourse_id($data)
     {
+        $query = $this->_db->with(['classTeacher.user'])
+            ->select('classes.id', 'classes.name')
+            ->where('classes.name', 'LIKE', "%{$data['search_term']}%")
+            ->where('classes.course_id', $data['course_id'])
+            ->whereNull('classes.deleted_at')
+            ->where('classes.is_disabled', false);
 
-        $name = $data['search_term'] ?? '';
+        // 如果有 teacher_id，驗證該 teacher_id 是否為 Admin
+        if (!empty($data['teacher_id'])) {
+            $user = User::find($data['teacher_id']); // 查詢指定的使用者
 
-        $data = $this->_db->select('id', 'name')
-            ->where('name', 'LIKE', "%$name%")
-            ->where('course_id', '=', $data['course_id'])
-            ->where('deleted_at', '=', null)
-            ->where('is_disabled', false)
-            ->skip($data['offset'])->take($data['result_count'])
-            ->get();
-
-        if (empty($data)) {
-            return null;
+            if ($user && $user->hasRole(UserType::Admin()->key)) {
+                // 如果是 Admin，則根據 teacher_id 過濾
+                $query->whereHas('classTeacher', function ($q) use ($data) {
+                    $q->where('user_id', $data['teacher_id']);
+                });
+            }
         }
-        return $data;
+
+        return $query->skip($data['offset'])->take($data['result_count'])->get();
     }
 
     public function getTotalCountBySearchTermAndCourse_id($data)
     {
+        $query = $this->_db->with(['classTeacher.user'])
+            ->where('classes.name', 'LIKE', "%{$data['search_term']}%")
+            ->where('classes.course_id', $data['course_id'])
+            ->whereNull('classes.deleted_at')
+            ->where('classes.is_disabled', false);
 
-        $name = $data['search_term'] ?? '';
+        // 如果有 teacher_id，驗證該 teacher_id 是否為 Admin
+        if (!empty($data['teacher_id'])) {
+            $user = User::find($data['teacher_id']); // 查詢指定的使用者
 
-        $totalCount = $this->_db
-            ->where('name', 'LIKE', "%$name%")
-            ->where('course_id', '=', $data['course_id'])
-            ->where('deleted_at', '=', null)
-            ->where('is_disabled', false)
-            ->count();
+            if ($user && $user->hasRole(UserType::Admin()->key)) {
+                // 如果是 Admin，則根據 teacher_id 過濾
+                $query->whereHas('classTeacher', function ($q) use ($data) {
+                    $q->where('user_id', $data['teacher_id']);
+                });
+            }
+        }
 
-        return $totalCount;
+        return $query->count();
     }
 }
