@@ -129,15 +129,21 @@
 
         <h5 class="my-3">
 
+            <span class="badge text-black fw-normal {{ is_null($filter['is_submitted']) ? 'border text-white' : '' }}"
+                wire:click="updateSubmittedStatus(null)" role="button"
+                style="background-color: {{ is_null($filter['is_submitted']) ? '#007bff' : '#F4F6FA' }};box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
+                All
+            </span>
+
             <span
-                class="badge text-black fw-normal {{ $filter['is_submitted'] === true ? 'border' : '' }} {{ $filter['is_submitted'] === true ? 'text-white' : '' }}"
+                class="badge text-black fw-normal {{ $filter['is_submitted'] === true ? 'border text-white' : '' }} ms-sm-2"
                 wire:click="updateSubmittedStatus(true)" role="button"
                 style="background-color: {{ $filter['is_submitted'] === true ? '#007bff' : '#F4F6FA' }};box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
                 Submitted
             </span>
 
             <span
-                class="badge text-black fw-normal {{ $filter['is_submitted'] === true ? 'border' : '' }} ms-sm-2  {{ $filter['is_submitted'] === false ? 'text-white' : '' }}"
+                class="badge text-black fw-normal {{ $filter['is_submitted'] === false ? 'border text-white' : '' }} ms-sm-2"
                 wire:click="updateSubmittedStatus(false)" role="button"
                 style="background-color: {{ $filter['is_submitted'] === false ? '#007bff' : '#F4F6FA' }};box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
                 Not Submitted

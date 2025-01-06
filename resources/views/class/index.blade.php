@@ -56,7 +56,7 @@
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="overflow-y: scroll; height: 480px;">
                     <form action="{{ route('class.store') }}" id="form" method="POST">
                         @csrf
                         <div class="row w-100 p-2 g-3" id="add-class-modal-content">
@@ -188,6 +188,17 @@
             });
 
 
+        });
+
+
+
+        let isScrolling;
+        $('#form').on('scroll', function() {
+            clearTimeout(isScrolling);
+            $('#course_id, #class_id, #student_id').select2('close'); // 滾動時關閉
+            isScrolling = setTimeout(function() {
+                $('#course_id, #class_id, #student_id').select2('open'); // 滾動結束後打開
+            }, 200);
         });
     </script>
 

@@ -21,6 +21,7 @@ class ClassList extends Component
 
     public function mount($userId)
     {
+        $this->filter['is_disabled'] = null;
         $this->userId = $userId;
         $this->loadData();
     }
@@ -33,7 +34,7 @@ class ClassList extends Component
 
     public function updateDisabledStatus($isDisabled)
     {
-        $this->filter['is_disabled'] = $isDisabled;
+        $this->filter['is_disabled'] = $isDisabled; // 可以為 true, false, 或 null
         $this->resetPagination();
         $this->loadData();
     }

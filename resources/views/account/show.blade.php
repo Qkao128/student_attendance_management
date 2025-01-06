@@ -193,7 +193,7 @@
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" style="overflow-y: scroll; height: 620px;">
                     <form action="{{ route('user.monitor.store', ['teacherId' => $user->id]) }}" id="form"
                         method="POST" enctype="multipart/form-data">
                         @csrf
@@ -501,5 +501,15 @@
                 .attr("src", initialImage);
             $("#remove-profile-image-btn").addClass("d-none");
         }
+
+
+        let isScrolling;
+        $('#form').on('scroll', function() {
+            clearTimeout(isScrolling);
+            $('#course_id, #class_id, #student_id').select2('close'); // 滾動時關閉
+            isScrolling = setTimeout(function() {
+                $('#course_id, #class_id, #student_id').select2('open'); // 滾動結束後打開
+            }, 200);
+        });
     </script>
 @endsection

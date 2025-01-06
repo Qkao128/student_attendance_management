@@ -93,7 +93,13 @@
     </div>
 
     <h5 class="d-flex mt-3">
-        <span class="badge text-black fw-normal {{ $filter['is_disabled'] === false ? 'border text-white' : '' }}"
+        <span class="badge text-black fw-normal {{ $filter['is_disabled'] === null ? 'border text-white' : '' }}"
+            wire:click="updateDisabledStatus(null)" role="button"
+            style="background-color: {{ $filter['is_disabled'] === null ? '#007bff' : '#F4F6FA' }}; box-shadow: 0px 4px 2px rgba(0, 0, 0, 0.25); border-radius: 10px;">
+            All
+        </span>
+
+        <span class="badge text-black fw-normal ms-2 {{ $filter['is_disabled'] === false ? 'border text-white' : '' }}"
             wire:click="updateDisabledStatus(false)" role="button"
             style="background-color: {{ $filter['is_disabled'] === false ? '#007bff' : '#F4F6FA' }}; box-shadow: 0px 4px 2px rgba(0, 0, 0, 0.25); border-radius: 10px;">
             Active

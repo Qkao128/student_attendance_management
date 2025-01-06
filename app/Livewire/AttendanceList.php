@@ -34,6 +34,7 @@ class AttendanceList extends Component
         $this->userId = $userId;
         $this->filter['date'] = now()->format('Y-m-d');
         $this->filter['is_user'] = false; // 初始化為非高亮狀態
+        $this->filter['is_submitted'] = null;
         $this->checkIfHoliday(); // 初始化時檢查是否是假期
         $this->loadData();
     }

@@ -178,58 +178,57 @@
 
         @if ($students->isNotEmpty())
 
-        
             @if ($isHoliday)
                 <div class="text-danger text-center mt-3 pt-2 ps-3 pe-3 pb-4">
                     This day is designated as a holiday.
                 </div>
-                @else
-                @if ($attendanceDate->isFuture())
-                <div class="text-danger text-center mt-3 p-3">
-                    Attendance records cannot be submitted for future dates.
-                </div>
             @else
-                @hasrole('SuperAdmin')
-                    <!-- SuperAdmin 沒有任何限制，直接顯示提交按鈕 -->
-                    <div class="text-end p-3 mt-5">
-                        <button type="submit" class="btn btn-success text-white rounded-4">Submit</button>
+                @if ($attendanceDate->isFuture())
+                    <div class="text-danger text-center mt-3 p-3">
+                        Attendance records cannot be submitted for future dates.
                     </div>
-                    @elsehasrole('Admin')
-                    @if ($currentMonth)
-                        <!-- Admin 只檢查是否為當月 -->
+                @else
+                    @hasrole('SuperAdmin')
+                        <!-- SuperAdmin 沒有任何限制，直接顯示提交按鈕 -->
                         <div class="text-end p-3 mt-5">
                             <button type="submit" class="btn btn-success text-white rounded-4">Submit</button>
                         </div>
-                    @else
-                        <!-- 顯示過期消息 -->
-                        <div class="text-danger text-center mt-3 p-3">
-                            Attendance records for previous months cannot be modified.
-                        </div>
-                    @endif
-                    @elsehasrole('Monitor')
-                    @if ($currentMonth && !$isHoliday)
-                        @if ($isWithinOneWeek)
-                            <!-- 當前月份且不是節假日，且提交日期在一週內才顯示提交按鈕 -->
+                        @elsehasrole('Admin')
+                        @if ($currentMonth)
+                            <!-- Admin 只檢查是否為當月 -->
                             <div class="text-end p-3 mt-5">
                                 <button type="submit" class="btn btn-success text-white rounded-4">Submit</button>
                             </div>
                         @else
-                            <!-- 超過一週時顯示錯誤信息 -->
+                            <!-- 顯示過期消息 -->
                             <div class="text-danger text-center mt-3 p-3">
-                                You cannot submit the attendance after one week of the attendance date.
+                                Attendance records for previous months cannot be modified.
+                            </div>
+                        @endif
+                        @elsehasrole('Monitor')
+                        @if ($currentMonth && !$isHoliday)
+                            @if ($isWithinOneWeek)
+                                <!-- 當前月份且不是節假日，且提交日期在一週內才顯示提交按鈕 -->
+                                <div class="text-end p-3 mt-5">
+                                    <button type="submit" class="btn btn-success text-white rounded-4">Submit</button>
+                                </div>
+                            @else
+                                <!-- 超過一週時顯示錯誤信息 -->
+                                <div class="text-danger text-center mt-3 p-3">
+                                    You cannot submit the attendance after one week of the attendance date.
+                                </div>
+                            @endif
+                        @else
+                            <div class="text-danger text-center mt-3 p-3">
+                                Attendance records for previous months cannot be modified.
                             </div>
                         @endif
                     @else
                         <div class="text-danger text-center mt-3 p-3">
-                            Attendance records for previous months cannot be modified.
+                            You do not have permission to submit attendance.
                         </div>
-                    @endif
-                @else
-                    <div class="text-danger text-center mt-3 p-3">
-                        You do not have permission to submit attendance.
-                    </div>
-                @endhasrole
-            @endif
+                    @endhasrole
+                @endif
             @endif
 
         @endif
@@ -254,21 +253,25 @@
             const currentDate = new Date();
             const attendanceDate = new Date("{{ $date }}");
 
-            // 檢查日期是否屬於當前月份
-            const isSameMonth =
-                currentDate.getFullYear() === attendanceDate.getFullYear() &&
-                currentDate.getMonth() === attendanceDate.getMonth();
+            // Check if the user has the 'SuperAdmin' role
+            const userRole =
+                "{{ Auth::user()->getRoleNames()->first() }}"; // Assuming you fetch the role like this
 
-            // 如果不是同一個月，阻止提交並隱藏提交按鈕
-            if (!isSameMonth) {
-                $('#form').on('submit', function(e) {
-                    e.preventDefault(); // 阻止表單提交
-                    alert('Attendance records for previous months cannot be modified.');
-                });
+            if (userRole !== 'SuperAdmin') {
+                // Check if the dates are not in the same month
+                const isSameMonth =
+                    currentDate.getFullYear() === attendanceDate.getFullYear() &&
+                    currentDate.getMonth() === attendanceDate.getMonth();
 
-                $('.btn-success').hide(); // 隱藏提交按鈕
+                if (!isSameMonth) {
+                    $('#form').on('submit', function(e) {
+                        e.preventDefault(); // Prevent form submission
+                        alert('Attendance records for previous months cannot be modified.');
+                    });
+
+                    $('.btn-success').hide(); // Hide the submit button
+                }
             }
-
 
             // 檢查每個學生的狀態
             $('#form').on('submit', function(e) {
