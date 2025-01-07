@@ -11,7 +11,7 @@ class HolidayList extends Component
 {
     public $page = 0;
     public $limitPerPage = 50;
-    public $holidays; // 初始化为空数组
+    public $holidays = []; // 初始化為空數組
     public $year;
     public $month;
 
@@ -22,17 +22,28 @@ class HolidayList extends Component
         $this->applyFilter();
     }
 
+    // 監聽 Livewire.dispatch('updateDate')，接收年份和月份數據
+    #[On('updateDate')]
+    public function handleUpdateDate(int $currentYear, int $currentMonth)
+    {
+        $this->year = $currentYear;
+        $this->month = $currentMonth;
+        $this->applyFilter(); // 當前年月發生變化時應用過濾條件
+    }
 
+    // 加載更多數據
     public function loadMore()
     {
         $this->page++;
         $this->render();
     }
 
+    // 應用過濾條件並重置數據
     public function applyFilter()
     {
         $this->page = 0;
-        $this->render();
+        $this->holidays = [];
+        $this->render(); // 按新條件加載數據
     }
 
     public function render()
@@ -53,6 +64,8 @@ class HolidayList extends Component
             $this->holidays = [...$this->holidays, ...$newData];
         }
 
-        return view('livewire.holiday-list');
+        return view('livewire.holiday-list', [
+            'holidays' => $this->holidays,
+        ]);
     }
 }
