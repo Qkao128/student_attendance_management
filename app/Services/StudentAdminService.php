@@ -237,8 +237,11 @@ class StudentAdminService extends Service
         DB::beginTransaction();
 
         try {
-            $class = $this->_classRepository->getById($classId);
+
+            $class = $this->_classRepository->getByTeacherId($classId);
+
             $student = $this->_studentRepository->getStudentByClassIdAndId($classId, $id);
+
 
             if (!Auth::check() || !Auth::user()->hasAnyRole([UserType::SuperAdmin()->key, UserType::Admin()->key])) {
                 throw new Exception('You do not have permission to perform this action.');
@@ -248,8 +251,9 @@ class StudentAdminService extends Service
                 throw new Exception();
             }
 
+
             if (Auth::user()->hasRole(UserType::Admin()->key)) {
-                if ($class->user_id !== Auth::user()->id) {
+                if ($class !== Auth::user()->id) {
                     throw new Exception('You are not authorized to manage this class.');
                 }
             }

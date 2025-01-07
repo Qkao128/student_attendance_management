@@ -120,6 +120,13 @@ class ClassRepository extends Repository
             ->count();
     }
 
+    public function getByTeacherId($classId)
+    {
+        return DB::table('class_teachers')
+            ->where('class_id', $classId)
+            ->value('user_id');
+    }
+
     public function getAllBySearchTermAndCourse_id($data)
     {
         $query = $this->_db->with(['classTeacher.user'])
