@@ -210,6 +210,21 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="col-12 col-sm-6 col-md-4">
+
+                        <div class="d-flex align-items-center">
+                            <div class=" me-4">
+                                <div class="status-attendance-icon rounded-circle border-holiday">
+                                    H
+                                </div>
+                            </div>
+                            <div>
+                                <p class="card-title mb-0">Holiday</p>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
