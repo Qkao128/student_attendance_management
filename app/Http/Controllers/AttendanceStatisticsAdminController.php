@@ -61,7 +61,7 @@ class AttendanceStatisticsAdminController extends Controller
 
     public function pieChartData(Request $request)
     {
-        $date = now()->format('Y-m-d');
+        $date = $request->get('date', now()->format('Y-m-d'));
         $dashboard = $this->_attendanceStatisticsAdminService->getDashboardData($date);
 
         if (!$dashboard) {

@@ -93,8 +93,8 @@
                             <h5 class="mb-3">Student Attendance Summary :</h5>
                             <div class="justify-content-around d-flex align-items-center mt-4 mb-3">
                                 <div class="ms-2 ms-sm-3 fs-5" id="studentAttendanceSummary">
-                                    {{ $dashboards['student_summary']['attended'] }} /
-                                    {{ $dashboards['student_summary']['total'] }}
+                                    {{ $dashboards['class_summary']['attended'] }} /
+                                    {{ $dashboards['class_summary']['total'] }}
                                 </div>
                                 <div class="d-flex align-self-center">
                                     <i class="fa-solid fa-user-check" id="icon-student-check"></i>

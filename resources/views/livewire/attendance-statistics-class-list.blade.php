@@ -13,16 +13,16 @@
             wire:keydown.debounce.250ms="filterClass($event.target.value)" wire:model="filter.class">
     </div>
 
-    <h5 class="mt-3">
-        <span
-            class="badge text-black fw-normal {{ $filter['is_user'] === true ? 'border' : '' }} mt-1 mt-sm-0 ms-sm-2  {{ $filter['is_user'] === true ? 'text-white' : '' }}"
-            wire:click="filterByCurrentUser" role="button"
-            style="background-color: {{ $filter['is_user'] === true ? '#007bff' : '#F4F6FA' }};box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
-            My Classes
-        </span>
-    </h5>
-
-
+    @hasrole('SuperAdmin')
+        <h5 class="mt-3">
+            <span
+                class="badge text-black fw-normal {{ $filter['is_user'] === true ? 'border' : '' }} mt-1 mt-sm-0 ms-sm-2  {{ $filter['is_user'] === true ? 'text-white' : '' }}"
+                wire:click="filterByCurrentUser" role="button"
+                style="background-color: {{ $filter['is_user'] === true ? '#007bff' : '#F4F6FA' }};box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
+                My Classes
+            </span>
+        </h5>
+    @endhasrole
 
     <div class="row g-4 mt-1">
 

@@ -42,9 +42,7 @@
             </div>
         </div>
 
-        @hasrole('Monitor')
-            <!-- 如果是 Monitor，這段代碼會被隱藏 -->
-        @else
+        @hasrole('SuperAdmin')
             <div class="col-2 col-sm-auto">
                 <button type="button" class="btn btn-link text-secondary" onclick="toggleFilter('#filter')">
                     <i class="fa-solid fa-filter"></i>
@@ -55,9 +53,7 @@
 
     </div>
 
-    @hasrole('Monitor')
-        <!-- 如果是 Monitor，這段代碼會被隱藏 -->
-    @else
+    @hasrole('SuperAdmin')
         <div id="filter" class="filter-popup-wraper d-none">
             <div class="filter-popup-content">
                 <form wire:submit.prevent="applyFilter" id='filter-form'>
@@ -159,7 +155,7 @@
     @endhasrole
 
 
-    <div class="row g-4 {{ Auth::user()->hasRole(UserType::Monitor()->key) ? 'mt-3' : '' }}">
+    <div class="row g-4 {{ Auth::user()->hasRole(UserType::SuperAdmin()->key) ? 'mt-2' : 'mt-3' }}">
 
         @foreach ($attendances as $attendance)
             <div class="col-12">

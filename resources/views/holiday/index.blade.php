@@ -24,15 +24,13 @@
         </div>
 
         <div class="row align-items-center my-1">
-            <div class="col {{ Auth::user()->hasRole(UserType::Monitor()->key) ? 'my-2' : '' }}">
+            <div class="col {{ Auth::user()->hasRole(UserType::SuperAdmin()->key) ? '' : 'my-2' }}">
                 <h4 class="header-title">Manage Holidays</h4>
             </div>
 
             <div class="col-12 col-md-auto mt-0 mt-md-1">
                 <div class="d-flex float-end align-items-center">
-                    @hasrole('Monitor')
-                        <!-- 如果是 Monitor，這段代碼會被隱藏 -->
-                    @else
+                    @hasrole('SuperAdmin')
                         <button type="button" class="btn btn-success text-white rounded-4" data-bs-toggle="modal"
                             data-bs-target="#add-holiday-modal">
                             Add

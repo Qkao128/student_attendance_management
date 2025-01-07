@@ -32,8 +32,7 @@ class AttendanceStatisticsAdminService extends Service
     public function getDashboardData($date)
     {
         try {
-            $formattedDate = Carbon::parse($date)->format('Y-m-d');
-
+            $formattedDate = Carbon::parse($date)->format('Y-m-d'); // 格式化日期
             $isHoliday = $this->_holidayRepository->isDateHoliday($formattedDate);
 
             $classCount = $this->_classRepository->getClassCount();
@@ -107,7 +106,8 @@ class AttendanceStatisticsAdminService extends Service
 
     public function getClassCountByCourse(?int $courseId)
     {
-        return $this->_attendanceRepository->getClassCountByCourse($courseId);
+        $result = $this->_attendanceRepository->getClassCountByCourse($courseId);
+        return $result;
     }
 
     private function getHolidayDates(array $holidays): array

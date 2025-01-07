@@ -164,7 +164,8 @@
                                         <div class="bar3"></div>
                                         <div class="mt-sm-1 mt-3 w-100">
                                             <div class="form-group mb-4 mb-md-5">
-                                                <label class="form-label mb-sm-3 mb-md-4 ms-2" for="name">Name</label>
+                                                <label class="form-label mb-sm-3 mb-md-4 ms-2"
+                                                    for="name">Username</label>
                                                 <input type="text" id="username" class="form-control"
                                                     placeholder="username" required name="username"
                                                     value="{{ old('username') }}">

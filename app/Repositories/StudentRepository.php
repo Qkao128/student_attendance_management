@@ -3,8 +3,10 @@
 namespace App\Repositories;
 
 use Carbon\Carbon;
+use App\Enums\UserType;
 use App\Models\Student;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class StudentRepository extends Repository
 {
@@ -77,7 +79,7 @@ class StudentRepository extends Repository
 
     public function getStudentCount($date)
     {
-        return DB::table('students')
+        $query = DB::table('students')
             ->leftjoin('classes', 'students.class_id', '=', 'classes.id')
             ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
             ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
@@ -86,8 +88,34 @@ class StudentRepository extends Repository
             ->where('classes.deleted_at', '=', null)
             ->where('classes.is_disabled', false)
             ->where('users.deleted_at', '=', null)
-            ->whereDate('students.enrollment_date', '<=', $date)
-            ->count();
+            ->whereDate('students.enrollment_date', '<=', $date);
+
+
+        // Apply additional filters based on user role
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            $student = Student::where('id', Auth::user()->student_id)->first();
+            if ($student) {
+                $query->where('classes.id', $student->class_id);
+            }
+        }
+
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+            $classTeacher = DB::table('classes')
+                ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+                ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+                ->where('classes.deleted_at', '=', null)
+                ->where('users.deleted_at', '=', null)
+                ->where('classes.is_disabled', false)
+                ->first();
+
+            if ($classTeacher != null) {
+                $query->where('class_teachers.user_id', Auth::user()->id);
+            }
+        }
+
+        $result = $query->count();
+        // Finally, get the count of distinct class IDs
+        return $result;
     }
 
     public function getAllBySearchTermAndClass_id($data)

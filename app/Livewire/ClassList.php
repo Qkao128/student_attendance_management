@@ -2,9 +2,11 @@
 
 namespace App\Livewire;
 
+use App\Enums\UserType;
 use App\Models\Classes;
 use Livewire\Component;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class ClassList extends Component
 {
@@ -111,6 +113,22 @@ class ClassList extends Component
 
         if (!is_null($this->filter['is_disabled'])) {
             $query->where('classes.is_disabled', '=', $this->filter['is_disabled']);
+        }
+
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+            // 使用當前用戶的 student_id 找到對應的班級
+            $class = DB::table('classes')
+                ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+                ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+                ->where('classes.deleted_at', '=', null)
+                ->where('users.deleted_at', '=', null)
+                ->where('classes.is_disabled', false)
+                ->first();
+
+            if ($class != null) {
+                // 只篩選 Monitor 的班級
+                $query->where('class_teachers.user_id', Auth::user()->id);
+            }
         }
 
         $newData = $query->offset($this->limitPerPage * $this->page)

@@ -16,11 +16,11 @@
             </thead>
             <tbody>
                 @foreach ($holidays as $holiday)
-                    @hasrole('Monitor')
-                        <tr>
-                        @else
+                    @hasrole('SuperAdmin')
                         <tr role="button"
                             onclick="selectHoliday({{ $holiday->id }}, '{{ $holiday->title }}', '{{ $holiday->date_from }}', '{{ $holiday->date_to }}', '{{ $holiday->background_color }}', '{{ $holiday->details }}')">
+                        @else
+                        <tr>
                         @endhasrole
 
                         <td class="p-2 px-sm-3 d-flex align-self-center text-wrap text-break"

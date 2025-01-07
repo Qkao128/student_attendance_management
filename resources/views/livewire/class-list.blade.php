@@ -14,111 +14,113 @@
             </div>
         </div>
 
-        <div class="col-auto">
-            <button type="button" class="btn btn-link text-secondary" onclick="toggleFilter('#filter')">
-                <i class="fa-solid fa-filter"></i>
-            </button>
-        </div>
+        @hasrole('SuperAdmin')
+            <div class="col-auto">
+                <button type="button" class="btn btn-link text-secondary" onclick="toggleFilter('#filter')">
+                    <i class="fa-solid fa-filter"></i>
+                </button>
+            </div>
+        @endhasrole
     </div>
 
 
-    <div id="filter" class="filter-popup-wraper d-none">
-        <div class="filter-popup-content">
-            <form wire:submit.prevent="applyFilter" id='filter-form'>
-                <div class="filter-popup-body">
-                    <h3 class="fw-bold text-center">Filter</h3>
+    @hasrole('SuperAdmin')
+        <div id="filter" class="filter-popup-wraper d-none">
+            <div class="filter-popup-content">
+                <form wire:submit.prevent="applyFilter" id='filter-form'>
+                    <div class="filter-popup-body">
+                        <h3 class="fw-bold text-center">Filter</h3>
 
-                    <button type="button" class="btn btn-link text-dark filter-popup-close-btn p-0"
-                        onclick="toggleFilter('#filter')">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
+                        <button type="button" class="btn btn-link text-dark filter-popup-close-btn p-0"
+                            onclick="toggleFilter('#filter')">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
 
-                    <div class="row mt-3">
-                        <div class="col-12 col-md-6">
-                            <div class="form-group mb-3" wire:ignore>
-                                <label class="form-label" for="filter_course_id">Course</label>
-                                <select class="form-select" id="filter_course_id" style="width:100%;">
-                                </select>
+                        <div class="row mt-3">
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3" wire:ignore>
+                                    <label class="form-label" for="filter_course_id">Course</label>
+                                    <select class="form-select" id="filter_course_id" style="width:100%;">
+                                    </select>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="col-12 col-md-6">
-                            <div class="form-group mb-3" wire:ignore>
-                                <label class="form-label" for="filter_user_id">Teacher</label>
-                                <select class="form-select" id="filter_user_id" style="width:100%;">
-                                </select>
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3" wire:ignore>
+                                    <label class="form-label" for="filter_user_id">Teacher</label>
+                                    <select class="form-select" id="filter_user_id" style="width:100%;">
+                                    </select>
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="col-12 col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label" for="filter-class">Class</label>
-                                <input type="text" class="form-control" id="filter-class" wire:model="filter.class"
-                                    placeholder="Enter class">
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="filter-class">Class</label>
+                                    <input type="text" class="form-control" id="filter-class" wire:model="filter.class"
+                                        placeholder="Enter class">
+                                </div>
                             </div>
-                        </div>
 
-                        <div class="col-12 col-md-6">
-                            <div class="form-group mb-3">
-                                <label class="form-label" for="filter-is_disabled">Status</label>
-                                <select class="form-control form-select" id="filter-is_disabled"
-                                    wire:model="filter.is_disabled">
-                                    <option value="" hidden>Please select</option>
-                                    <option value="0">Active</option>
-                                    <option value="1">Disabled</option>
-                                </select>
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="filter-is_disabled">Status</label>
+                                    <select class="form-control form-select" id="filter-is_disabled"
+                                        wire:model="filter.is_disabled">
+                                        <option value="" hidden>Please select</option>
+                                        <option value="0">Active</option>
+                                        <option value="1">Disabled</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="filter-popup-footer">
-                    <div class="row g-2 p-3">
-                        <div class="col-4 col-lg-6">
-                            <button type="button" class="btn btn-danger text-white rounded-4 btn-lg w-100"
-                                wire:click="resetFilter()" onclick="toggleFilter('#filter')">
-                                Reset
-                            </button>
-                        </div>
-                        <div class="col-8 col-lg-6">
-                            <button type="submit" class="btn btn-primary text-white rounded-4 btn-lg w-100"
-                                onclick="toggleFilter('#filter')">
-                                Filter
-                            </button>
+                    <div class="filter-popup-footer">
+                        <div class="row g-2 p-3">
+                            <div class="col-4 col-lg-6">
+                                <button type="button" class="btn btn-danger text-white rounded-4 btn-lg w-100"
+                                    wire:click="resetFilter()" onclick="toggleFilter('#filter')">
+                                    Reset
+                                </button>
+                            </div>
+                            <div class="col-8 col-lg-6">
+                                <button type="submit" class="btn btn-primary text-white rounded-4 btn-lg w-100"
+                                    onclick="toggleFilter('#filter')">
+                                    Filter
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <h5 class="d-flex mt-3">
-        <span class="badge text-black fw-normal {{ $filter['is_disabled'] === null ? 'border text-white' : '' }}"
-            wire:click="updateDisabledStatus(null)" role="button"
-            style="background-color: {{ $filter['is_disabled'] === null ? '#007bff' : '#F4F6FA' }}; box-shadow: 0px 4px 2px rgba(0, 0, 0, 0.25); border-radius: 10px;">
-            All
-        </span>
+        <h5 class="d-flex mt-3">
+            <span class="badge text-black fw-normal {{ $filter['is_disabled'] === null ? 'border text-white' : '' }}"
+                wire:click="updateDisabledStatus(null)" role="button"
+                style="background-color: {{ $filter['is_disabled'] === null ? '#007bff' : '#F4F6FA' }}; box-shadow: 0px 4px 2px rgba(0, 0, 0, 0.25); border-radius: 10px;">
+                All
+            </span>
 
-        <span class="badge text-black fw-normal ms-2 {{ $filter['is_disabled'] === false ? 'border text-white' : '' }}"
-            wire:click="updateDisabledStatus(false)" role="button"
-            style="background-color: {{ $filter['is_disabled'] === false ? '#007bff' : '#F4F6FA' }}; box-shadow: 0px 4px 2px rgba(0, 0, 0, 0.25); border-radius: 10px;">
-            Active
-        </span>
+            <span class="badge text-black fw-normal ms-2 {{ $filter['is_disabled'] === false ? 'border text-white' : '' }}"
+                wire:click="updateDisabledStatus(false)" role="button"
+                style="background-color: {{ $filter['is_disabled'] === false ? '#007bff' : '#F4F6FA' }}; box-shadow: 0px 4px 2px rgba(0, 0, 0, 0.25); border-radius: 10px;">
+                Active
+            </span>
 
-        <span class="badge text-black fw-normal ms-2 {{ $filter['is_disabled'] === true ? 'border text-white' : '' }}"
-            wire:click="updateDisabledStatus(true)" role="button"
-            style="background-color: {{ $filter['is_disabled'] === true ? '#007bff' : '#F4F6FA' }}; box-shadow: 0px 4px 2px rgba(0, 0, 0, 0.25); border-radius: 10px;">
-            Disabled
-        </span>
+            <span class="badge text-black fw-normal ms-2 {{ $filter['is_disabled'] === true ? 'border text-white' : '' }}"
+                wire:click="updateDisabledStatus(true)" role="button"
+                style="background-color: {{ $filter['is_disabled'] === true ? '#007bff' : '#F4F6FA' }}; box-shadow: 0px 4px 2px rgba(0, 0, 0, 0.25); border-radius: 10px;">
+                Disabled
+            </span>
 
-        <span class="badge text-black fw-normal ms-2 {{ $filter['user_id'] === $userId ? 'border text-white' : '' }}"
-            wire:click="filterByCurrentUser" role="button"
-            style="background-color: {{ $filter['user_id'] === $userId ? '#007bff' : '#F4F6FA' }}; box-shadow: 0px 4px 2px rgba(0, 0, 0, 0.25); border-radius: 10px;">
-            My Classes
-        </span>
-    </h5>
-
-
+            <span class="badge text-black fw-normal ms-2 {{ $filter['user_id'] === $userId ? 'border text-white' : '' }}"
+                wire:click="filterByCurrentUser" role="button"
+                style="background-color: {{ $filter['user_id'] === $userId ? '#007bff' : '#F4F6FA' }}; box-shadow: 0px 4px 2px rgba(0, 0, 0, 0.25); border-radius: 10px;">
+                My Classes
+            </span>
+        </h5>
+    @endhasrole
 
 
     <div class="row g-4 mt-2">

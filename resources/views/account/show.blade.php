@@ -33,29 +33,33 @@
     </div>
 
     <div class="row align-items-center mb-3">
-        <div class="col">
+        <div class="col {{ Auth::user()->hasRole(UserType::Monitor()->key) ? 'my-2' : '' }}">
             <h4 class="header-title">Account Details</h4>
         </div>
 
         <div class="col-12 col-md-auto mt-0 mt-md-1">
             <div class="d-flex float-end align-items-center gap-2">
-                <a href="{{ route('user.index') }}" class="btn btn-dark rounded-4 text-white">
-                    <i class="fa-solid fa-angle-left text-white"></i>
-                    Back
-                </a>
+                @hasrole('Admin')
+                    <!-- 如果是 Admin，這段代碼會被隱藏 -->
+                @else
+                    <a href="{{ route('user.index') }}" class="btn btn-dark rounded-4 text-white">
+                        <i class="fa-solid fa-angle-left text-white"></i>
+                        Back
+                    </a>
 
-                <form method="post" action={{ route('user.destroy', ['id' => $user->id]) }}>
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger rounded-4" onclick="deleteFormConfirmation(event)">
-                        <i class="fa-solid fa-trash"></i> Delete
-                    </button>
-                </form>
+                    <form method="post" action={{ route('user.destroy', ['id' => $user->id]) }}>
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger rounded-4" onclick="deleteFormConfirmation(event)">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </button>
+                    </form>
 
-                <a href="{{ route('user.edit', ['id' => $user->id]) }}" class="btn btn-warning text-dark rounded-4">
-                    <i class="fa-solid fa-pen-nib"></i>
-                    Edit
-                </a>
+                    <a href="{{ route('user.edit', ['id' => $user->id]) }}" class="btn btn-warning text-dark rounded-4">
+                        <i class="fa-solid fa-pen-nib"></i>
+                        Edit
+                    </a>
+                @endhasrole
             </div>
         </div>
     </div>

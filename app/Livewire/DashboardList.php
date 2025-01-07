@@ -3,9 +3,12 @@
 namespace App\Livewire;
 
 use Carbon\Carbon;
+use App\Enums\UserType;
+use App\Models\student;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardList extends Component
 {
@@ -85,6 +88,33 @@ class DashboardList extends Component
             $classesQuery->where('classes.name', 'like', '%' . $this->filter['class'] . '%');
         }
 
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            // 使用當前用戶的 student_id 找到對應的班級
+            $student = Student::where('id', Auth::user()->student_id)->first();
+
+            if ($student) {
+                // 只篩選 Monitor 的班級
+                $classesQuery->where('classes.id', $student->class_id);
+            }
+        }
+
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+            // 使用當前用戶的 student_id 找到對應的班級
+            $classTeacher = DB::table('classes')
+                ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+                ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+                ->where('classes.deleted_at', '=', null)
+                ->where('users.deleted_at', '=', null)
+                ->where('classes.is_disabled', false)
+                ->first();
+
+            if ($classTeacher != null) {
+                // 只篩選 Monitor 的班級
+                $classesQuery->where('class_teachers.user_id', Auth::user()->id);
+            }
+        }
+
+
         // 获取班级数据
         $classes = $classesQuery->get();
 
@@ -106,37 +136,97 @@ class DashboardList extends Component
 
     protected function getAttendanceSummary($classId, $date)
     {
-        // 获取学生总数
-        $studentCount = DB::table('students')
+        // 確認用戶身份
+        $user = Auth::user();
+        $query = DB::table('students')
             ->leftJoin('classes', 'students.class_id', '=', 'classes.id')
             ->where('classes.id', $classId)
             ->where('classes.deleted_at', '=', null)
             ->where('classes.is_disabled', false)
-            ->whereDate('students.created_at', '<=', $date) // 确保学生创建时间小于等于指定日期
-            ->count();
+            ->whereDate('students.created_at', '<=', $date);
 
-        // 统计不同考勤状态的数量
+        // 如果是 Monitor，僅計算該班級
+        if ($user->hasRole(UserType::Monitor()->key)) {
+            $student = Student::where('id', $user->student_id)->first();
+            if ($student) {
+                $query->where('classes.id', $student->class_id);
+            }
+        }
+
+        // 如果是 Admin，僅計算其負責的班級
+        if ($user->hasRole(UserType::Admin()->key)) {
+            $query->whereExists(function ($subQuery) use ($user) {
+                $subQuery->select(DB::raw(1))
+                    ->from('class_teachers')
+                    ->where('class_teachers.class_id', 'classes.id')
+                    ->where('class_teachers.user_id', $user->id);
+            });
+        }
+
+        // 計算學生總數
+        $studentCount = $query->count();
+
+        // 考勤狀態統計
         $statusCounts = DB::table('attendances')
             ->selectRaw('status, COUNT(*) as count')
             ->where('class_id', $classId)
             ->whereDate('created_at', $date)
-            ->groupBy('status')
-            ->pluck('count', 'status')
-            ->toArray();
+            ->groupBy('status');
 
-        // 统计到达人数（包括 Present、Late、LeaveApproval 状态）
-        $arrivedCount = DB::table('attendances')
+        // 如果是 Monitor 或 Admin，限制考勤範圍
+        if ($user->hasRole(UserType::Monitor()->key)) {
+            $statusCounts->where('class_id', $student->class_id);
+        }
+        if ($user->hasRole(UserType::Admin()->key)) {
+            $statusCounts->whereExists(function ($subQuery) use ($user) {
+                $subQuery->select(DB::raw(1))
+                    ->from('class_teachers')
+                    ->where('class_teachers.class_id', 'attendances.class_id')
+                    ->where('class_teachers.user_id', $user->id);
+            });
+        }
+
+        $statusCounts = $statusCounts->pluck('count', 'status')->toArray();
+
+        // 統計到達人數
+        $arrivedCountQuery = DB::table('attendances')
             ->where('class_id', $classId)
             ->whereDate('created_at', $date)
-            ->whereIn('status', ['Present', 'Late', 'LeaveApproval']) // 包括多个状态的学生
-            ->count();
+            ->whereIn('status', ['Present', 'Late', 'LeaveApproval']);
 
-        // 获取最新的考勤更新时间
-        $latestAttendanceTime = DB::table('attendances')
+        if ($user->hasRole(UserType::Monitor()->key)) {
+            $arrivedCountQuery->where('class_id', $student->class_id);
+        }
+        if ($user->hasRole(UserType::Admin()->key)) {
+            $arrivedCountQuery->whereExists(function ($subQuery) use ($user) {
+                $subQuery->select(DB::raw(1))
+                    ->from('class_teachers')
+                    ->where('class_teachers.class_id', 'attendances.class_id')
+                    ->where('class_teachers.user_id', $user->id);
+            });
+        }
+
+        $arrivedCount = $arrivedCountQuery->count();
+
+        // 最新考勤時間
+        $latestAttendanceTimeQuery = DB::table('attendances')
             ->where('class_id', $classId)
             ->whereDate('created_at', $date)
-            ->orderBy('updated_at', 'desc')
-            ->value('updated_at');
+            ->orderBy('updated_at', 'desc');
+
+        if ($user->hasRole(UserType::Monitor()->key)) {
+            $latestAttendanceTimeQuery->where('class_id', $student->class_id);
+        }
+        if ($user->hasRole(UserType::Admin()->key)) {
+            $latestAttendanceTimeQuery->whereExists(function ($subQuery) use ($user) {
+                $subQuery->select(DB::raw(1))
+                    ->from('class_teachers')
+                    ->where('class_teachers.class_id', 'attendances.class_id')
+                    ->where('class_teachers.user_id', $user->id);
+            });
+        }
+
+        $latestAttendanceTime = $latestAttendanceTimeQuery->value('updated_at');
 
         return [
             'student_count' => $studentCount,

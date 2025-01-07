@@ -3,9 +3,11 @@
 namespace App\Livewire;
 
 use Carbon\Carbon;
+use App\Enums\UserType;
 use Livewire\Component;
 use Livewire\Attributes\On;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class AttendanceStatisticsClassList extends Component
 {
@@ -134,6 +136,22 @@ class AttendanceStatisticsClassList extends Component
 
         if (!empty($this->filter['class'])) {
             $classesQuery->where('classes.name', 'like', '%' . $this->filter['class'] . '%');
+        }
+
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+            // 使用當前用戶的 student_id 找到對應的班級
+            $class = DB::table('classes')
+                ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+                ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+                ->where('classes.deleted_at', '=', null)
+                ->where('users.deleted_at', '=', null)
+                ->where('classes.is_disabled', false)
+                ->first();
+
+            if ($class != null) {
+                // 只篩選 Monitor 的班級
+                $classesQuery->where('class_teachers.user_id', Auth::user()->id);
+            }
         }
 
 

@@ -157,6 +157,22 @@ class AttendanceList extends Component
             }
         }
 
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+            // 使用當前用戶的 student_id 找到對應的班級
+            $classTeacher = DB::table('classes')
+                ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+                ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+                ->where('classes.deleted_at', '=', null)
+                ->where('users.deleted_at', '=', null)
+                ->where('classes.is_disabled', false)
+                ->first();
+
+            if ($classTeacher != null) {
+                // 只篩選 Monitor 的班級
+                $classesQuery->where('class_teachers.user_id', Auth::user()->id);
+            }
+        }
+
         // 根據提交狀態篩選
         if (!is_null($this->filter['is_submitted'])) {
             if ($this->filter['is_submitted']) {

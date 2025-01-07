@@ -1,3 +1,7 @@
+@php
+    use App\Enums\UserType;
+@endphp
+
 @extends('layout/layout')
 
 @section('page_title', 'Class')
@@ -27,17 +31,20 @@
         </div>
 
         <div class="row align-items-center g-2">
-            <div class="col">
+            <div class="col {{ Auth::user()->hasRole(UserType::Admin()->key) ? 'py-2' : '' }}">
                 <h4 class="header-title">Manage Class</h4>
             </div>
-            <div class="col-12 col-md-auto mt-0 mt-md-1">
-                <div class="d-flex float-end align-items-center">
-                    <button type="button" class="btn btn-success text-white rounded-4" data-bs-toggle="modal"
-                        data-bs-target="#add-class-modal">
-                        Add
-                    </button>
+
+            @hasrole('SuperAdmin')
+                <div class="col-12 col-md-auto mt-0 mt-md-1">
+                    <div class="d-flex float-end align-items-center">
+                        <button type="button" class="btn btn-success text-white rounded-4" data-bs-toggle="modal"
+                            data-bs-target="#add-class-modal">
+                            Add
+                        </button>
+                    </div>
                 </div>
-            </div>
+            @endhasrole
 
         </div>
 

@@ -21,33 +21,43 @@
             </li>
 
             <hr class="m-0">
+            @php
+                use App\Enums\UserType;
+            @endphp
 
             @hasrole('Monitor')
-                <!-- 如果是 Monitor，這段代碼會被隱藏 -->
+                <!-- Monitor 角色不顯示任何內容 -->
             @else
-                <li class="text-muted sidebar-header my-3">
-                    Course and Class
-                </li>
-
-                <li class="sidebar-item {{ Request::routeIs('course.*') ? 'active' : '' }}">
-                    <a class="sidebar-link" href="{{ route('course.index') }}">
-                        <span class="pc-micon">
-                            <i class="fa-solid fa-book-bookmark"></i>
-                        </span>
-                        Manage Course
-
-                    </a>
-                </li>
                 <li
-                    class="sidebar-item {{ Request::routeIs('class.*') ? 'active' : '' }} {{ Request::routeIs('student.*') ? 'active' : '' }}">
-                    <a class="sidebar-link" href="{{ route('class.index') }}">
-                        <span class="pc-micon">
-                            <i class="fa-solid fa-users-rectangle"></i>
-                        </span>
-                        Manage Class
-
-                    </a>
+                    class="text-muted sidebar-header  {{ Auth::user()->hasRole(UserType::SuperAdmin()->key) ? 'my-3' : 'my-2' }}">
+                    @hasrole('SuperAdmin')
+                        Course and
+                    @endhasrole
+                    Class
                 </li>
+
+                @hasrole('SuperAdmin')
+                    <li class="sidebar-item {{ Request::routeIs('course.*') ? 'active' : '' }}">
+                        <a class="sidebar-link" href="{{ route('course.index') }}">
+                            <span class="pc-micon">
+                                <i class="fa-solid fa-book-bookmark"></i>
+                            </span>
+                            Manage Course
+                        </a>
+                    </li>
+                @endhasrole
+
+                @hasanyrole('SuperAdmin|Admin')
+                    <li
+                        class="sidebar-item {{ Request::routeIs('class.*') ? 'active' : '' }} {{ Request::routeIs('student.*') ? 'active' : '' }}">
+                        <a class="sidebar-link" href="{{ route('class.index') }}">
+                            <span class="pc-micon">
+                                <i class="fa-solid fa-users-rectangle"></i>
+                            </span>
+                            Manage Class
+                        </a>
+                    </li>
+                @endhasanyrole
 
                 <hr class="m-0">
             @endhasrole

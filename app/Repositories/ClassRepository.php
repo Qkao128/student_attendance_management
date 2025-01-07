@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use App\Enums\UserType;
 use App\Models\Classes;
+use App\Models\student;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -109,15 +110,42 @@ class ClassRepository extends Repository
 
     public function getClassCount()
     {
-        return DB::table('classes')
+        // Start with the base query
+        $query = DB::table('classes')
             ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
             ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
             ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
             ->where('classes.deleted_at', '=', null)
             ->where('courses.deleted_at', '=', null)
             ->where('users.deleted_at', '=', null)
-            ->where('classes.is_disabled', false)
-            ->count();
+            ->where('classes.is_disabled', false);
+
+        // Apply additional filters based on user role
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            $student = Student::where('id', Auth::user()->student_id)->first();
+            if ($student) {
+                $query->where('classes.id', $student->class_id);
+            }
+        }
+
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+            $classTeacher = DB::table('classes')
+                ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+                ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+                ->where('classes.deleted_at', '=', null)
+                ->where('users.deleted_at', '=', null)
+                ->where('classes.is_disabled', false)
+                ->first();
+
+            if ($classTeacher != null) {
+                $query->where('class_teachers.user_id', Auth::user()->id);
+            }
+        }
+
+        $classCount = $query->count();
+
+        // 移除 dd()，返回之前保存的結果
+        return $classCount;
     }
 
     public function getByTeacherId($classId)

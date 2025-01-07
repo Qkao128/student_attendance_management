@@ -4,8 +4,11 @@ namespace App\Repositories;
 
 use Carbon\Carbon;
 use App\Enums\Status;
+use App\Enums\UserType;
+use App\Models\student;
 use App\Models\Attendance;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class AttendanceRepository extends Repository
 {
@@ -116,47 +119,162 @@ class AttendanceRepository extends Repository
 
     public function getAttendedClassCount($date)
     {
-        return DB::table('attendances')
-            ->whereDate('created_at', $date)
-            ->distinct('class_id')
-            ->count('class_id');
+        $query = DB::table('attendances')
+            ->leftJoin('classes', 'attendances.class_id', '=', 'classes.id')
+            ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+            ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+            ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
+            ->where('classes.deleted_at', '=', null)
+            ->where('courses.deleted_at', '=', null)
+            ->where('users.deleted_at', '=', null)
+            ->where('classes.is_disabled', false)
+            ->whereDate('attendances.created_at', $date); // Ensure you're filtering by the correct table's date column
+
+        // Apply additional filters based on user role
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            $student = Student::where('id', Auth::user()->student_id)->first();
+            if ($student) {
+                $query->where('classes.id', $student->class_id);
+            }
+        }
+
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+            $classTeacher = DB::table('classes')
+                ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+                ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+                ->where('classes.deleted_at', '=', null)
+                ->where('users.deleted_at', '=', null)
+                ->where('classes.is_disabled', false)
+                ->first();
+
+            if ($classTeacher != null) {
+                $query->where('class_teachers.user_id', Auth::user()->id);
+            }
+        }
+
+        $result = $query->distinct()->count('attendances.class_id');
+        // Finally, get the count of distinct class IDs
+        return $result;
     }
 
     public function getAttendedStudentCount($date)
     {
-        return DB::table('attendances')
-            ->whereDate('created_at', $date)
-            ->whereIn('status', ['Present', 'Late', 'LeaveApproval'])
-            ->count();
+        $query = DB::table('attendances')
+            ->leftJoin('classes', 'attendances.class_id', '=', 'classes.id')
+            ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+            ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+            ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
+            ->where('classes.deleted_at', '=', null)
+            ->where('courses.deleted_at', '=', null)
+            ->where('users.deleted_at', '=', null)
+            ->where('classes.is_disabled', false)
+            ->whereDate('attendances.created_at', $date)
+            ->whereIn('attendances.status', ['Present', 'Late', 'LeaveApproval']);
+
+        // Apply additional filters based on user role
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            $student = Student::where('id', Auth::user()->student_id)->first();
+            if ($student) {
+                $query->where('attendances.class_id', $student->class_id);
+            }
+        }
+
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+            $classTeacher = DB::table('classes')
+                ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+                ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+                ->where('classes.deleted_at', '=', null)
+                ->where('users.deleted_at', '=', null)
+                ->where('classes.is_disabled', false)
+                ->first();
+
+            if ($classTeacher != null) {
+                $query->where('class_teachers.user_id', Auth::user()->id);
+            }
+        }
+
+        // Count the matching students
+        $result = $query->count();
+
+        return $result;
     }
 
     public function getUnavailableStudentCount($date)
     {
-        return DB::table('attendances')
-            ->whereDate('created_at', $date)
-            ->whereIn('status', ['Medical', 'Absence'])
-            ->count();
-    }
+        $query = DB::table('attendances')
+            ->leftJoin('classes', 'attendances.class_id', '=', 'classes.id')
+            ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+            ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+            ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
+            ->where('classes.deleted_at', '=', null)
+            ->where('courses.deleted_at', '=', null)
+            ->where('users.deleted_at', '=', null)
+            ->where('classes.is_disabled', false)
+            ->whereDate('attendances.created_at', $date)
+            ->whereIn('attendances.status', ['Medical', 'Absence']);
 
+        // Apply additional filters based on user role
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            $student = Student::where('id', Auth::user()->student_id)->first();
+            if ($student) {
+                $query->where('attendances.class_id', $student->class_id);
+            }
+        }
+
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+            $classTeacher = DB::table('classes')
+                ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+                ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+                ->where('classes.deleted_at', '=', null)
+                ->where('users.deleted_at', '=', null)
+                ->where('classes.is_disabled', false)
+                ->first();
+
+            if ($classTeacher != null) {
+                $query->where('class_teachers.user_id', Auth::user()->id);
+            }
+        }
+
+        $result = $query->count();
+        // Finally, get the count of distinct class IDs
+        return $result;
+    }
 
     public function getStatusCounts($date)
     {
         // 获取不同状态的学生数量
         $totalStatusCounts = DB::table('attendances')
-            ->selectRaw('status, COUNT(*) as count')
-            ->whereDate('created_at', $date)
-            ->groupBy('status')
+            ->leftJoin('classes', 'attendances.class_id', '=', 'classes.id')
+            ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+            ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+            ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
+            ->where('classes.deleted_at', '=', null)
+            ->where('courses.deleted_at', '=', null)
+            ->where('users.deleted_at', '=', null)
+            ->where('classes.is_disabled', false)
+            ->selectRaw('attendances.status, COUNT(*) as count')
+            ->whereDate('attendances.created_at', $date);
+
+        // Apply additional filters based on user role
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            $student = Student::where('id', Auth::user()->student_id)->first();
+            if ($student) {
+                $totalStatusCounts->where('attendances.class_id', $student->class_id);
+            }
+        }
+
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+            $totalStatusCounts->where('class_teachers.user_id', Auth::user()->id);
+        }
+
+        // 按状态分组并获取结果
+        $totalStatusCounts = $totalStatusCounts->groupBy('attendances.status')
             ->pluck('count', 'status')
             ->toArray();
 
-        // 确保每个状态都有返回值，避免为 null
-        $statusList = ['Present', 'Absence', 'Medical', 'Late', 'LeaveApproval', 'NotSubmitted'];
-
-        foreach ($statusList as $status) {
-            if (!isset($totalStatusCounts[$status])) {
-                $totalStatusCounts[$status] = 0;
-            }
-        }
+        // 确保每个状态都有返回值
+        $statusList = ['Present', 'Absence', 'Medical', 'Late', 'LeaveApproval'];
+        $totalStatusCounts = array_merge(array_fill_keys($statusList, 0), $totalStatusCounts);
 
         return [
             'total_status_counts' => $totalStatusCounts, // 每个状态对应的数量
@@ -166,46 +284,103 @@ class AttendanceRepository extends Repository
     public function getMonthlyAttendanceData(Carbon $startOfMonth, Carbon $endOfMonth, ?int $courseId, array $holidayDates)
     {
         $query = DB::table('attendances')
-            ->join('students', 'attendances.student_id', '=', 'students.id')
-            ->join('classes', 'students.class_id', '=', 'classes.id')
+            ->leftJoin('students', 'attendances.student_id', '=', 'students.id')
+            ->leftJoin('classes', 'students.class_id', '=', 'classes.id')
+            ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+            ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
             ->select('attendances.status', DB::raw('COUNT(attendances.id) as count'))
             ->where('classes.deleted_at', '=', null)
+            ->where('courses.deleted_at', '=', null)
             ->where('classes.is_disabled', false)
             ->whereBetween('attendances.created_at', [$startOfMonth, $endOfMonth]);
 
+        // 篩選特定課程
         if ($courseId) {
-            $query->where('classes.id', $courseId);
+            $query->where('classes.course_id', $courseId);
         }
 
+        // 根據角色應用條件
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            $student = Student::where('id', Auth::user()->student_id)->first();
+            if ($student) {
+                $query->where('students.class_id', $student->class_id);
+            }
+        }
+
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+            $isAdminClassTeacher = DB::table('class_teachers')
+                ->where('user_id', Auth::user()->id)
+                ->exists();
+
+            if ($isAdminClassTeacher) {
+                $query->where('class_teachers.user_id', Auth::user()->id);
+            } else {
+                // 確保 Admin 用戶無對應記錄時，返回空結果
+                return [];
+            }
+        }
+
+        // 排除假期日期
         if (!empty($holidayDates)) {
             $query->whereNotIn(DB::raw('DATE(attendances.created_at)'), $holidayDates);
         }
 
-        $query->groupBy('attendances.status');
+        // 按狀態分組
+        $result = $query->groupBy('attendances.status')->pluck('count', 'status')->toArray();
 
-        return $query->pluck('count', 'status')->toArray();
+
+        // 返回統計數據
+        return $result;
     }
 
 
     public function getMonthlyUnavailableStudentCount(Carbon $startOfMonth, Carbon $endOfMonth, ?int $courseId, array $holidayDates)
     {
         $query = DB::table('attendances')
-            ->join('students', 'attendances.student_id', '=', 'students.id')
-            ->join('classes', 'students.class_id', '=', 'classes.id')
+            ->leftJoin('students', 'attendances.student_id', '=', 'students.id')
+            ->leftJoin('classes', 'students.class_id', '=', 'classes.id')
+            ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+            ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+            ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
             ->where('classes.deleted_at', '=', null)
+            ->where('courses.deleted_at', '=', null)
+            ->where('users.deleted_at', '=', null)
             ->where('classes.is_disabled', false)
             ->whereBetween('attendances.created_at', [$startOfMonth, $endOfMonth])
             ->whereIn('attendances.status', ['Medical', 'Absence']);
 
-        if ($courseId) {
-            $query->where('classes.id', $courseId);
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            $student = Student::where('id', Auth::user()->student_id)->first();
+            if ($student) {
+                $query->where('attendances.class_id', $student->class_id);
+            }
+        }
+
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+            $classTeacher = DB::table('classes')
+                ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+                ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+                ->where('classes.deleted_at', '=', null)
+                ->where('users.deleted_at', '=', null)
+                ->where('classes.is_disabled', false)
+                ->first();
+
+            if ($classTeacher != null) {
+                $query->where('class_teachers.user_id', Auth::user()->id);
+            }
         }
 
         if (!empty($holidayDates)) {
             $query->whereNotIn(DB::raw('DATE(attendances.created_at)'), $holidayDates);
         }
 
-        return $query->count();
+        if ($courseId) {
+            $query->where('courses.id', $courseId);
+        }
+
+        $result =  $query->count();
+
+        return $result;
     }
 
 
@@ -220,42 +395,126 @@ class AttendanceRepository extends Repository
             ->where('users.deleted_at', '=', null)
             ->where('classes.is_disabled', false); // 只篩選 is_disabled = false 的班級
 
+
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            $student = Student::where('id', Auth::user()->student_id)->first();
+            if ($student) {
+                $query->where('attendances.class_id', $student->class_id);
+            }
+        }
+
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+            $classTeacher = DB::table('classes')
+                ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+                ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+                ->where('classes.deleted_at', '=', null)
+                ->where('users.deleted_at', '=', null)
+                ->where('classes.is_disabled', false)
+                ->first();
+
+            if ($classTeacher != null) {
+                $query->where('class_teachers.user_id', Auth::user()->id);
+            }
+        }
+
         if ($courseId) {
             $query->where('course_id', $courseId); // 篩選特定課程的班級
         }
 
-        return $query->count(); // 返回符合條件的班級數量
+        $result = $query->count();
+
+        return $result; // 返回符合條件的班級數量
     }
 
     public function getPresentRelatedCount(Carbon $startOfMonth, Carbon $endOfMonth, ?int $courseId, array $holidayDates)
     {
         $query = DB::table('attendances')
-            ->join('students', 'attendances.student_id', '=', 'students.id')
-            ->join('classes', 'students.class_id', '=', 'classes.id')
+            ->leftJoin('students', 'attendances.student_id', '=', 'students.id')
+            ->leftJoin('classes', 'students.class_id', '=', 'classes.id')
+            ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+            ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+            ->leftJoin('courses', 'classes.course_id', '=', 'courses.id')
             ->where('classes.deleted_at', '=', null)
+            ->where('courses.deleted_at', '=', null)
+            ->where('users.deleted_at', '=', null)
             ->where('classes.is_disabled', false)
             ->whereBetween('attendances.created_at', [$startOfMonth, $endOfMonth])
             ->whereIn('attendances.status', ['Present', 'Late', 'LeaveApproval']);
 
         if ($courseId) {
-            $query->where('classes.id', $courseId);
+            $query->where('courses.id', $courseId);
+        }
+
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            $student = Student::where('id', Auth::user()->student_id)->first();
+            if ($student) {
+                $query->where('attendances.class_id', $student->class_id);
+            }
+        }
+
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+            $classTeacher = DB::table('classes')
+                ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+                ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+                ->where('classes.deleted_at', '=', null)
+                ->where('users.deleted_at', '=', null)
+                ->where('classes.is_disabled', false)
+                ->first();
+
+            if ($classTeacher != null) {
+                $query->where('class_teachers.user_id', Auth::user()->id);
+            }
         }
 
         if (!empty($holidayDates)) {
             $query->whereNotIn(DB::raw('DATE(attendances.created_at)'), $holidayDates);
         }
 
-        return $query->count();
+        $result =  $query->count();
+
+        return $result;
     }
 
 
     public function getAttendanceRecords($classId, Carbon $startOfMonth, Carbon $endOfMonth)
     {
         $records = DB::table('attendances')
-            ->where('class_id', $classId)
-            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
-            ->orderBy('created_at', 'desc')
-            ->get();
+            ->leftJoin('classes', 'attendances.class_id', '=', 'classes.id')
+            ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+            ->where('attendances.class_id', $classId)
+            ->whereBetween('attendances.created_at', [$startOfMonth, $endOfMonth]);
+
+        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
+            $student = Student::where('id', Auth::user()->student_id)->first();
+            if ($student) {
+                $records->where('attendances.class_id', $student->class_id);
+            }
+        }
+
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+            $classTeacher = DB::table('classes')
+                ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
+                ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
+                ->where('classes.deleted_at', '=', null)
+                ->where('users.deleted_at', '=', null)
+                ->where('classes.is_disabled', false)
+                ->first();
+
+            if ($classTeacher != null) {
+                $records->where('class_teachers.user_id', Auth::user()->id);
+            }
+
+            $classTeacherIds = DB::table('class_teachers')
+                ->where('user_id', Auth::user()->id)
+                ->pluck('class_id')
+                ->toArray();
+
+            if (!in_array($classId, $classTeacherIds)) {
+                abort(403, 'Unauthorized access to this class data.');
+            }
+        }
+
+        $records = $records->orderBy('attendances.created_at', 'desc')->get();
 
         $attendanceRecords = [];
         foreach ($records as $record) {
