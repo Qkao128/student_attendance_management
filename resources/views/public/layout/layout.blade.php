@@ -27,7 +27,7 @@
     @yield('style')
 </head>
 
-<body class="p-2" id="auth-layout" style="background-image: url('{{ asset('img/background.png') }}');">
+<body class="p-2" id="auth-layout">
     @yield('content')
 
 

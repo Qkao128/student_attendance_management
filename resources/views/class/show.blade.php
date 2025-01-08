@@ -90,11 +90,15 @@
                         <i class="fa-solid fa-trash"></i> Delete
                     </button>
                 </form>
+                @hasrole('Admin')
+                    <!-- 如果是 Admin，這段代碼會被隱藏 -->
+                @else
+                    <a href="{{ route('class.edit', ['id' => $class->id]) }}" class="btn btn-warning text-dark rounded-4">
+                        <i class="fa-solid fa-pen-nib"></i>
+                        Edit
+                    </a>
+                @endhasrole
 
-                <a href="{{ route('class.edit', ['id' => $class->id]) }}" class="btn btn-warning text-dark rounded-4">
-                    <i class="fa-solid fa-pen-nib"></i>
-                    Edit
-                </a>
             </div>
         </div>
     </div>

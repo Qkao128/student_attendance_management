@@ -181,10 +181,14 @@
                                                 <i class="fa-solid fa-eye"></i>
                                             </a>
 
-                                            <a href="{{ route('class.edit', ['id' => $class->id]) }}"
-                                                class="btn btn-warning text-dark">
-                                                <i class="fa-solid fa-pen-nib"></i>
-                                            </a>
+                                            @hasrole('Admin')
+                                                <!-- 如果是 Admin，這段代碼會被隱藏 -->
+                                            @else
+                                                <a href="{{ route('class.edit', ['id' => $class->id]) }}"
+                                                    class="btn btn-warning text-dark">
+                                                    <i class="fa-solid fa-pen-nib"></i>
+                                                </a>
+                                            @endhasrole
 
                                             <form method="POST" action="{{ route('class.destroy', $class->id) }}">
                                                 @csrf
