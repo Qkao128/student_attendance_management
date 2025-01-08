@@ -31,14 +31,14 @@
                 </li>
 
                 <li>
-                    <button type="button" class="dropdown-item" onclick="$('#logout-form').submit();">
+                    <button type="button" class="dropdown-item" onclick="$('.logout-form').submit();">
                         <div class="d-flex align-items-center gap-2">
                             <i class="fa-solid fa-right-from-bracket"></i> Logout
                         </div>
                     </button>
 
 
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST">
+                    <form class="logout-form" action="{{ route('logout') }}" method="POST">
                         @csrf
                     </form>
 

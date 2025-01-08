@@ -297,16 +297,16 @@
                                         </div>
 
                                         <div class="form-group col-12 mb-4">
-                                            <label class="form-label" for="password">Password<span
+                                            <label class="form-label" for="passwordB">Password<span
                                                     class="text-danger">*</span></label>
-                                            <input type="password" class="form-control" id="password" name="password"
+                                            <input type="password" class="form-control" id="passwordB" name="password"
                                                 placeholder="Enter password" required>
                                         </div>
 
                                         <div class="form-group col-12 mb-4">
-                                            <label class="form-label" for="password_confirmation">Confirm
+                                            <label class="form-label" for="password_confirmation_b">Confirm
                                                 Password<span class="text-danger">*</span></label>
-                                            <input type="password" class="form-control" id="password_confirmation"
+                                            <input type="password" class="form-control" id="password_confirmation_b"
                                                 name="password_confirmation" placeholder="Enter confirm password"
                                                 required>
                                         </div>
