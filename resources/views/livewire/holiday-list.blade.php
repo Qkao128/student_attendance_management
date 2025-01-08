@@ -17,8 +17,10 @@
             <tbody>
                 @foreach ($holidays as $holiday)
                     @hasrole('SuperAdmin')
-                        <tr role="button"
-                            onclick="selectHoliday({{ $holiday->id }}, '{{ $holiday->title }}', '{{ $holiday->date_from }}', '{{ $holiday->date_to }}', '{{ $holiday->background_color }}', '{{ $holiday->details }}')">
+                        <tr role="button" data-id="{{ $holiday->id }}" data-title="{{ $holiday->title }}"
+                            data-date-from="{{ $holiday->date_from }}" data-date-to="{{ $holiday->date_to }}"
+                            data-background-color="{{ $holiday->background_color }}" data-details="{{ $holiday->details }}"
+                            onclick="selectHolidayFromData(this)">
                         @else
                         <tr>
                         @endhasrole
@@ -222,24 +224,32 @@
 
         });
 
-        function selectHoliday(id, title, dateFrom, dateTo, backgroundColor, details) {
-            // 更新模态框字段
-            $('#modal-holiday-id').val(id); // 设置隐藏字段 id 的值
+        function selectHolidayFromData(element) {
+            // 從 data-* 屬性中獲取數據
+            const id = $(element).data('id');
+            const title = $(element).data('title');
+            const dateFrom = $(element).data('date-from');
+            const dateTo = $(element).data('date-to');
+            const backgroundColor = $(element).data('background-color');
+            const details = $(element).data('details');
+
+            // 更新模態框字段
+            $('#modal-holiday-id').val(id); // 設置隱藏字段 id 的值
             $('#modal-title').val(title);
             $('#modal-date-from').val(dateFrom);
             $('#modal-date-to').val(dateTo);
             $('#modal-background-color').val(backgroundColor);
             $('#modal-details').val(details);
 
-            // 动态设置表单的 action，直接在 URL 中包含 holiday ID
+            // 動態設置表單的 action，直接在 URL 中包含 holiday ID
             let formAction = `{{ route('holiday.update', ['id' => ':id']) }}`.replace(':id', id);
             $('#holiday-form').attr('action', formAction);
 
-            // 设置删除表单的 action，包含 holiday ID
+            // 設置刪除表單的 action，包含 holiday ID
             let deleteFormAction = `{{ route('holiday.destroy', ['id' => ':id']) }}`.replace(':id', id);
             $('#delete-form').attr('action', deleteFormAction);
 
-            // 打开模态框
+            // 打開模態框
             $('#holiday-list-modal').modal('show');
         }
     </script>
