@@ -61,7 +61,7 @@
                     Dashboard
                 </li>
                 <li class="breadcrumb-item">
-                    Class Management
+                    Manage Class
                 </li>
                 <li class="breadcrumb-item">
                     Class Management Details
@@ -83,16 +83,17 @@
                     Back
                 </a>
 
-                <form method="post" action={{ route('class.destroy', ['id' => $class->id]) }}>
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger rounded-4" onclick="deleteFormConfirmation(event)">
-                        <i class="fa-solid fa-trash"></i> Delete
-                    </button>
-                </form>
                 @hasrole('Admin')
                     <!-- 如果是 Admin，這段代碼會被隱藏 -->
                 @else
+                    <form method="post" action={{ route('class.destroy', ['id' => $class->id]) }}>
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger rounded-4" onclick="deleteFormConfirmation(event)">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </button>
+                    </form>
+
                     <a href="{{ route('class.edit', ['id' => $class->id]) }}" class="btn btn-warning text-dark rounded-4">
                         <i class="fa-solid fa-pen-nib"></i>
                         Edit

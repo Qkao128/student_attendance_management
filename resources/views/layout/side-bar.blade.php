@@ -102,13 +102,28 @@
             </li>
 
             <li class="sidebar-item {{ Request::routeIs('user.*') ? 'active' : '' }}">
-                <a class="sidebar-link" href="{{ route('user.index') }}">
-                    <span class="pc-micon" style="margin-top: -2px !important;margin-left: -4px !important;">
-                        <i class="fa-solid fa-user-tie"></i>
-                    </span>
-                    Manage Account
 
-                </a>
+
+                @hasrole('Admin')
+                    <a class="sidebar-link" href="{{ route('user.show', ['id' => Auth::id()]) }}">
+                        <span class="pc-micon" style="margin-top: -2px !important;margin-left: -4px !important;">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </span>
+                        Manage Account
+
+                    </a>
+                @else
+                    <a class="sidebar-link" href="{{ route('user.index') }}">
+                        <span class="pc-micon" style="margin-top: -2px !important;margin-left: -4px !important;">
+                            <i class="fa-solid fa-user-tie"></i>
+                        </span>
+                        Manage Account
+
+                    </a>
+                @endhasrole
+
+
+
             </li>
 
 

@@ -116,7 +116,6 @@ class ClassList extends Component
         }
 
         if (Auth::user()->hasRole(UserType::Admin()->key)) {
-            // 使用當前用戶的 student_id 找到對應的班級
             $class = DB::table('classes')
                 ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
                 ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
@@ -126,8 +125,7 @@ class ClassList extends Component
                 ->first();
 
             if ($class != null) {
-                // 只篩選 Monitor 的班級
-                $query->where('class_teachers.user_id', Auth::user()->id);
+                $query->where('class_teachers.user_id', Auth::user()->id)->where('classes.is_disabled', false);
             }
         }
 

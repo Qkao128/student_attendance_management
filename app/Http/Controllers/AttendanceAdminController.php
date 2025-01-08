@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Enums\Status;
+use App\Enums\UserType;
 use Illuminate\Http\Request;
 use App\Services\ClassAdminService;
 use App\Services\CourseAdminService;
+use Illuminate\Support\Facades\Auth;
 use App\Services\StudentAdminService;
 use App\Services\AttendanceAdminService;
 use Illuminate\Support\Facades\Redirect;
@@ -60,6 +62,14 @@ class AttendanceAdminController extends Controller
 
         if ($class === false || $students === false) {
             abort(404);
+        }
+
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+            $relatedClass = $this->_classAdminService->getByTeacherId($class->id);
+
+            if ($relatedClass === false || $relatedClass != Auth::user()->id) {
+                abort(403, 'Unauthorized access.');
+            }
         }
 
         $date = $date ?? now()->format('Y-m-d');

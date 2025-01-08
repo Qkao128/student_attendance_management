@@ -188,16 +188,17 @@
                                                     class="btn btn-warning text-dark">
                                                     <i class="fa-solid fa-pen-nib"></i>
                                                 </a>
+
+                                                <form method="POST" action="{{ route('class.destroy', $class->id) }}">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-danger"
+                                                        onclick="deleteFormConfirmation(event)">
+                                                        <i class="fa-solid fa-trash-can"></i>
+                                                    </button>
+                                                </form>
                                             @endhasrole
 
-                                            <form method="POST" action="{{ route('class.destroy', $class->id) }}">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-danger"
-                                                    onclick="deleteFormConfirmation(event)">
-                                                    <i class="fa-solid fa-trash-can"></i>
-                                                </button>
-                                            </form>
                                         </div>
                                     </div>
                                 </div>

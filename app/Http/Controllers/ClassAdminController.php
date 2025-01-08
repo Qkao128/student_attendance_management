@@ -55,6 +55,29 @@ class ClassAdminController extends Controller
             return redirect()->route('dashboard');
         }
 
+
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+            $relatedClass = $this->_classAdminService->getByTeacherId($id);
+
+            if ($relatedClass === false || $relatedClass != Auth::user()->id) {
+                abort(403, 'Unauthorized access.');
+            }
+
+            $class = $this->_classAdminService->getByIdWithDetails($id);
+
+            if ($class === false) {
+                abort(404);
+            }
+
+            if ($class == null) {
+                $errorMessage = implode("<br>", $this->_classAdminService->_errorMessage);
+                return back()->with('error', $errorMessage)->withInput();
+            }
+
+            return view('class/show', compact('class'));
+        }
+
+
         $class = $this->_classAdminService->getByIdWithDetails($id);
 
         if ($class === false) {

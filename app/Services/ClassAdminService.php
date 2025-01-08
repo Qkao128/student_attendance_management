@@ -82,6 +82,24 @@ class ClassAdminService extends Service
         }
     }
 
+    public function getByTeacherId($classId)
+    {
+        try {
+            $class = $this->_classRepository->getByTeacherId($classId);
+
+            if ($class == null) {
+                return false;
+            }
+
+            return $class;
+        } catch (Exception $e) {
+            array_push($this->_errorMessage, "Fail to get class details.");
+
+            return null;
+        }
+    }
+
+
     public function getByIdWithDetails($id)
     {
         try {

@@ -102,22 +102,34 @@ class UserAdminController extends Controller
             return view('account/monitor/show', compact('user', 'monitor', 'teacher'));
         }
 
+        if (Auth::user()->hasRole(UserType::Admin()->key)) {
+
+            $relatedUser = $this->_userAdminService->getByTeacherId($id);
+
+            if ($relatedUser === false ||  $relatedUser->id !== Auth::user()->id) {
+                abort(403, 'Unauthorized access.');
+            }
+
+            $user = $this->_userAdminService->getByTeacherId($id);
+
+            if ($user === false) {
+                abort(404);
+            }
+
+            if ($user == null) {
+                $errorMessage = implode("<br>", $this->_userAdminService->_errorMessage);
+                return back()->with('error', $errorMessage)->withInput();
+            }
+
+            return view('account/show', compact('user'));
+        }
+
+
         $user = $this->_userAdminService->getByTeacherId($id);
 
         if ($user === false) {
             abort(404);
         }
-
-        if ($user->hasRole(UserType::Admin()->key)) {
-            if ($id != $user->id) {
-                $relatedUser = $this->_userAdminService->getByTeacherId($id);
-                if ($relatedUser === false || $relatedUser->teacher_user_id != $user->id) {
-                    abort(403, 'Unauthorized access.');
-                }
-            }
-            return view('account/show', compact('user'));
-        }
-
 
         if ($user == null) {
             $errorMessage = implode("<br>", $this->_userAdminService->_errorMessage);
@@ -301,11 +313,9 @@ class UserAdminController extends Controller
         }
 
         if ($user->hasRole(UserType::Admin()->key)) {
-            if ($id != $user->id || Auth::user()->id != $teacherId) {
-                $relatedUser = $this->_userAdminService->getByTeacherId($teacherId);
-                if ($relatedUser === false || $relatedUser->teacher_user_id != $user->id) {
-                    abort(403, 'Unauthorized access.');
-                }
+            $relatedUser = $this->_userAdminService->getByTeacherId($teacherId);
+            if ($relatedUser === false || $relatedUser->teacher_user_id != $user->id || Auth::user()->id != $teacherId) {
+                abort(403, 'Unauthorized access.');
             }
         }
 
