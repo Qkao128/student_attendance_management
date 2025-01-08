@@ -87,6 +87,7 @@
                 margin: 0 !important;
                 border-top-left-radius: 0 !important;
                 border-top-right-radius: 0 !important;
+                margin-left: -1px !important;
             }
 
             .card-header .auth-logo-container {

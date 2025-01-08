@@ -27,7 +27,7 @@
     @yield('style')
 </head>
 
-<body class="p-2" id="auth-layout">
+<body id="auth-layout">
     @yield('content')
 
 
