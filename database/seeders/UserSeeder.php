@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $user = User::create([
-            'username' => 'admin',
+            'username' => 'john123',
             'email' => 'admin@admin.com',
             'password' => bcrypt('12345678'),
             'profile_image' => null,
@@ -26,7 +26,7 @@ class UserSeeder extends Seeder
         $user->assignRole(UserType::SuperAdmin()->key);
 
         $user = User::create([
-            'username' => 'teacher',
+            'username' => 'shaoxi123',
             'email' => 'teacher@teacher.com',
             'password' => bcrypt('12345678'),
             'profile_image' => null,
@@ -37,7 +37,7 @@ class UserSeeder extends Seeder
         $user->assignRole(UserType::Admin()->key);
 
         $user = User::create([
-            'username' => 'Monitor',
+            'username' => 'weiming123',
             'email' => 'monitor@monitor.com',
             'password' => bcrypt('12345678'),
             'profile_image' => null,
