@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use App\Repositories\ClassRepository;
-use App\Repositories\StudentRepository;
+use App\Repositories\StudentRepository; //修了大寫
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
