@@ -478,34 +478,18 @@ class AttendanceRepository extends Repository
 
     public function getAttendanceRecords($classId, Carbon $startOfMonth, Carbon $endOfMonth)
     {
-        $records = DB::table('attendances')
-            ->leftJoin('classes', 'attendances.class_id', '=', 'classes.id')
-            ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
-            ->where('attendances.class_id', $classId)
-            ->whereBetween('attendances.created_at', [$startOfMonth, $endOfMonth]);
+        $user = Auth::user();
 
-        if (Auth::user()->hasRole(UserType::Monitor()->key)) {
-            $student = Student::where('id', Auth::user()->student_id)->first();
-            if ($student) {
-                $records->where('attendances.class_id', $student->class_id);
+        if ($user->hasRole(UserType::Monitor()->key)) {
+            $studentClassId = Student::where('id', $user->student_id)->value('class_id');
+            if ($studentClassId !== $classId) {
+                abort(403, 'Unauthorized access to this class data.');
             }
         }
 
-        if (Auth::user()->hasRole(UserType::Admin()->key)) {
-            $classTeacher = DB::table('classes')
-                ->leftJoin('class_teachers', 'classes.id', '=', 'class_teachers.class_id')
-                ->leftJoin('users', 'class_teachers.user_id', '=', 'users.id')
-                ->where('classes.deleted_at', '=', null)
-                ->where('users.deleted_at', '=', null)
-                ->where('classes.is_disabled', false)
-                ->first();
-
-            if ($classTeacher != null) {
-                $records->where('class_teachers.user_id', Auth::user()->id);
-            }
-
+        if ($user->hasRole(UserType::Admin()->key)) {
             $classTeacherIds = DB::table('class_teachers')
-                ->where('user_id', Auth::user()->id)
+                ->where('user_id', $user->id)
                 ->pluck('class_id')
                 ->toArray();
 
@@ -514,14 +498,17 @@ class AttendanceRepository extends Repository
             }
         }
 
-        $records = $records->orderBy('attendances.created_at', 'desc')->get();
+        $records = DB::table('attendances')
+            ->where('class_id', $classId)
+            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+            ->get();
 
         $attendanceRecords = [];
         foreach ($records as $record) {
             $date = Carbon::parse($record->created_at)->toDateString();
             $attendanceRecords[$record->student_id][$date] = $record->status;
             $attendanceRecords[$record->student_id]['details'][$date] = $record->details;
-            $attendanceRecords[$record->student_id]['files'][$date] = $record->file; // 添加文件信息
+            $attendanceRecords[$record->student_id]['files'][$date] = $record->file;
         }
 
         return $attendanceRecords;

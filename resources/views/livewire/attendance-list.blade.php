@@ -13,7 +13,7 @@
     @endif
 
     <div class="row align-items-center g-3 mt-1">
-        <div class="col-12 col-sm-5">
+        <div class="col-12 {{ Auth::user()->hasRole(UserType::Monitor()->key) ? 'col-sm-12' : 'col-sm-5' }}">
             <div class="d-flex justify-content-between align-items-center"
                 style=" box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
                 <!-- 顯示當前日期 -->
@@ -32,23 +32,26 @@
             </div>
         </div>
 
-        <div class="col-10 col-sm">
-            <div class="search-input-group">
-                <div class="search-input-icon">
-                    <i class="fa fa-search"></i>
-                </div>
-                <input type="text" class="form-control search-input" placeholder="Search class"
-                    wire:keydown.debounce.250ms="filterClass($event.target.value)" wire:model="filter.class">
-            </div>
-        </div>
 
-        @hasrole('SuperAdmin')
-            <div class="col-2 col-sm-auto">
-                <button type="button" class="btn btn-link text-secondary" onclick="toggleFilter('#filter')">
-                    <i class="fa-solid fa-filter"></i>
-                </button>
+        @hasrole('Monitor')
+            <!-- Monitor 角色不顯示任何內容 -->
+        @else
+            <div class="col-10 col-sm">
+                <div class="search-input-group">
+                    <div class="search-input-icon">
+                        <i class="fa fa-search"></i>
+                    </div>
+                    <input type="text" class="form-control search-input" placeholder="Search class"
+                        wire:keydown.debounce.250ms="filterClass($event.target.value)" wire:model="filter.class">
+                </div>
             </div>
         @endhasrole
+
+        <div class="col-2 col-sm-auto">
+            <button type="button" class="btn btn-link text-secondary" onclick="toggleFilter('#filter')">
+                <i class="fa-solid fa-filter"></i>
+            </button>
+        </div>
 
 
     </div>
@@ -151,6 +154,88 @@
                 style="background-color: {{ $filter['is_user'] === true ? '#007bff' : '#F4F6FA' }};box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
                 My Classes
             </span>
+        </h5>
+    @else
+        <div id="filter" class="filter-popup-wraper d-none">
+            <div class="filter-popup-content">
+                <form wire:submit.prevent="applyFilter" id='filter-form'>
+                    <div class="filter-popup-body">
+                        <h3 class="fw-bold text-center">Filter</h3>
+
+                        <button type="button" class="btn btn-link text-dark filter-popup-close-btn p-0"
+                            onclick="toggleFilter('#filter')">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+
+                        <div class="row mt-3">
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3" wire:ignore>
+                                    <label class="form-label" for="filter_course_id">Course</label>
+                                    <select class="form-select" id="filter_course_id" style="width:100%;">
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="filter-class">Date</label>
+                                    <input class="form-control" type="date" wire:model="filter.date"
+                                        style="background-color: #F4F6FA;" onclick="this.showPicker()">
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-12">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="filter-class">Class</label>
+                                    <input type="text" class="form-control" id="filter-class"
+                                        wire:model="filter.class" placeholder="Enter class">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="filter-popup-footer">
+                        <div class="row g-2 p-3">
+                            <div class="col-4 col-lg-6">
+                                <button type="button" class="btn btn-danger btn-lg w-100" wire:click="resetFilter()"
+                                    onclick="toggleFilter('#filter')">
+                                    Reset
+                                </button>
+                            </div>
+                            <div class="col-8 col-lg-6">
+                                <button type="submit" class="btn btn-primary btn-lg w-100"
+                                    onclick="toggleFilter('#filter')">
+                                    Filter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <h5 class="my-3">
+
+            <span class="badge text-black fw-normal {{ is_null($filter['is_submitted']) ? 'border text-white' : '' }}"
+                wire:click="updateSubmittedStatus(null)" role="button"
+                style="background-color: {{ is_null($filter['is_submitted']) ? '#007bff' : '#F4F6FA' }};box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
+                All
+            </span>
+
+            <span
+                class="badge text-black fw-normal {{ $filter['is_submitted'] === true ? 'border text-white' : '' }} ms-sm-2"
+                wire:click="updateSubmittedStatus(true)" role="button"
+                style="background-color: {{ $filter['is_submitted'] === true ? '#007bff' : '#F4F6FA' }};box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
+                Submitted
+            </span>
+
+            <span
+                class="badge text-black fw-normal {{ $filter['is_submitted'] === false ? 'border text-white' : '' }} ms-sm-2"
+                wire:click="updateSubmittedStatus(false)" role="button"
+                style="background-color: {{ $filter['is_submitted'] === false ? '#007bff' : '#F4F6FA' }};box-shadow: 0px 4px 2px RGBA(0, 0, 0, 0.25); border-radius: 10px;">
+                Not Submitted
+            </span>
+
         </h5>
     @endhasrole
 

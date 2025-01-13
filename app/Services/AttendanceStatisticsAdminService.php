@@ -139,32 +139,28 @@ class AttendanceStatisticsAdminService extends Service
         $attendanceRecords = $this->_attendanceRepository->getAttendanceRecords($classId, $startOfMonth, $endOfMonth);
 
         $attendanceTable = [];
-        $nonPresentDetails = []; // 用於存儲非 Present 狀態的詳細數據
+        $nonPresentDetails = [];
 
         foreach ($students as $student) {
-            $row = [
-                'student_name' => $student->name,
-                'attendance' => [],
-            ];
+            $row = ['student_name' => $student->name, 'attendance' => []];
 
             foreach (Carbon::parse($startOfMonth)->daysUntil($endOfMonth) as $day) {
                 $date = $day->toDateString();
 
                 if (in_array($date, $holidayDates)) {
-                    $row['attendance'][$date] = 'H'; // 假期標記為 H
+                    $row['attendance'][$date] = 'H';
                 } else {
                     $status = $attendanceRecords[$student->id][$date] ?? '-';
                     $row['attendance'][$date] = $this->getStatusAbbreviation($status);
-
                     if ($status !== 'Present' && $status !== '-') {
-                        $details = $attendanceRecords[$student->id]['details'][$date] ?? null;
-                        $file = $attendanceRecords[$student->id]['files'][$date] ?? null; // 獲取文件記錄
+                        $details = $attendanceRecords[$student->id]['details'][$date] ?? 'N/A';
+                        $file = $attendanceRecords[$student->id]['files'][$date] ?? null;
                         $nonPresentDetails[] = [
                             'date' => $date,
                             'student_name' => $student->name,
                             'status' => $this->getStatusAbbreviation($status),
                             'reason' => $details,
-                            'file' => $file, // 添加文件記錄
+                            'file' => $file,
                         ];
                     }
                 }
@@ -173,10 +169,9 @@ class AttendanceStatisticsAdminService extends Service
             $attendanceTable[] = $row;
         }
 
-        $nonPresentDetails = collect($nonPresentDetails)->sortBy('date')->values()->toArray(); // 按日期排序
         return [
             'table' => $attendanceTable,
-            'nonPresentDetails' => $nonPresentDetails,
+            'nonPresentDetails' => collect($nonPresentDetails)->sortBy('date')->values()->toArray(),
         ];
     }
 
