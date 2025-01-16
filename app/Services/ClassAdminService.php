@@ -33,6 +33,8 @@ class ClassAdminService extends Service
                 'name' => 'required|string|max:255',
                 'course_id' => 'required|exists:courses,id',
                 'user_id' => 'required|exists:users,id',
+                'date_from' => 'required|date',
+                'date_to' => 'required|date',
             ]);
 
             if ($validator->fails()) {
@@ -45,6 +47,10 @@ class ClassAdminService extends Service
 
             if (!Auth::check() || !Auth::user()->hasRole(UserType::SuperAdmin()->key)) {
                 throw new Exception('You do not have permission to perform this action.');
+            }
+
+            if (strtotime($data['date_to']) < strtotime($data['date_from'])) {
+                throw new Exception('The date to must be greater than or equal to the date from.');
             }
 
             $data['is_disabled'] = true;

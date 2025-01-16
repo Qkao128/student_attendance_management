@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->foreignId('course_id')->constrained('courses');
             $table->boolean('is_disabled');
+            $table->date('date_from');
+            $table->date('date_to');
             $table->timestamps();
             $table->softDeletes();
         });

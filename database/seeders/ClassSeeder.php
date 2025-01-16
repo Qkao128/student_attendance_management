@@ -17,6 +17,8 @@ class ClassSeeder extends Seeder
             'name' => 'Class A',
             'course_id' =>  1,
             'is_disabled' => false,
+            'date_from' => '2022-10-01',
+            'date_to' => '2025-1-31',
         ]);
 
 
@@ -24,13 +26,16 @@ class ClassSeeder extends Seeder
             'name' => 'Class B',
             'course_id' => 1,
             'is_disabled' => false,
+            'date_from' => '2022-10-01',
+            'date_to' => '2025-1-31',
         ]);
-
 
         $class = Classes::create([
             'name' => 'Class C',
             'course_id' => 2,
             'is_disabled' => false,
+            'date_from' => '2022-10-01',
+            'date_to' => '2025-1-31',
         ]);
     }
 }

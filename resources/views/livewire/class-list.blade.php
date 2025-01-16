@@ -159,11 +159,23 @@
                             <div class="col-12 col-sm">
                                 <div class="row gap-2 d-md-block">
                                     <div class="col-12 text-muted">
-                                        Created At :
+                                        Started At :
                                     </div>
 
                                     <div class="col-12 mt-1">
-                                        {{ Carbon::parse($class->created_at)->format('d-m-Y h:i A') }}
+                                        {{ Carbon::parse($class->date_from)->format('d-m-Y') }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-sm">
+                                <div class="row gap-2 d-md-block">
+                                    <div class="col-12 text-muted">
+                                        End At :
+                                    </div>
+
+                                    <div class="col-12 mt-1">
+                                        {{ Carbon::parse($class->date_to)->format('d-m-Y') }}
                                     </div>
                                 </div>
                             </div>

@@ -25,6 +25,8 @@ class ClassRepository extends Repository
         $model->name = $data['name'];
         $model->course_id = $data['course_id'];
         $model->is_disabled = $data['is_disabled'];
+        $model->date_from = $data['date_from'];
+        $model->date_to = $data['date_to'];
 
         $model->save();
         return $model->fresh();
@@ -36,6 +38,8 @@ class ClassRepository extends Repository
         $model->name = $data['name'] ?? $model->name;
         $model->course_id = $data['course_id'] ?? $model->course_id;
         $model->is_disabled = $data['is_disabled'] ?? $model->is_disabled;
+        $model->date_from = $data['date_from'] ?? $model->date_from;
+        $model->date_to = $data['date_to'] ?? $model->date_to;
 
         $model->update();
         return $model;
@@ -82,6 +86,8 @@ class ClassRepository extends Repository
                 'classes.id',
                 'classes.name',
                 'classes.is_disabled',
+                'classes.date_from',
+                'classes.date_to',
                 'classes.created_at',
                 'class_teachers.user_id',
                 'courses.name as course_name',

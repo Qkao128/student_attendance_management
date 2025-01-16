@@ -1,5 +1,6 @@
 @php
     use App\Enums\UserType;
+    use Carbon\Carbon;
 @endphp
 
 @extends('layout/layout')
@@ -77,6 +78,24 @@
                                 <label class="form-label" for="user_id">Teacher<span class="text-danger">*</span></label>
                                 <select class="form-select" id="user_id" name="user_id" required style="width:100%;">
                                 </select>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div class="form-group mb-3">
+                                    <label class="form-label" for="date_from">Date from<span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="date_from" name="date_from"
+                                        value="{{ Carbon::now()->toDateString() }}" required>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label" for="date_to">Date to<span
+                                            class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="date_to" name="date_to"
+                                        value="{{ Carbon::now()->toDateString() }}" required>
+                                </div>
                             </div>
 
                             <div class="form-group col-12">
@@ -206,6 +225,19 @@
             isScrolling = setTimeout(function() {
                 $('#course_id, #class_id, #student_id').select2('open'); // 滾動結束後打開
             }, 200);
+        });
+
+        $('#date_to').attr('min', $('#date_from').val());
+
+        $('#date_from').on('change', function() {
+            let dateFormValue = $(this).val();
+            let dateToValue = $('#date_to').val();
+
+            $('#date_to').attr('min', dateFormValue);
+
+            if (dateToValue < dateFormValue) {
+                $('#date_to').val(dateFormValue);
+            }
         });
     </script>
 
