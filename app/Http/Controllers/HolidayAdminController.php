@@ -29,6 +29,7 @@ class HolidayAdminController extends Controller
             'title',
             'background_color',
             'details',
+            'is_holidays'
         ]);
         $result = $this->_holidayAdminService->createHolidays($data);
 
@@ -49,6 +50,7 @@ class HolidayAdminController extends Controller
             'title',
             'background_color',
             'details',
+            'is_holidays'
         ]);
 
         $result = $this->_holidayAdminService->update($data, $id);

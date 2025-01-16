@@ -240,7 +240,7 @@ class AttendanceAdminService extends Service
     {
         try {
             $formattedDate = Carbon::parse($date)->format('Y-m-d'); // 格式化日期
-            $isHoliday = $this->_holidayRepository->isDateHoliday($formattedDate);
+            $isHoliday = $this->_holidayRepository->getHolidaysAndActivities($formattedDate);
 
             return [
                 'is_holiday' => $isHoliday,

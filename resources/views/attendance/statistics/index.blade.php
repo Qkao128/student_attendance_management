@@ -68,11 +68,7 @@
         </div>
     </div>
 
-    @if ($isHoliday)
-        <div class="alert alert-info mt-4">
-            Today is a holiday !
-        </div>
-    @endif
+    <div id="holidayStatusContainer"></div>
 
     <div class="row g-3 mt-3">
         <div class="col-12 col-md-4">
@@ -264,372 +260,411 @@
         </div>
 
 
+    </div>
+@endsection
 
-    @endsection
+@section('script')
+    <script>
+        $(document).ready(function() {
+            function updateDashboard() {
+                $.ajax({
+                    url: "{{ route('dashboard.data') }}",
+                    method: "POST",
+                    data: {
+                        date: "{{ now()->format('Y-m-d') }}",
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(data) {
+                        // 更新數據顯示
+                        $("#classAttendanceSummary").text(
+                            `${data.dashboards.class_summary.attended} / ${data.dashboards.class_summary.total}`
+                        );
+                        $("#studentAttendanceSummary").text(
+                            `${data.dashboards.student_summary.attended} / ${data.dashboards.student_summary.total}`
+                        );
+                        $("#unavailableMonMonthlyStudents").text(data.dashboards.student_summary
+                            .unavailable);
 
-    @section('script')
-        <script>
-            $(document).ready(function() {
-                function updateDashboard() {
-                    $.ajax({
-                        url: "{{ route('dashboard.data') }}",
-                        method: "POST",
-                        data: {
-                            date: "{{ now()->format('Y-m-d') }}",
-                            _token: "{{ csrf_token() }}"
-                        },
-                        success: function(data) {
-                            // 更新數據顯示
-                            $("#classAttendanceSummary").text(
-                                `${data.dashboards.class_summary.attended} / ${data.dashboards.class_summary.total}`
-                            );
-                            $("#studentAttendanceSummary").text(
-                                `${data.dashboards.student_summary.attended} / ${data.dashboards.student_summary.total}`
-                            );
-                            $("#unavailableMonMonthlyStudents").text(data.dashboards.student_summary
-                                .unavailable);
+                        Livewire.dispatch('updateDate', {
+                            date: "{{ now()->format('Y-m-d') }}"
+                        });
+                    },
+                    error: function() {
+                        alert('Failed to fetch data.');
+                    }
+                });
+            }
 
-                            Livewire.dispatch('updateDate', {
-                                date: "{{ now()->format('Y-m-d') }}"
-                            });
-                        },
-                        error: function() {
-                            alert('Failed to fetch data.');
-                        }
-                    });
+            let attendancePieChart;
+
+            // 動態設置圖例位置
+            function getLegendPosition() {
+                return window.innerWidth <= 1200 ? 'top' : 'left';
+            }
+
+            // 渲染圖表
+            function renderPieChart(data) {
+                const canvas = document.getElementById('attendancePieChart');
+                const noDataContainer = document.querySelector('.no-data-found-today-container');
+
+                const totalStudents = data.total_students || 0;
+                const statusCounts = data.total_status_counts || {};
+
+                const notSubmittedCount = totalStudents - Object.values(statusCounts).reduce((a, b) => a + b, 0);
+
+                // 判斷是否所有數據都為 0
+                const hasData = Object.values(statusCounts).some(value => value > 0) || notSubmittedCount > 0;
+
+                if (!hasData) {
+                    // 如果沒有數據，顯示 "No data found" 圖片，隱藏 canvas
+                    noDataContainer.style.display = 'block'; // 顯示圖片
+                    canvas.style.display = 'none'; // 隱藏 canvas
+                    return; // 終止圖表渲染
+                } else {
+                    // 如果有數據，顯示 canvas，隱藏 "No data found" 圖片
+                    noDataContainer.style.display = 'none'; // 隱藏圖片
+                    canvas.style.display = 'block'; // 顯示 canvas
                 }
 
-                let attendancePieChart;
+                const ctx = canvas.getContext('2d');
 
-                // 動態設置圖例位置
-                function getLegendPosition() {
-                    return window.innerWidth <= 1200 ? 'top' : 'left';
+                if (attendancePieChart) {
+                    attendancePieChart.destroy(); // 銷毀舊圖表，重新渲染
                 }
 
-                // 渲染圖表
-                function renderPieChart(data) {
-                    const canvas = document.getElementById('attendancePieChart');
-                    const noDataContainer = document.querySelector('.no-data-found-today-container');
-
-                    const totalStudents = data.total_students || 0;
-                    const statusCounts = data.total_status_counts || {};
-
-                    const notSubmittedCount = totalStudents - Object.values(statusCounts).reduce((a, b) => a + b, 0);
-
-                    // 判斷是否所有數據都為 0
-                    const hasData = Object.values(statusCounts).some(value => value > 0) || notSubmittedCount > 0;
-
-                    if (!hasData) {
-                        // 如果沒有數據，顯示 "No data found" 圖片，隱藏 canvas
-                        noDataContainer.style.display = 'block'; // 顯示圖片
-                        canvas.style.display = 'none'; // 隱藏 canvas
-                        return; // 終止圖表渲染
-                    } else {
-                        // 如果有數據，顯示 canvas，隱藏 "No data found" 圖片
-                        noDataContainer.style.display = 'none'; // 隱藏圖片
-                        canvas.style.display = 'block'; // 顯示 canvas
-                    }
-
-                    const ctx = canvas.getContext('2d');
-
-                    if (attendancePieChart) {
-                        attendancePieChart.destroy(); // 銷毀舊圖表，重新渲染
-                    }
-
-                    attendancePieChart = new Chart(ctx, {
-                        type: 'pie',
-                        data: {
-                            labels: [
-                                'Present',
-                                'Absence',
-                                'Medical',
-                                'Late',
-                                'Leave Approval',
-                                'Not Submitted'
+                attendancePieChart = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: [
+                            'Present',
+                            'Absence',
+                            'Medical',
+                            'Late',
+                            'Leave Approval',
+                            'Not Submitted'
+                        ],
+                        datasets: [{
+                            data: [
+                                statusCounts.Present || 0,
+                                statusCounts.Absence || 0,
+                                statusCounts.Medical || 0,
+                                statusCounts.Late || 0,
+                                statusCounts.LeaveApproval || 0,
+                                notSubmittedCount || 0
                             ],
-                            datasets: [{
-                                data: [
-                                    statusCounts.Present || 0,
-                                    statusCounts.Absence || 0,
-                                    statusCounts.Medical || 0,
-                                    statusCounts.Late || 0,
-                                    statusCounts.LeaveApproval || 0,
-                                    notSubmittedCount || 0
-                                ],
-                                backgroundColor: [
-                                    '#32CD32', // Present
-                                    '#EE0000', // Absent
-                                    '#2222FF', // Medical
-                                    '#007777', // Late
-                                    '#000000', // Leave Approval
-                                    'rgba(211, 211, 211, 0.5)' // Not Submitted
-                                ],
-                                borderColor: [
-                                    '#32CD32',
-                                    '#EE0000',
-                                    '#2222FF',
-                                    '#007777',
-                                    '#000000',
-                                    'rgba(211, 211, 211, 0.5)'
-                                ],
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: getLegendPosition(),
-                                },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(tooltipItem) {
-                                            const value = tooltipItem.raw;
-                                            return `${tooltipItem.label}: ${value}`;
-                                        }
+                            backgroundColor: [
+                                '#32CD32', // Present
+                                '#EE0000', // Absent
+                                '#2222FF', // Medical
+                                '#007777', // Late
+                                '#000000', // Leave Approval
+                                'rgba(211, 211, 211, 0.5)' // Not Submitted
+                            ],
+                            borderColor: [
+                                '#32CD32',
+                                '#EE0000',
+                                '#2222FF',
+                                '#007777',
+                                '#000000',
+                                'rgba(211, 211, 211, 0.5)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: getLegendPosition(),
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        const value = tooltipItem.raw;
+                                        return `${tooltipItem.label}: ${value}`;
                                     }
                                 }
                             }
                         }
-                    });
+                    }
+                });
+            }
+
+            // 監聽視窗大小變化，重新渲染圖表
+            window.addEventListener('resize', function() {
+                if (attendancePieChart) {
+                    attendancePieChart.options.plugins.legend.position = getLegendPosition();
+                    attendancePieChart.update();
                 }
 
-                // 監聽視窗大小變化，重新渲染圖表
-                window.addEventListener('resize', function() {
-                    if (attendancePieChart) {
-                        attendancePieChart.options.plugins.legend.position = getLegendPosition();
-                        attendancePieChart.update();
-                    }
-
-                    if (attendanceDonutChart) {
-                        attendanceDonutChart.options.plugins.legend.position = getLegendPosition();
-                        attendanceDonutChart.update();
-                    }
-                });
-
-                // 初始化圖表數據
-                function updatePieChart() {
-                    $.ajax({
-                        url: "{{ route('dashboard.pieChartData') }}",
-                        method: "POST",
-                        data: {
-                            date: "{{ now()->format('Y-m-d') }}",
-                            _token: "{{ csrf_token() }}"
-                        },
-                        success: function(response) {
-                            renderPieChart(response.status_statistics);
-                        },
-                        error: function() {
-                            alert('Failed to fetch chart data.');
-                        }
-                    });
+                if (attendanceDonutChart) {
+                    attendanceDonutChart.options.plugins.legend.position = getLegendPosition();
+                    attendanceDonutChart.update();
                 }
-
-                updateDashboard();
-                updatePieChart();
-
-
-                // 本月
-                $("#course_id").select2({
-                    theme: 'bootstrap-5',
-                    allowClear: true,
-                    placeholder: 'Select course',
-                    ajax: {
-                        url: "{{ route('course.select_search') }}", // 课程搜索的接口
-                        dataType: 'json',
-                        delay: 250,
-                        data: function(params) {
-                            return {
-                                search_term: params.term, // 搜索词
-                                page: params.page,
-                                _token: "{{ csrf_token() }}" // CSRF Token
-                            };
-                        },
-                        processResults: function(data) {
-                            return {
-                                results: $.map(data.results, function(item) {
-                                    return {
-                                        text: item.name,
-                                        id: item.id
-                                    };
-                                }),
-                                pagination: {
-                                    more: data.pagination.more
-                                }
-                            };
-                        }
-                    }
-                });
-
-                $("#course_id").on('change', function() {
-                    const courseId = $(this).val();
-                    Livewire.dispatch('updateCourse', {
-                        courseId
-                    });
-                });
-
-                // 渲染 Donut Chart
-                let attendanceDonutChart;
-
-                // 渲染 Donut Chart
-                function renderDonutChart(data) {
-                    const canvasMonthly = document.getElementById('attendanceDonutChart');
-                    const noDataMonthlyContainer = document.querySelector('#no-data-container');
-
-                    const totalStudents = data.total_students || 0;
-                    const statusCounts = data.total_status_counts || {};
-
-                    const hasData = Object.values(statusCounts).some(value => value > 0);
-
-                    if (!hasData) {
-                        noDataMonthlyContainer.style.display = 'block';
-                        canvasMonthly.style.display = 'none';
-                        return;
-                    } else {
-                        noDataMonthlyContainer.style.display = 'none';
-                        canvasMonthly.style.display = 'block';
-                    }
-
-                    const ctx = canvasMonthly.getContext('2d');
-
-                    if (attendanceDonutChart) {
-                        attendanceDonutChart.destroy();
-                    }
-
-                    attendanceDonutChart = new Chart(ctx, {
-                        type: 'doughnut',
-                        data: {
-                            labels: ['Present', 'Absence', 'Late', 'Medical', 'Leave Approval'],
-                            datasets: [{
-                                data: [
-                                    statusCounts.Present || 0,
-                                    statusCounts.Absence || 0,
-                                    statusCounts.Late || 0,
-                                    statusCounts.Medical || 0,
-                                    statusCounts.LeaveApproval || 0
-                                ],
-                                backgroundColor: ['#32CD32', '#EE0000', '#007777', '#2222FF',
-                                    '#000000'
-                                ],
-                                borderColor: ['#32CD32', '#EE0000', '#007777', '#2222FF', '#000000'],
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {
-                                legend: {
-                                    position: getLegendPosition(),
-                                },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(tooltipItem) {
-                                            const value = tooltipItem.raw;
-                                            return `${tooltipItem.label}: ${value}`;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    });
-                }
-
-                // 更新 Donut Chart 數據
-                function updateDonutChart(month, courseId) {
-                    $.ajax({
-                        url: "{{ route('attendance_statistics.pieMonthlyChartData') }}",
-                        method: "POST",
-                        data: {
-                            month: month,
-                            course_id: courseId || null,
-                            _token: "{{ csrf_token() }}"
-                        },
-                        success: function(response) {
-                            const data = response.data;
-
-                            // 更新 Donut Chart
-                            renderDonutChart(data.status_statistics);
-                            // 更新统计数据
-                            $("#presentQuantity").text(data
-                                .present_quantity); // 包括 Present, Late, LeaveApproval
-                            $("#unavailableMonthlyStudents").text(data.unavailable_students);
-                            $("#totalClasses").text(data.total_classes);
-                        },
-                        error: function() {
-                            alert('Failed to fetch chart data.');
-                        }
-                    });
-                }
-
-
-                // 月份選擇器切換事件
-                $("#filterMonth").on("change", function() {
-                    const month = $(this).val();
-                    const courseId = $("#course_id").val();
-
-                    // 更新 Donut Chart
-                    updateDonutChart(month, courseId);
-
-                    // 發送到 Livewire
-                    Livewire.dispatch('updateMonth', {
-                        month,
-                    });
-                });
-
-                $("#prevMonth").on("click", function() {
-                    const currentDate = new Date($("#filterMonth").val());
-                    currentDate.setMonth(currentDate.getMonth() - 1);
-                    const formattedMonth = currentDate.toISOString().split("T")[0].slice(0, 7);
-                    $("#filterMonth").val(formattedMonth);
-                    const courseId = $("#course_id").val();
-
-                    // 更新 Donut Chart
-                    updateDonutChart(formattedMonth, courseId);
-
-                    // 發送到 Livewire
-                    Livewire.dispatch('updateMonth', {
-                        month: formattedMonth,
-                    });
-                });
-
-                $("#nextMonth").on("click", function() {
-                    const currentDate = new Date($("#filterMonth").val());
-                    currentDate.setMonth(currentDate.getMonth() + 1);
-                    const formattedMonth = currentDate.toISOString().split("T")[0].slice(0, 7);
-                    $("#filterMonth").val(formattedMonth);
-                    const courseId = $("#course_id").val();
-
-                    // 更新 Donut Chart
-                    updateDonutChart(formattedMonth, courseId);
-
-                    // 發送到 Livewire
-                    Livewire.dispatch('updateMonth', {
-                        month: formattedMonth,
-                    });
-                });
-
-                $("#course_id").on("change", function() {
-                    const month = $("#filterMonth").val();
-                    const courseId = $(this).val();
-                    updateDonutChart(month, courseId);
-                });
-
-                const currentMonth = new Date().toISOString().split("T")[0].slice(0, 7);
-                $("#filterMonth").val(currentMonth);
-
-                // 初始化時觸發更新 Donut Chart
-                updateDonutChart(currentMonth, null);
-
-                // 初始化時發送到 Livewire
-                Livewire.dispatch('updateMonth', {
-                    month: currentMonth,
-                });
-
-
             });
-        </script>
 
-        @stack('scripts')
-    @endsection
+            // 初始化圖表數據
+            function updatePieChart() {
+                $.ajax({
+                    url: "{{ route('dashboard.pieChartData') }}",
+                    method: "POST",
+                    data: {
+                        date: "{{ now()->format('Y-m-d') }}",
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        renderPieChart(response.status_statistics);
+                    },
+                    error: function() {
+                        alert('Failed to fetch chart data.');
+                    }
+                });
+            }
+
+            updateDashboard();
+            updatePieChart();
+
+
+            // 本月
+            $("#course_id").select2({
+                theme: 'bootstrap-5',
+                allowClear: true,
+                placeholder: 'Select course',
+                ajax: {
+                    url: "{{ route('course.select_search') }}", // 课程搜索的接口
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search_term: params.term, // 搜索词
+                            page: params.page,
+                            _token: "{{ csrf_token() }}" // CSRF Token
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data.results, function(item) {
+                                return {
+                                    text: item.name,
+                                    id: item.id
+                                };
+                            }),
+                            pagination: {
+                                more: data.pagination.more
+                            }
+                        };
+                    }
+                }
+            });
+
+            $("#course_id").on('change', function() {
+                const courseId = $(this).val();
+                Livewire.dispatch('updateCourse', {
+                    courseId
+                });
+            });
+
+            // 渲染 Donut Chart
+            let attendanceDonutChart;
+
+            // 渲染 Donut Chart
+            function renderDonutChart(data) {
+                const canvasMonthly = document.getElementById('attendanceDonutChart');
+                const noDataMonthlyContainer = document.querySelector('#no-data-container');
+
+                const totalStudents = data.total_students || 0;
+                const statusCounts = data.total_status_counts || {};
+
+                const hasData = Object.values(statusCounts).some(value => value > 0);
+
+                if (!hasData) {
+                    noDataMonthlyContainer.style.display = 'block';
+                    canvasMonthly.style.display = 'none';
+                    return;
+                } else {
+                    noDataMonthlyContainer.style.display = 'none';
+                    canvasMonthly.style.display = 'block';
+                }
+
+                const ctx = canvasMonthly.getContext('2d');
+
+                if (attendanceDonutChart) {
+                    attendanceDonutChart.destroy();
+                }
+
+                attendanceDonutChart = new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Present', 'Absence', 'Late', 'Medical', 'Leave Approval'],
+                        datasets: [{
+                            data: [
+                                statusCounts.Present || 0,
+                                statusCounts.Absence || 0,
+                                statusCounts.Late || 0,
+                                statusCounts.Medical || 0,
+                                statusCounts.LeaveApproval || 0
+                            ],
+                            backgroundColor: ['#32CD32', '#EE0000', '#007777', '#2222FF',
+                                '#000000'
+                            ],
+                            borderColor: ['#32CD32', '#EE0000', '#007777', '#2222FF', '#000000'],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: getLegendPosition(),
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        const value = tooltipItem.raw;
+                                        return `${tooltipItem.label}: ${value}`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 更新 Donut Chart 數據
+            function updateDonutChart(month, courseId) {
+                $.ajax({
+                    url: "{{ route('attendance_statistics.pieMonthlyChartData') }}",
+                    method: "POST",
+                    data: {
+                        month: month,
+                        course_id: courseId || null,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        const data = response.data;
+
+                        // 更新 Donut Chart
+                        renderDonutChart(data.status_statistics);
+                        // 更新统计数据
+                        $("#presentQuantity").text(data
+                            .present_quantity); // 包括 Present, Late, LeaveApproval
+                        $("#unavailableMonthlyStudents").text(data.unavailable_students);
+                        $("#totalClasses").text(data.total_classes);
+                    },
+                    error: function() {
+                        alert('Failed to fetch chart data.');
+                    }
+                });
+            }
+
+
+            // 月份選擇器切換事件
+            $("#filterMonth").on("change", function() {
+                const month = $(this).val();
+                const courseId = $("#course_id").val();
+
+                // 更新 Donut Chart
+                updateDonutChart(month, courseId);
+
+                // 發送到 Livewire
+                Livewire.dispatch('updateMonth', {
+                    month,
+                });
+            });
+
+            $("#prevMonth").on("click", function() {
+                const currentDate = new Date($("#filterMonth").val());
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                const formattedMonth = currentDate.toISOString().split("T")[0].slice(0, 7);
+                $("#filterMonth").val(formattedMonth);
+                const courseId = $("#course_id").val();
+
+                // 更新 Donut Chart
+                updateDonutChart(formattedMonth, courseId);
+
+                // 發送到 Livewire
+                Livewire.dispatch('updateMonth', {
+                    month: formattedMonth,
+                });
+            });
+
+            $("#nextMonth").on("click", function() {
+                const currentDate = new Date($("#filterMonth").val());
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                const formattedMonth = currentDate.toISOString().split("T")[0].slice(0, 7);
+                $("#filterMonth").val(formattedMonth);
+                const courseId = $("#course_id").val();
+
+                // 更新 Donut Chart
+                updateDonutChart(formattedMonth, courseId);
+
+                // 發送到 Livewire
+                Livewire.dispatch('updateMonth', {
+                    month: formattedMonth,
+                });
+            });
+
+            $("#course_id").on("change", function() {
+                const month = $("#filterMonth").val();
+                const courseId = $(this).val();
+                updateDonutChart(month, courseId);
+            });
+
+            const currentMonth = new Date().toISOString().split("T")[0].slice(0, 7);
+            $("#filterMonth").val(currentMonth);
+
+            // 初始化時觸發更新 Donut Chart
+            updateDonutChart(currentMonth, null);
+
+            // 初始化時發送到 Livewire
+            Livewire.dispatch('updateMonth', {
+                month: currentMonth,
+            });
+
+            function fetchHolidayStatus(date) {
+                $.ajax({
+                    url: '{{ route('dashboard.isHoliday') }}',
+                    method: "POST",
+                    data: {
+                        date: date,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    success: function(response) {
+                        $('#holidayStatusContainer').empty();
+                        if (response.items.length > 0) {
+                            response.items.forEach(function(item) {
+                                const borderColor = item.background_color;
+                                const bgColor = hexToRgba(borderColor, 0.1); // 使用 10% 不透明度
+                                const alertType = item.is_holidays ? 'alert-success' :
+                                    'alert-info';
+                                const alertHtml = `
+                                    <div class="alert ${alertType} mt-4" style="border-color: ${borderColor}; background-color: ${bgColor};">
+                                        Today is <strong>${item.title}</strong> !
+                                    </div>
+                                `;
+                                $('#holidayStatusContainer').append(alertHtml);
+                            });
+                        }
+                    }
+                });
+            }
+
+            // 將十六進制顏色轉換為 RGBA
+            function hexToRgba(hex, opacity) {
+                const bigint = parseInt(hex.replace('#', ''), 16);
+                const r = (bigint >> 16) & 255;
+                const g = (bigint >> 8) & 255;
+                const b = bigint & 255;
+                return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+            }
+
+            const today = "{{ Carbon::now()->format('Y-m-d') }}";
+            fetchHolidayStatus(today);
+
+        });
+    </script>
+
+    @stack('scripts')
+@endsection

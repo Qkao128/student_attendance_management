@@ -24,7 +24,7 @@ class AttendanceList extends Component
         'user_id' => null,  // 用於篩選的用戶 ID
     ];
     public $userId;
-    public $isHoliday = false; // 新增屬性標記是否為假期
+    public $holidaysAndActivities = []; // 存儲假期和活動
     public $attendances = [];
     public $page = 0;
     public $limitPerPage = 50;
@@ -116,12 +116,32 @@ class AttendanceList extends Component
     {
         $date = Carbon::parse($this->filter['date'])->format('Y-m-d');
 
-        $this->isHoliday = DB::table('holidays')
+        $this->holidaysAndActivities = DB::table('holidays')
             ->where(function ($query) use ($date) {
                 $query->where('date_from', '<=', $date)
                     ->where('date_to', '>=', $date);
             })
-            ->exists();
+            ->select('title', 'background_color', 'is_holidays')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'title' => $item->title,
+                    'background_color' => $item->background_color,
+                    'rgba_color' => $this->hexToRgba($item->background_color),
+                    'is_holidays' => $item->is_holidays,
+                ];
+            })
+            ->toArray();
+    }
+
+    private function hexToRgba($hex, $opacity = 0.1)
+    {
+        $hex = str_replace('#', '', $hex);
+        $r = hexdec(substr($hex, 0, 2));
+        $g = hexdec(substr($hex, 2, 2));
+        $b = hexdec(substr($hex, 4, 2));
+
+        return "rgba($r, $g, $b, $opacity)";
     }
 
     // 加載數據的邏輯方法
@@ -211,6 +231,8 @@ class AttendanceList extends Component
             $class->attendance_summary = $attendanceSummary;
         }
 
+        $this->checkIfHoliday();
+
         if ($this->page == 0) {
             $this->attendances = $classes->toArray();
         } else {
@@ -264,7 +286,7 @@ class AttendanceList extends Component
     public function render()
     {
         return view('livewire.attendance-list', [
-            'isHoliday' => $this->isHoliday, // 傳遞假期狀態到前端
+            'holidaysAndActivities' => $this->holidaysAndActivities,
         ]);
     }
 }

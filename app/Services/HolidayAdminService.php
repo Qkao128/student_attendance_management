@@ -32,6 +32,7 @@ class HolidayAdminService extends Service
                 'title' => 'required|string|max:255',
                 'background_color' => 'required|string|size:7',
                 'details' => 'nullable|string|max:65535',
+                'is_holidays' => 'required|boolean',
             ]);
 
             if ($validator->fails()) {
@@ -90,6 +91,7 @@ class HolidayAdminService extends Service
                 'title' => 'required|string|max:255',
                 'background_color' => 'required|string|size:7',
                 'details' => 'nullable|string|max:65535',
+                'is_holidays' => 'required|boolean',
             ]);
 
             if ($validator->fails()) {

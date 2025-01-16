@@ -64,19 +64,17 @@ class DashboardAdminService extends Service
         }
     }
 
-    public function getIsDateHoliday($date)
+    public function getHolidaysAndActivitiesByDate($date)
     {
         try {
             $formattedDate = Carbon::parse($date)->format('Y-m-d'); // 格式化日期
-            $isHoliday = $this->_holidayRepository->isDateHoliday($formattedDate);
+            $holidaysAndActivities = $this->_holidayRepository->getHolidaysAndActivities($formattedDate);
 
-            return [
-                'is_holiday' => $isHoliday,
-            ];
+            return $holidaysAndActivities;  // 回傳所有活動與假期
         } catch (Exception $e) {
-            array_push($this->_errorMessage, "Fail to get holiay details.");
+            array_push($this->_errorMessage, "Failed to get holiday or activity details.");
 
-            return null;
+            return [];
         }
     }
 }

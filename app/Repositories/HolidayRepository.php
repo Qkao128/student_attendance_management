@@ -23,6 +23,7 @@ class HolidayRepository extends Repository
         $model->title = $data['title'];
         $model->background_color = $data['background_color'];
         $model->details = $data['details'];
+        $model->is_holidays = $data['is_holidays'];
 
         $model->save();
         return $model->fresh();
@@ -36,6 +37,7 @@ class HolidayRepository extends Repository
         $model->title = $data['title'] ?? $model->title;
         $model->background_color = $data['background_color'] ?? $model->background_color;
         $model->details = (array_key_exists('details', $data)) ? $data['details'] : $model->details;
+        $model->is_holidays = $data['is_holidays'] ?? $model->is_holidays;
 
         $model->update();
         return $model;
@@ -50,6 +52,7 @@ class HolidayRepository extends Repository
             'background_color as backgroundColor',
             'background_color as borderColor',
             'details',
+            'is_holidays as isHolidays'
         ])->get();
     }
 
@@ -61,12 +64,28 @@ class HolidayRepository extends Repository
             ->where(function ($query) use ($date) {
                 $query->where(function ($q) use ($date) {
                     $q->where('date_from', '<=', $date)
-                        ->where('date_to', '>=', $date);
+                        ->where('date_to', '>=', $date)
+                        ->where('is_holidays', true);
                 });
             })
             ->exists();
 
         return $holiday;
+    }
+
+    public function getHolidaysAndActivities($date)
+    {
+        $date = Carbon::parse($date)->format('Y-m-d');
+
+        $holidays = DB::table('holidays')
+            ->where(function ($query) use ($date) {
+                $query->where('date_from', '<=', $date)
+                    ->where('date_to', '>=', $date);
+            })
+            ->select('title', 'background_color', 'is_holidays')
+            ->get();
+
+        return $holidays;
     }
 
     public function getHolidaysInRange(Carbon $startOfMonth, Carbon $endOfMonth)
@@ -79,7 +98,7 @@ class HolidayRepository extends Repository
                         $q->where('date_from', '<=', $startOfMonth)
                             ->where('date_to', '>=', $endOfMonth);
                     });
-            })
+            })->where('is_holidays', true)
             ->get(['date_from', 'date_to'])
             ->toArray();
     }

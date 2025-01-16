@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('title');
             $table->string('background_color');
             $table->string('details')->nullable();
-            $table->boolean('is_holiday');
+            $table->boolean('is_holidays');
             $table->timestamps();
         });
     }

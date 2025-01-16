@@ -91,7 +91,7 @@
                                     </div>
                                 </div>
 
-                                <div class="col-12 col-md-6">
+                                <div class="col-12 col-md-6 mb-3">
                                     <label class="form-label" for="title">Title<span class="text-danger">*</span></label>
                                     <input type="text" class="form-control" id="title" name="title"
                                         value="{{ old('title') }}" placeholder="Enter title" required>
@@ -112,6 +112,17 @@
                                         </div>
                                     </div>
 
+                                </div>
+
+                                <div class="col-12 col-md-6">
+                                    <label class="form-label" for="is_holidays">Set as Holidays<span
+                                            class="text-danger">*</span></label>
+                                    <select class="form-control form-select" id="is_holidays" name="is_holidays" required>
+                                        <option value="1">Yes
+                                        </option>
+                                        <option value="0" selected>No
+                                        </option>
+                                    </select>
                                 </div>
 
 
@@ -150,15 +161,20 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" style="height: 550px;">
-                        <div class="row">
-                            <div class="col-12 col-sm-6">
+                        <div class="row p-2">
+                            <div class="col-12 col-sm-6 col-md-4">
                                 <label class="form-label">Started At :</label>
                                 <p class="text-muted" id="event-start"></p>
                             </div>
 
-                            <div class="col-12 col-sm-6">
+                            <div class="col-12 col-sm-6 col-md-4">
                                 <label class="form-label">Ended At :</label>
                                 <p class="text-muted" id="event-end"></p>
+                            </div>
+
+                            <div class="col-12 col-md-4">
+                                <label class="form-label mb-1">Type :</label>
+                                <p> <span class="badge bg-warning text-dark" id="event-type"></span></p>
                             </div>
 
                             <div class="col-12 mt-1">
@@ -248,11 +264,20 @@
                         const eventEnd = info.event.end.toLocaleDateString();
                         const eventDetails = info.event.extendedProps.details ||
                             'No additional details provided.';
+                        const isHolidays = info.event.extendedProps.isHolidays;
+
+                        console.log(isHolidays);
+
+
+                        const eventType = isHolidays ? 'Holiday' : 'Activity';
+
 
                         $('#event-title').text(`${eventTitle}`);
                         $('#event-start').text(`${eventStart}`);
                         $('#event-end').text(`${eventEnd}`);
                         $('#event-details').text(`${eventDetails}`);
+                        $('#event-type').text(`${eventType}`); // 新增 event-type 用來顯示是 Holiday 還是 Activity
+
 
                         $('#eventDetailsModal').modal('show');
                     },

@@ -20,7 +20,7 @@
                         <tr role="button" data-id="{{ $holiday->id }}" data-title="{{ $holiday->title }}"
                             data-date-from="{{ $holiday->date_from }}" data-date-to="{{ $holiday->date_to }}"
                             data-background-color="{{ $holiday->background_color }}" data-details="{{ $holiday->details }}"
-                            onclick="selectHolidayFromData(this)">
+                            data-is-holidays="{{ $holiday->is_holidays }}" onclick="selectHolidayFromData(this)">
                         @else
                         <tr>
                         @endhasrole
@@ -34,9 +34,20 @@
                             <span class="ms-2">{{ $holiday->title }}</span>
                         </td>
                         <td class="p-2 px-sm-3 text-left text-sm-center" style="min-width: 210px;width: 100%;">
-                            <span
-                                class="{{ $holiday->date_from && Carbon::parse($holiday->date_from)->isToday() ? 'text-success' : '' }}">
-                                {{ $holiday->date_from && $holiday->date_to ? Carbon::parse($holiday->date_from)->format('Y/m/d') . ' - ' . Carbon::parse($holiday->date_to)->format('Y/m/d') : '-' }}
+                            @php
+                                $isTodayInHolidayRange =
+                                    Carbon::parse($holiday->date_from)->isToday() ||
+                                    Carbon::parse($holiday->date_to)->isToday() ||
+                                    Carbon::today()->between(
+                                        Carbon::parse($holiday->date_from),
+                                        Carbon::parse($holiday->date_to),
+                                    );
+                            @endphp
+
+                            <span class="{{ $isTodayInHolidayRange ? 'text-success' : '' }}">
+                                {{ $holiday->date_from && $holiday->date_to
+                                    ? Carbon::parse($holiday->date_from)->format('Y/m/d') . ' - ' . Carbon::parse($holiday->date_to)->format('Y/m/d')
+                                    : '-' }}
                             </span>
                         </td>
                     </tr>
@@ -100,6 +111,17 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="col-12 col-md-6">
+                                <label class="form-label" for="is_holidays">Set as Holidays<span
+                                        class="text-danger">*</span></label>
+                                <select class="form-control form-select mb-3" id="modal-is-holidays" name="is_holidays"
+                                    required>
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+
                             <div class="col-12">
                                 <div class="form-group mb-3">
                                     <label class="form-label" for="modal-details">Details</label>
@@ -225,31 +247,35 @@
         });
 
         function selectHolidayFromData(element) {
-            // 從 data-* 屬性中獲取數據
+            // 从 data-* 属性中获取数据
             const id = $(element).data('id');
             const title = $(element).data('title');
             const dateFrom = $(element).data('date-from');
             const dateTo = $(element).data('date-to');
             const backgroundColor = $(element).data('background-color');
             const details = $(element).data('details');
+            const isHolidays = $(element).data('is-holidays');
 
-            // 更新模態框字段
-            $('#modal-holiday-id').val(id); // 設置隱藏字段 id 的值
+            // 更新模态框字段
+            $('#modal-holiday-id').val(id); // 设置隐藏字段 id 的值
             $('#modal-title').val(title);
             $('#modal-date-from').val(dateFrom);
             $('#modal-date-to').val(dateTo);
             $('#modal-background-color').val(backgroundColor);
             $('#modal-details').val(details);
 
-            // 動態設置表單的 action，直接在 URL 中包含 holiday ID
+            // 动态设置 select 的选中值
+            $('#modal-is-holidays').val(isHolidays ? '1' : '0'); // 设置 select 的选中值，根据布尔值决定是 '1' 还是 '0'
+
+            // 动态设置表单的 action，直接在 URL 中包含 holiday ID
             let formAction = `{{ route('holiday.update', ['id' => ':id']) }}`.replace(':id', id);
             $('#holiday-form').attr('action', formAction);
 
-            // 設置刪除表單的 action，包含 holiday ID
+            // 设置删除表单的 action，包含 holiday ID
             let deleteFormAction = `{{ route('holiday.destroy', ['id' => ':id']) }}`.replace(':id', id);
             $('#delete-form').attr('action', deleteFormAction);
 
-            // 打開模態框
+            // 打开模态框
             $('#holiday-list-modal').modal('show');
         }
     </script>

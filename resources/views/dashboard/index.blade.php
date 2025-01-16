@@ -1,3 +1,7 @@
+@php
+    use Carbon\Carbon;
+@endphp
+
 @extends('layout/layout')
 
 @section('page_title', 'Dashboard')
@@ -54,8 +58,9 @@
             <span class="input-group-text" role="button" id="prevDate" style="background-color: #F4F6FA;">
                 <i class="fa-solid fa-chevron-left"></i>
             </span>
-            <input class="form-control text-center" type="date" id="filterDate" value="{{ now()->format('Y-m-d') }}"
-                style="background-color: #F4F6FA;" onclick="this.showPicker()" />
+            <input class="form-control text-center" type="date" id="filterDate"
+                value="{{ Carbon::now()->format('Y-m-d') }}" style="background-color: #F4F6FA;"
+                onclick="this.showPicker()" />
             <span class="input-group-text" role="button" id="nextDate" style="background-color: #F4F6FA;">
                 <i class="fa-solid fa-chevron-right"></i>
             </span>
@@ -63,8 +68,7 @@
     </div>
 
 
-    <div class="alert alert-info mt-4" id="holidayStatus" style="display: none">
-    </div>
+    <div id="holidayStatusContainer"></div>
 
 
     <div class="row g-3 mt-3">
@@ -146,7 +150,7 @@
 
 
     <div class="mt-4">
-        @livewire('dashboard-list', ['date' => $filterDate ?? now()->format('Y-m-d')])
+        @livewire('dashboard-list', ['date' => $filterDate ?? Carbon::now()->format('Y-m-d')])
     </div>
 
 @endsection
@@ -306,23 +310,39 @@
 
             function fetchHolidayStatus(date) {
                 $.ajax({
-                    url: '{{ route('dashboard.isHoliday') }}', // 後端路由
+                    url: '{{ route('dashboard.isHoliday') }}',
                     method: "POST",
                     data: {
                         date: date,
-                        _token: "{{ csrf_token() }}" // Laravel 的 CSRF 保護
+                        _token: "{{ csrf_token() }}"
                     },
                     success: function(response) {
-                        if (response.isHoliday) {
-                            $('#holidayStatus')
-                                .text('Today is a holiday !')
-                                .show();
-                        } else {
-                            $('#holidayStatus')
-                                .hide();
+                        $('#holidayStatusContainer').empty();
+                        if (response.items.length > 0) {
+                            response.items.forEach(function(item) {
+                                const borderColor = item.background_color;
+                                const bgColor = hexToRgba(borderColor, 0.1); // 使用 10% 不透明度
+                                const alertType = item.is_holidays ? 'alert-success' :
+                                    'alert-info';
+                                const alertHtml = `
+                                    <div class="alert ${alertType} mt-4" style="border-color: ${borderColor}; background-color: ${bgColor};">
+                                        Today is <strong>${item.title}</strong> !
+                                    </div>
+                                `;
+                                $('#holidayStatusContainer').append(alertHtml);
+                            });
                         }
                     }
                 });
+            }
+
+            // 將十六進制顏色轉換為 RGBA
+            function hexToRgba(hex, opacity) {
+                const bigint = parseInt(hex.replace('#', ''), 16);
+                const r = (bigint >> 16) & 255;
+                const g = (bigint >> 8) & 255;
+                const b = bigint & 255;
+                return `rgba(${r}, ${g}, ${b}, ${opacity})`;
             }
 
             $("#filterDate").on("change", function() {
@@ -366,7 +386,7 @@
                 });
             });
 
-            const today = new Date().toISOString().split('T')[0];
+            const today = "{{ Carbon::now()->format('Y-m-d') }}";
             $("#filterDate").val(today);
 
             updateDashboard(today);

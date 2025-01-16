@@ -75,10 +75,10 @@ class DashboardAdminController extends Controller
             return response()->json(['error' => 'Invalid date provided'], 400);
         }
 
-        $dashboard = $this->_dashboardAdminService->getIsDateHoliday($date);
+        $dashboard = $this->_dashboardAdminService->getHolidaysAndActivitiesByDate($date); // 修改服務方法名稱
 
         return response()->json([
-            'isHoliday' => $dashboard['is_holiday'] ?? false,
+            'items' => $dashboard,  // 回傳陣列資料
         ]);
     }
 }

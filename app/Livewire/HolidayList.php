@@ -49,7 +49,7 @@ class HolidayList extends Component
     public function render()
     {
         $newData = DB::table('holidays')
-            ->select('id', 'date_from', 'date_to', 'title', 'background_color', 'details')
+            ->select('id', 'date_from', 'date_to', 'title', 'background_color', 'details', 'is_holidays')
             ->whereYear('date_from', $this->year)
             ->whereMonth('date_from', $this->month)
             ->orderBy('date_from', 'ASC');

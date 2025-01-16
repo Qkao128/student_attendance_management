@@ -6,11 +6,16 @@
 
 <div id="attendance-list">
 
-    @if ($isHoliday)
-        <div class="alert alert-info mt-3 mb-1">
-            Today is a holiday !
-        </div>
-    @endif
+    <div>
+        @if (count($holidaysAndActivities) > 0)
+            @foreach ($holidaysAndActivities as $item)
+                <div class="alert mt-3 mb-1"
+                    style="border-color: {{ $item['background_color'] }}; background-color: {{ $item['rgba_color'] }};">
+                    Today is <strong>{{ $item['title'] }}</strong> !
+                </div>
+            @endforeach
+        @endif
+    </div>
 
     <div class="row align-items-center g-3 mt-1">
         <div class="col-12 {{ Auth::user()->hasRole(UserType::Monitor()->key) ? 'col-sm-12' : 'col-sm-5' }}">

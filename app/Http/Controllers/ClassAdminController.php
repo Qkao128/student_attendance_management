@@ -35,7 +35,9 @@ class ClassAdminController extends Controller
         $data = $request->only([
             'name',
             'course_id',
-            'user_id'
+            'user_id',
+            'date_from',
+            'date_to'
         ]);
 
         $result = $this->_classAdminService->createClass($data);
