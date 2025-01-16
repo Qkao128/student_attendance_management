@@ -236,6 +236,7 @@ class AttendanceAdminService extends Service
             return null;
         }
     }
+
     public function getIsDateHoliday($date)
     {
         try {
@@ -251,6 +252,24 @@ class AttendanceAdminService extends Service
             return null;
         }
     }
+
+
+    public function getIsDateTrueHoliday($date)
+    {
+        try {
+            $formattedDate = Carbon::parse($date)->format('Y-m-d'); // 格式化日期
+            $isHoliday = $this->_holidayRepository->isDateHoliday($formattedDate);
+
+            return [
+                'is_holiday' => $isHoliday,
+            ];
+        } catch (Exception $e) {
+            array_push($this->_errorMessage, "Fail to get holiay details.");
+
+            return null;
+        }
+    }
+
 
 
     private function generateFileName()

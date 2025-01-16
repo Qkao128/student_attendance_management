@@ -82,10 +82,14 @@
     @endphp
     <div class="text-muted fs-5 mb-3 fst-italic text-decoration-underline">{{ $formattedDate }}</div>
 
-    @if ($isHoliday['is_holiday'])
-        <div class="alert alert-info mt-4">
-            Today is a holiday !
-        </div>
+
+    @if (!empty($holidaysAndActivities['is_holiday']))
+        @foreach ($holidaysAndActivities['is_holiday'] as $holidaysAndActivity)
+            <div class="alert mt-3 mb-1" style="border-color: {{ $holidaysAndActivity->background_color }};"
+                data-bg-color="{{ $holidaysAndActivity->background_color }}">
+                Today is <strong>{{ $holidaysAndActivity->title }}</strong> !
+            </div>
+        @endforeach
     @endif
 
     <div class="card border-0 card-shadow px-1">
@@ -251,7 +255,7 @@
         <h4 class="mb-0">Attendance Update :</h4>
     </div>
 
-    @livewire('attendance-student-list', ['classId' => $class->id, 'date' => $date, 'isHoliday' => $isHoliday['is_holiday']])
+    @livewire('attendance-student-list', ['classId' => $class->id, 'date' => $date, 'isHoliday' => $isHolidays]);
 
 
     @foreach (Status::asArray() as $statusKey => $statusValue)
@@ -340,8 +344,28 @@
                             '', 4000);
                     }
                 },
-            })
+            });
 
+
+            $('.alert').each(function() {
+                // 獲取 data-bg-color 屬性的值
+                var borderColor = $(this).data('bg-color');
+
+                // 將十六進制顏色轉換為 RGBA，使用 10% 不透明度
+                var bgColor = hexToRgba(borderColor, 0.1);
+
+                // 將計算出的 RGBA 顏色設置為背景色
+                $(this).css('background-color', bgColor);
+            });
+
+            // 將十六進制顏色轉換為 RGBA
+            function hexToRgba(hex, opacity) {
+                var bigint = parseInt(hex.replace('#', ''), 16);
+                var r = (bigint >> 16) & 255;
+                var g = (bigint >> 8) & 255;
+                var b = bigint & 255;
+                return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+            }
         });
     </script>
 
