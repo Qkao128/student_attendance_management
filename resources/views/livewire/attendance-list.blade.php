@@ -45,14 +45,13 @@
                         wire:keydown.debounce.250ms="filterClass($event.target.value)" wire:model="filter.class">
                 </div>
             </div>
+
+            <div class="col-2 col-sm-auto">
+                <button type="button" class="btn btn-link text-secondary" onclick="toggleFilter('#filter')">
+                    <i class="fa-solid fa-filter"></i>
+                </button>
+            </div>
         @endhasrole
-
-        <div class="col-2 col-sm-auto">
-            <button type="button" class="btn btn-link text-secondary" onclick="toggleFilter('#filter')">
-                <i class="fa-solid fa-filter"></i>
-            </button>
-        </div>
-
 
     </div>
 
@@ -155,7 +154,9 @@
                 My Classes
             </span>
         </h5>
-    @else
+    @endhasrole
+
+    @hasrole('Admin')
         <div id="filter" class="filter-popup-wraper d-none">
             <div class="filter-popup-content">
                 <form wire:submit.prevent="applyFilter" id='filter-form'>

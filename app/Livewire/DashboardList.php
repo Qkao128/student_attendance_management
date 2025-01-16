@@ -145,24 +145,6 @@ class DashboardList extends Component
             ->where('classes.is_disabled', false)
             ->whereDate('students.created_at', '<=', $date);
 
-        // 如果是 Monitor，僅計算該班級
-        if ($user->hasRole(UserType::Monitor()->key)) {
-            $student = Student::where('id', $user->student_id)->first();
-            if ($student) {
-                $query->where('classes.id', $student->class_id);
-            }
-        }
-
-        // 如果是 Admin，僅計算其負責的班級
-        if ($user->hasRole(UserType::Admin()->key)) {
-            $query->whereExists(function ($subQuery) use ($user) {
-                $subQuery->select(DB::raw(1))
-                    ->from('class_teachers')
-                    ->where('class_teachers.class_id', 'classes.id')
-                    ->where('class_teachers.user_id', $user->id);
-            });
-        }
-
         // 計算學生總數
         $studentCount = $query->count();
 
@@ -173,18 +155,6 @@ class DashboardList extends Component
             ->whereDate('created_at', $date)
             ->groupBy('status');
 
-        // 如果是 Monitor 或 Admin，限制考勤範圍
-        if ($user->hasRole(UserType::Monitor()->key)) {
-            $statusCounts->where('class_id', $student->class_id);
-        }
-        if ($user->hasRole(UserType::Admin()->key)) {
-            $statusCounts->whereExists(function ($subQuery) use ($user) {
-                $subQuery->select(DB::raw(1))
-                    ->from('class_teachers')
-                    ->where('class_teachers.class_id', 'attendances.class_id')
-                    ->where('class_teachers.user_id', $user->id);
-            });
-        }
 
         $statusCounts = $statusCounts->pluck('count', 'status')->toArray();
 
@@ -194,18 +164,6 @@ class DashboardList extends Component
             ->whereDate('created_at', $date)
             ->whereIn('status', ['Present', 'Late', 'LeaveApproval']);
 
-        if ($user->hasRole(UserType::Monitor()->key)) {
-            $arrivedCountQuery->where('class_id', $student->class_id);
-        }
-        if ($user->hasRole(UserType::Admin()->key)) {
-            $arrivedCountQuery->whereExists(function ($subQuery) use ($user) {
-                $subQuery->select(DB::raw(1))
-                    ->from('class_teachers')
-                    ->where('class_teachers.class_id', 'attendances.class_id')
-                    ->where('class_teachers.user_id', $user->id);
-            });
-        }
-
         $arrivedCount = $arrivedCountQuery->count();
 
         // 最新考勤時間
@@ -214,17 +172,6 @@ class DashboardList extends Component
             ->whereDate('created_at', $date)
             ->orderBy('updated_at', 'desc');
 
-        if ($user->hasRole(UserType::Monitor()->key)) {
-            $latestAttendanceTimeQuery->where('class_id', $student->class_id);
-        }
-        if ($user->hasRole(UserType::Admin()->key)) {
-            $latestAttendanceTimeQuery->whereExists(function ($subQuery) use ($user) {
-                $subQuery->select(DB::raw(1))
-                    ->from('class_teachers')
-                    ->where('class_teachers.class_id', 'attendances.class_id')
-                    ->where('class_teachers.user_id', $user->id);
-            });
-        }
 
         $latestAttendanceTime = $latestAttendanceTimeQuery->value('updated_at');
 
