@@ -80,7 +80,7 @@
                             </div>
                         @else
                             <div id="attendance-global-file-input-container" class="text-center">
-                                <span class="text-muted">no Attendance Proof has been uploaded.</span>
+                                <span class="text-muted">No attendance proof has been uploaded.</span>
                             </div>
                         @endif
 
