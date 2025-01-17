@@ -59,7 +59,7 @@ class AttendanceAdminController extends Controller
     public function show($id, $date)
     {
         $class = $this->_classAdminService->getById($id);
-        $holidaysAndActivities = $this->_attendanceAdminService->getIsDateHoliday($date);
+        $holidaysAndActivities = $this->_attendanceAdminService->getDateHoliday($date);
 
         $isHoliday = $this->_attendanceAdminService->getIsDateHoliday($date);
 

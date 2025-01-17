@@ -83,8 +83,8 @@
     <div class="text-muted fs-5 mb-3 fst-italic text-decoration-underline">{{ $formattedDate }}</div>
 
 
-    @if (!empty($holidaysAndActivities['is_holiday']))
-        @foreach ($holidaysAndActivities['is_holiday'] as $holidaysAndActivity)
+    @if (!empty($holidaysAndActivities))
+        @foreach ($holidaysAndActivities as $holidaysAndActivity)
             <div class="alert mt-3 mb-3" style="border-color: {{ $holidaysAndActivity->background_color }};"
                 data-bg-color="{{ $holidaysAndActivity->background_color }}">
                 Today is <strong>{{ $holidaysAndActivity->title }}</strong> !

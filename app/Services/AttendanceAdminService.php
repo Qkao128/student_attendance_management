@@ -305,6 +305,20 @@ class AttendanceAdminService extends Service
         }
     }
 
+    public function getDateHoliday($date)
+    {
+        try {
+            $formattedDate = Carbon::parse($date)->format('Y-m-d'); // 格式化日期
+            $isHoliday = $this->_holidayRepository->getDateHoliday($formattedDate);
+
+            return $isHoliday;
+        } catch (Exception $e) {
+            array_push($this->_errorMessage, "Fail to get holiay details.");
+
+            return null;
+        }
+    }
+
     public function getIsDateHoliday($date)
     {
         try {

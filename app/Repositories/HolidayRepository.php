@@ -73,6 +73,17 @@ class HolidayRepository extends Repository
         return $holiday;
     }
 
+    public function getDateHoliday($date)
+    {
+        $date = Carbon::parse($date)->format('Y-m-d');
+
+        $holiday = $this->_db->where('date_from', '<=', $date)
+            ->where('date_to', '>=', $date)
+            ->get();
+
+        return $holiday;
+    }
+
     public function getHolidaysAndActivities($date)
     {
         $date = Carbon::parse($date)->format('Y-m-d');
