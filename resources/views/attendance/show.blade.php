@@ -85,7 +85,7 @@
 
     @if (!empty($holidaysAndActivities['is_holiday']))
         @foreach ($holidaysAndActivities['is_holiday'] as $holidaysAndActivity)
-            <div class="alert mt-3 mb-1" style="border-color: {{ $holidaysAndActivity->background_color }};"
+            <div class="alert mt-3 mb-3" style="border-color: {{ $holidaysAndActivity->background_color }};"
                 data-bg-color="{{ $holidaysAndActivity->background_color }}">
                 Today is <strong>{{ $holidaysAndActivity->title }}</strong> !
             </div>
@@ -255,7 +255,7 @@
         <h4 class="mb-0">Attendance Update :</h4>
     </div>
 
-    @livewire('attendance-student-list', ['classId' => $class->id, 'date' => $date, 'isHoliday' => $isHolidays]);
+    @livewire('attendance-student-list', ['classId' => $class->id, 'date' => $date, 'isHoliday' => $isHolidays])
 
 
     @foreach (Status::asArray() as $statusKey => $statusValue)

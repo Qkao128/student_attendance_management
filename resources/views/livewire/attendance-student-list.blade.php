@@ -17,6 +17,78 @@
         enctype="multipart/form-data" style="background-color: #edf0f2">
         @csrf
         <div class="row g-3 mt-2 px-3">
+            @hasrole('Monitor')
+                <label class="form-label mb-0">Upload Attendance Proof :</label>
+
+                <div id="attendance-global-file-upload-container">
+                    <div id="attendance-global-file-upload-container">
+
+                        @if (!empty($file))
+                            <!-- 有文件時才顯示的文件查看模式（默認隱藏） -->
+                            <div id="attendance-global-file-view-container"
+                                class="d-flex align-items-center justify-content-center">
+                                <div id="file-att">
+                                    <span id="view-att-file" class="d-flex" style="width: 250px">
+                                        <a href="{{ asset('storage/attendance_files/' . $file->file) }}" target="_blank"
+                                            class="btn btn-primary text-truncate text-white">
+                                            {{ $file->file ?? 'View File' }}
+                                        </a>
+
+                                        <i class="fa-solid fa-pen ms-4" id="edit-file-att-icon"></i>
+                                    </span>
+
+
+                                    <span class="d-none align-items-center" id="file-att-input">
+                                        <input type="file" name="file" class="form-control">
+                                        <input type="hidden" name="file_status" value="">
+                                        <i class="fa-solid fa-xmark ms-2" id="cancel-file-att-icon"></i>
+                                    </span>
+
+                                </div>
+
+                            </div>
+                        @else
+                            <!-- 默認顯示文件上傳框 -->
+                            <div id="attendance-global-file-input-container" class="d-flex align-items-center">
+                                <input id="attendance-file-input" type="file" name="file" class="form-control">
+                                {{-- <i id="attendance-global-file-cancel-icon"
+                                    class="fa-solid fa-xmark ms-2 cancel-file-icon d-none"></i>
+                                <input type="hidden" id="attendance-global-file-status" name="file_status" value=""> --}}
+                            </div>
+                        @endif
+
+                    </div>
+                </div>
+            @else
+                <label class="form-label mb-0">Upload Attendance Proof :</label>
+
+                <div id="attendance-global-file-upload-container">
+                    <div id="attendance-global-file-upload-container">
+
+                        @if (!empty($file))
+                            <!-- 有文件時才顯示的文件查看模式（默認隱藏） -->
+                            <div class="d-flex align-items-center justify-content-center">
+                                <div>
+                                    <span class="d-flex" style="width: 250px">
+                                        <a href="{{ asset('storage/attendance_files/' . $file->file) }}" target="_blank"
+                                            class="btn btn-primary text-truncate text-white">
+                                            {{ $file->file ?? 'View File' }}
+                                        </a>
+                                    </span>
+                                </div>
+
+                            </div>
+                        @else
+                            <div id="attendance-global-file-input-container" class="text-center">
+                                <span class="text-muted">no Attendance Proof has been uploaded.</span>
+                            </div>
+                        @endif
+
+                    </div>
+                </div>
+            @endhasrole
+
+            <label class="form-label">Student List :</label>
             @foreach ($students as $key => $student)
                 <div class="col-12 col-sm-6 col-md-4 col-lg-6 col-xxl-3">
                     <div class="card border-0 card-shadow px-1 h-100">
@@ -44,8 +116,7 @@
                                         <!-- 有文件的情況 -->
                                         <div id="file-container-{{ $key }}"
                                             class="d-flex justify-content-around">
-                                            <span id="view-file-{{ $key }}" class="d-flex"
-                                                style="width: 150px">
+                                            <span id="view-file" class="d-flex" style="width: 150px">
                                                 <a href="{{ asset('storage/attendance_files/' . $student->attendance_file) }}"
                                                     target="_blank" class="btn btn-primary text-truncate text-white">
                                                     {{ $student->attendance_file }}
@@ -178,7 +249,7 @@
 
         @if ($students->isNotEmpty())
 
-            @if ($isHoliday)
+            @if ($isHoliday['is_holiday'] == true)
                 <div class="text-danger text-center mt-3 pt-2 ps-3 pe-3 pb-4">
                     This day is designated as a holiday.
                 </div>
@@ -206,7 +277,8 @@
                             </div>
                         @endif
                         @elsehasrole('Monitor')
-                        @if ($currentMonth && !$isHoliday)
+
+                        @if ($currentMonth && $isHoliday['is_holiday'] == false)
                             @if ($isWithinOneWeek)
                                 <!-- 當前月份且不是節假日，且提交日期在一週內才顯示提交按鈕 -->
                                 <div class="text-end p-3 mt-5">
@@ -472,6 +544,20 @@
                 $(`#file-input-${studentId}`).removeClass('d-flex').addClass('d-none');
                 $(`#view-file-${studentId}`).removeClass('d-none').addClass('d-flex');
                 $(`input[name="students[${studentId}][file_status]"]`).val('');
+            });
+
+
+
+            $(document).on('click', '#edit-file-att-icon', function() {
+                $(`#file-att-input`).removeClass('d-none').addClass('d-flex');
+                $(`#view-att-file`).removeClass('d-flex').addClass('d-none');
+                $(`input[name="file_status"]`).val('edited');
+            });
+
+            $(document).on('click', '#cancel-file-att-icon', function() {
+                $(`#file-att-input`).removeClass('d-flex').addClass('d-none');
+                $(`#view-att-file`).removeClass('d-none').addClass('d-flex');
+                $(`input[name="file_status"]`).val('');
             });
 
         });

@@ -9,6 +9,7 @@ use App\Services\ClassAdminService;
 use App\Services\CourseAdminService;
 use Illuminate\Support\Facades\Auth;
 use App\Services\StudentAdminService;
+use App\Models\AttendanceAttachements;
 use App\Services\AttendanceAdminService;
 use Illuminate\Support\Facades\Redirect;
 
@@ -36,6 +37,8 @@ class AttendanceAdminController extends Controller
     public function store($classId, $date, Request $request)
     {
         $data = $request->only([
+            'file',
+            'file_status',
             'students',
             'students.student_id',
             'students.file',
@@ -58,8 +61,9 @@ class AttendanceAdminController extends Controller
         $class = $this->_classAdminService->getById($id);
         $holidaysAndActivities = $this->_attendanceAdminService->getIsDateHoliday($date);
 
-        $isHolidays = $this->_attendanceAdminService->getIsDateTrueHoliday($date);
+        $isHoliday = $this->_attendanceAdminService->getIsDateHoliday($date);
 
+        $isHolidays = $this->_attendanceAdminService->getIsDateTrueHoliday($date);
 
         $students = $this->_studentAdminService->getByClassId($class->id);
 
@@ -112,6 +116,7 @@ class AttendanceAdminController extends Controller
             'students',
             'course',
             'holidaysAndActivities',
+            'isHoliday',
             'isHolidays',
             'attendanceCounts',
             'studentsByStatus',

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class AttendanceStudentList extends Component
 {
+    public $file;
     public $students;
     public $classId;
     public $date;
@@ -40,10 +41,15 @@ class AttendanceStudentList extends Component
             ->orderBy('students.name', 'asc')
             ->get();
 
+        $newFile = DB::table('attendance_attachements')->where('attendance_attachements.class_id', $this->classId)->whereDate('attendance_attachements.date', '=', $this->date)->first();
+        $this->file =  $newFile;
+
         $this->students = $newData;
 
         return view('livewire.attendance-student-list', [
             'students' => $this->students,
+            'file' => $this->file,
+
         ]);
     }
 }

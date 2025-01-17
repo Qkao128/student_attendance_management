@@ -16,6 +16,7 @@ use App\Repositories\StudentRepository;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use App\Repositories\AttendanceRepository;
+use App\Repositories\AttendanceAttachementRepository;
 
 class AttendanceAdminService extends Service
 {
@@ -23,17 +24,20 @@ class AttendanceAdminService extends Service
     protected $_classRepository;
     protected $_studentRepository;
     protected $_holidayRepository;
+    protected $_attendanceAttachementRepository;
 
     public function __construct(
         AttendanceRepository $attendanceRepository,
         ClassRepository $classRepository,
         StudentRepository $studentRepository,
+        AttendanceAttachementRepository $attendanceAttachementRepository,
         HolidayRepository $holidayRepository,
     ) {
         $this->_attendanceRepository = $attendanceRepository;
         $this->_classRepository = $classRepository;
         $this->_studentRepository = $studentRepository;
         $this->_holidayRepository = $holidayRepository;
+        $this->_attendanceAttachementRepository = $attendanceAttachementRepository;
     }
 
     public function createOrUpdateAttendance($classId, $date, $data)
@@ -78,6 +82,8 @@ class AttendanceAdminService extends Service
             }
 
             $validator = Validator::make($data, [
+                'file' => 'nullable|file',
+                'file_status' => 'nullable|string',
                 'students' => 'nullable|array',
                 'students.*.student_id' => 'required|exists:students,id',
                 'students.*.file' => 'nullable|file',
@@ -165,6 +171,54 @@ class AttendanceAdminService extends Service
                 $this->_attendanceRepository->bulkSave($toCreate, $attendanceDate);
             }
 
+
+            $existingAttachment = $this->_attendanceAttachementRepository->getByClassIdAndDate($classId, $date);
+            $data['class_id'] = $classId;
+            $data['date'] = $date;
+
+            if (!empty($data['file_status']) && $data['file_status'] === 'edited') {
+                // 更新操作
+                if (empty($data['file']) && $existingAttachment) {
+                    // 如果文件狀態為 "edited" 且沒有新文件，則刪除現有文件
+                    Storage::delete('public/attendance_files/' . $existingAttachment->file);
+                    $this->_attendanceAttachementRepository->deleteByClassId($classId, $date);
+                } elseif (!empty($data['file']) && $data['file'] instanceof \Illuminate\Http\UploadedFile) {
+                    // 如果上傳了新文件
+                    $fileName = $this->generateFileName();
+                    $fileExtension = $data['file']->extension();
+                    $finalFileName = $fileName . '.' . $fileExtension;
+
+                    $data['file']->storeAs('public/attendance_files', $finalFileName);
+
+                    $data['file'] = $finalFileName; // 更新 $data 中的 file 字段
+
+                    if ($existingAttachment) {
+                        // 刪除舊文件
+                        Storage::delete('public/attendance_files/' . $existingAttachment->file);
+
+                        // 更新附件記錄
+                        $this->_attendanceAttachementRepository->update($data, $existingAttachment->id);
+                    } else {
+                        // 創建新的附件記錄
+                        $this->_attendanceAttachementRepository->save($data);
+                    }
+                }
+            } elseif (!empty($data['file']) && $data['file'] instanceof \Illuminate\Http\UploadedFile) {
+                // 創建操作（file_status 不存在的情況）
+                $fileName = $this->generateFileName();
+                $fileExtension = $data['file']->extension();
+                $finalFileName = $fileName . '.' . $fileExtension;
+
+                $data['file']->storeAs('public/attendance_files', $finalFileName);
+
+                $data['file'] = $finalFileName; // 更新 $data 中的 file 字段
+
+                // 創建新的附件記錄
+                $this->_attendanceAttachementRepository->save($data);
+            }
+
+
+
             DB::commit();
             return true;
         } catch (Exception $e) {
@@ -177,14 +231,14 @@ class AttendanceAdminService extends Service
 
 
 
-    public function getStatusCountsByClassId($classId, $date)
+    public function getStatusCounts($date)
     {
-        $statusCounts = $this->_attendanceRepository->getStatusCountsByClassId($classId, $date);
-        $result = [];
-        foreach (Status::asArray() as $statusKey => $statusValue) {
-            $result[$statusKey] = $statusCounts[$statusKey] ?? 0;
+        try {
+            return $this->_attendanceRepository->getStatusCounts($date);
+        } catch (Exception $e) {
+            array_push($this->_errorMessage, "Fail to get students by status.");
+            return [];
         }
-        return $result;
     }
 
     public function getStudentsByStatus($classId, $date)
@@ -196,6 +250,20 @@ class AttendanceAdminService extends Service
             return [];
         }
     }
+
+
+    public function  getByClassIdAndDate($classId, $date)
+    {
+        try {
+
+            $result = $this->_attendanceAttachementRepository->getByClassIdAndDate($classId, $date);
+            return $result;
+        } catch (Exception $e) {
+            array_push($this->_errorMessage, "Fail to get attendance attachment by status.");
+            return [];
+        }
+    }
+
 
     public function getLatestAttendanceUpdatedAt($classId, $date)
     {
@@ -217,10 +285,10 @@ class AttendanceAdminService extends Service
         }
     }
 
-    public function getStatusCounts($date)
+    public function getStatusCountsByClassId($date, $classId)
     {
         try {
-            return $this->_attendanceRepository->getStatusCounts($date);
+            return $this->_attendanceRepository->getStatusCountsByClassId($date, $classId);
         } catch (Exception $e) {
             array_push($this->_errorMessage, "Fail to get status status.");
             return 0;
@@ -241,7 +309,7 @@ class AttendanceAdminService extends Service
     {
         try {
             $formattedDate = Carbon::parse($date)->format('Y-m-d'); // 格式化日期
-            $isHoliday = $this->_holidayRepository->getHolidaysAndActivities($formattedDate);
+            $isHoliday = $this->_holidayRepository->isDateHoliday($formattedDate);
 
             return [
                 'is_holiday' => $isHoliday,
