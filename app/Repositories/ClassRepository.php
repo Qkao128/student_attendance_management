@@ -90,8 +90,6 @@ class ClassRepository extends Repository
                 'classes.is_disabled',
                 'classes.date_from',
                 'classes.date_to',
-                'classes.date_from',
-                'classes.date_to',
                 'class_teachers.user_id',
                 'courses.name as course_name',
                 'users.username as user_name',

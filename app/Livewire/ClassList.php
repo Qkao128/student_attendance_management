@@ -90,7 +90,8 @@ class ClassList extends Component
                 'classes.id',
                 'classes.name',
                 'classes.is_disabled',
-                'classes.created_at',
+                'classes.date_from',
+                'classes.date_to',
                 'class_teachers.user_id',
                 'courses.name',
                 'users.username'
